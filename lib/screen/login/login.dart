@@ -18,7 +18,6 @@ class _LoginAppState extends State<LoginApp> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo and Title
                 SizedBox(height: 50), // Optional space at the top
                 Column(
                   children: [
@@ -41,7 +40,6 @@ class _LoginAppState extends State<LoginApp> {
                   ],
                 ),
                 SizedBox(height: 20), // Space between sections
-                // Welcome Text
                 Text(
                   'Sé bienvenido a tu app para apoyo institucional',
                   textAlign: TextAlign.center,
@@ -52,7 +50,6 @@ class _LoginAppState extends State<LoginApp> {
                   ),
                 ),
                 SizedBox(height: 20),
-                // Matricula TextField
                 TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -60,7 +57,6 @@ class _LoginAppState extends State<LoginApp> {
                   ),
                 ),
                 SizedBox(height: 10),
-                // Contraseña TextField
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
@@ -69,7 +65,6 @@ class _LoginAppState extends State<LoginApp> {
                   ),
                 ),
                 SizedBox(height: 20),
-                // Ingresar Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -90,8 +85,7 @@ class _LoginAppState extends State<LoginApp> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
-
+                SizedBox(height: 20),
                 Text(
                   'Olvidaste tu contraseña',
                   style: TextStyle(
@@ -119,13 +113,14 @@ class _LoginAppState extends State<LoginApp> {
                   indent: 20,
                   endIndent: 20,
                 ),
-                //SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Eres nuevo?'),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/NewAccount1");
+                      },
                       child: Text(
                         'Crear una cuenta',
                         style: TextStyle(

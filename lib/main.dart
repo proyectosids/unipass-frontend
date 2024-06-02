@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/screen/NewAccount/newaccount1.dart';
+import 'package:flutter_application_unipass/screen/NewAccount/newaccount2.dart';
 import 'package:flutter_application_unipass/screen/login/login.dart';
 import 'package:flutter_application_unipass/screen/Preview/preview1.dart';
 import 'package:flutter_application_unipass/screen/Preview/preview2.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         '/next': (context) => const Preview2(),
         '/login': (context) => const LoginApp(),
         '/NewAccount1': (context) => const NewAccount1(),
+        '/NewAccount2': (context) => const NewAccount2(),
       },
     );
   }
