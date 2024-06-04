@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/screen/widgets/verificationOTP.dart';
 
-class NewAccount2 extends StatefulWidget {
-  const NewAccount2({super.key});
+class RecoverPassword2 extends StatefulWidget {
+  const RecoverPassword2({super.key});
 
   @override
-  _NewAccount2State createState() => _NewAccount2State();
+  _RecoverPassword2State createState() => _RecoverPassword2State();
 }
 
-class _NewAccount2State extends State<NewAccount2> {
+class _RecoverPassword2State extends State<RecoverPassword2> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
@@ -78,7 +78,7 @@ class _NewAccount2State extends State<NewAccount2> {
                     ),
                     SizedBox(height: 90),
                     Text(
-                      'Enviamos un mensaje al correo que proporcionaste un código para crear tu cuenta.',
+                      'Enviamos un mensaje al correo que proporcionaste para enviar la verificación.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
@@ -100,7 +100,7 @@ class _NewAccount2State extends State<NewAccount2> {
                   child: ElevatedButton(
                     onPressed: _isButtonEnabled
                         ? () {
-                            Navigator.pushNamed(context, "/NewAccount3");
+                            Navigator.pushNamed(context, "/Recover3");
                           }
                         : null,
                     style: ElevatedButton.styleFrom(

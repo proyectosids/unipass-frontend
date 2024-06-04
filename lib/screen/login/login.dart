@@ -18,7 +18,7 @@ class _LoginAppState extends State<LoginApp> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 50), // Optional space at the top
+                SizedBox(height: 50),
                 Column(
                   children: [
                     Text(
@@ -96,7 +96,7 @@ class _LoginAppState extends State<LoginApp> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/NewAccount1");
+                    Navigator.pushNamed(context, "/Recover1");
                   },
                   child: Text(
                     'Recuperar',
