@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-class NewAccount3 extends StatefulWidget {
-  const NewAccount3({super.key});
+class NewAccountCredentials extends StatefulWidget {
+  static const routeName = '/accountCredentials';
+  const NewAccountCredentials({super.key});
 
   @override
-  _NewAccount3State createState() => _NewAccount3State();
+  _NewAccountCredentialsState createState() => _NewAccountCredentialsState();
 }
 
-class _NewAccount3State extends State<NewAccount3> {
+class _NewAccountCredentialsState extends State<NewAccountCredentials> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _matriculaController = TextEditingController();
 
   @override
   void dispose() {
@@ -23,19 +25,60 @@ class _NewAccount3State extends State<NewAccount3> {
   void _showSuccessDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Contraseña cambiada'),
-          content: Text('La contraseña ha sido cambiada exitosamente.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacementNamed('/');
-              },
-              child: Text('Volver al inicio'),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Notificación',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 50),
+                Text(
+                  'Se ha creado tu cuenta con exito\nVaya al login para poder acceder',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(height: 50),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacementNamed('/login');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Text(
+                      'Ir al login',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -63,7 +106,7 @@ class _NewAccount3State extends State<NewAccount3> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Cambiar contraseña',
+                  'Crear cuenta',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -72,7 +115,7 @@ class _NewAccount3State extends State<NewAccount3> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Crea una nueva contraseña para que puedas ingresar a tu cuenta',
+                  'Utilizaremos tu matricula como usuario',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -81,9 +124,24 @@ class _NewAccount3State extends State<NewAccount3> {
                 ),
                 SizedBox(height: 30),
                 TextFormField(
+                  controller: _matriculaController,
+                  decoration: InputDecoration(
+                    labelText: 'Ingresa tu matricula',
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa tu matricula';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
-                    labelText: 'Nueva contraseña',
+                    labelText: 'Ingresar tu contraseña',
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
@@ -123,7 +181,7 @@ class _NewAccount3State extends State<NewAccount3> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.orange,
+                      backgroundColor: Colors.orange,
                       padding: EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -138,7 +196,7 @@ class _NewAccount3State extends State<NewAccount3> {
                     ),
                   ),
                 ),
-                SizedBox(height: 150), // Añadimos espacio al final
+                SizedBox(height: 60), // Añadimos espacio al final
               ],
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class VerificationOTP extends StatefulWidget {
   final TextEditingController controller1;
@@ -43,21 +44,34 @@ class _VerificationOTPState extends State<VerificationOTP> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildCodeInputField(widget.controller1),
         _buildCodeInputField(widget.controller2),
         _buildCodeInputField(widget.controller3),
-        _buildCodeInputField(widget.controller4),
+        _buildCodeInputField(widget.controller4,
+            isLast: true), // Marcamos el último campo
       ],
     );
   }
 
-  Widget _buildCodeInputField(TextEditingController controller) {
+  Widget _buildCodeInputField(TextEditingController controller,
+      {bool isLast = false}) {
     return SizedBox(
       width: 50,
       child: TextField(
+        onChanged: (value) {
+          if (value.length == 1) {
+            if (isLast) {
+              FocusScope.of(context)
+                  .unfocus(); // Oculta el teclado cuando es el último campo
+            } else {
+              FocusScope.of(context).nextFocus();
+            }
+          }
+        },
         controller: controller,
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,

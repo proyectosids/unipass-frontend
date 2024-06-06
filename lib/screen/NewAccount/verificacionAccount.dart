@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/screen/widgets/verificationOTP.dart';
 
-class NewAccount2 extends StatefulWidget {
-  const NewAccount2({super.key});
+class VerificationNewAccount extends StatefulWidget {
+  static const routeName = '/verificationAccount';
+  const VerificationNewAccount({super.key});
 
   @override
-  _NewAccount2State createState() => _NewAccount2State();
+  _VerificationNewAccountState createState() => _VerificationNewAccountState();
 }
 
-class _NewAccount2State extends State<NewAccount2> {
+class _VerificationNewAccountState extends State<VerificationNewAccount> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
@@ -100,11 +101,11 @@ class _NewAccount2State extends State<NewAccount2> {
                   child: ElevatedButton(
                     onPressed: _isButtonEnabled
                         ? () {
-                            Navigator.pushNamed(context, "/NewAccount3");
+                            Navigator.pushNamed(context, '/accountCredentials');
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.orange,
+                      backgroundColor: Colors.orange,
                       padding: EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),

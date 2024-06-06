@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class NewAccount1 extends StatefulWidget {
-  const NewAccount1({super.key});
+class NewAccountAuthentication extends StatefulWidget {
+  static const routeName = '/accountAuthentication';
+  const NewAccountAuthentication({super.key});
 
   @override
-  State<NewAccount1> createState() => _NewAccount1State();
+  State<NewAccountAuthentication> createState() =>
+      _NewAccountAuthenticationState();
 }
 
-class _NewAccount1State extends State<NewAccount1> {
+class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
 
@@ -90,7 +92,8 @@ class _NewAccount1State extends State<NewAccount1> {
                           ? null
                           : () {
                               if (_formKey.currentState?.validate() ?? false) {
-                                Navigator.pushNamed(context, "/NewAccount2");
+                                Navigator.pushNamed(
+                                    context, '/verificationAccount');
                               }
                             },
                       style: ElevatedButton.styleFrom(
