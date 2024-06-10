@@ -48,19 +48,20 @@ class _VerificationOTPState extends State<VerificationOTP> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildCodeInputField(widget.controller1),
-        _buildCodeInputField(widget.controller2),
-        _buildCodeInputField(widget.controller3),
-        _buildCodeInputField(widget.controller4,
+        _buildCodeInputField(widget.controller1, responsive),
+        _buildCodeInputField(widget.controller2, responsive),
+        _buildCodeInputField(widget.controller3, responsive),
+        _buildCodeInputField(widget.controller4, responsive,
             isLast: true), // Marcamos el último campo
       ],
     );
   }
 
-  Widget _buildCodeInputField(TextEditingController controller,
+  Widget _buildCodeInputField(
+      TextEditingController controller, Responsive responsive,
       {bool isLast = false}) {
     return SizedBox(
-      width: 50,
+      width: responsive.wp(12),
       child: TextField(
         onChanged: (value) {
           if (value.length == 1) {

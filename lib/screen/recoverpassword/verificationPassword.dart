@@ -49,89 +49,97 @@ class _VerificationPasswordState extends State<VerificationPassword> {
     super.dispose();
   }
 
+  Future<bool> _onWillPop() async {
+    Navigator.pushReplacementNamed(context, '/login');
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(5); // 5% del ancho de la pantalla
-    //final double imageHeight = responsive.hp(20);
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: padding),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: responsive.hp(10)), // Espacio al principio
-                  Column(
-                    children: [
-                      Text(
-                        'UniPass ULV',
-                        style: TextStyle(
-                            fontSize: responsive.dp(3),
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black),
-                      ),
-                      SizedBox(height: responsive.hp(2)),
-                      Text(
-                        'Se ha enviado un correo',
-                        style: TextStyle(
-                          fontSize: responsive.dp(2.6),
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: padding),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: responsive.hp(10)), // Espacio al principio
+                    Column(
+                      children: [
+                        Text(
+                          'UniPass ULV',
+                          style: TextStyle(
+                              fontSize: responsive.dp(3),
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
                         ),
-                      ),
-                      SizedBox(height: responsive.hp(5)),
-                      Text(
-                        'Enviamos un mensaje al correo que proporcionaste para enviar la verificación.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: responsive.dp(2.2),
-                          color: Colors.grey[600],
+                        SizedBox(height: responsive.hp(2)),
+                        Text(
+                          'Se ha enviado un correo',
+                          style: TextStyle(
+                            fontSize: responsive.dp(2.6),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: responsive.wp(30)),
-                  VerificationOTP(
-                    controller1: _controller1,
-                    controller2: _controller2,
-                    controller3: _controller3,
-                    controller4: _controller4,
-                  ),
-                  SizedBox(height: responsive.dp(12)),
-                  SizedBox(
-                    width: responsive.wp(60),
-                    child: ElevatedButton(
-                      onPressed: _isButtonEnabled
-                          ? () {
-                              Navigator.pushNamed(context, '/newPassword');
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        padding:
-                            EdgeInsets.symmetric(vertical: responsive.hp(1.6)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(responsive.wp(10)),
+                        SizedBox(height: responsive.hp(5)),
+                        Text(
+                          'Enviamos un mensaje al correo que proporcionaste para enviar la verificación.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: responsive.dp(2.2),
+                            color: Colors.grey[600],
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        'Verificar',
-                        style: TextStyle(
-                          fontSize: responsive.dp(2),
-                          color: Colors.white,
+                      ],
+                    ),
+                    SizedBox(height: responsive.hp(8)),
+                    VerificationOTP(
+                      controller1: _controller1,
+                      controller2: _controller2,
+                      controller3: _controller3,
+                      controller4: _controller4,
+                    ),
+                    SizedBox(height: responsive.hp(12)),
+                    SizedBox(
+                      width: responsive.wp(60),
+                      child: ElevatedButton(
+                        onPressed: _isButtonEnabled
+                            ? () {
+                                Navigator.pushReplacementNamed(
+                                    context, '/newPassword');
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          padding: EdgeInsets.symmetric(
+                              vertical: responsive.hp(1.6)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(responsive.wp(10)),
+                          ),
+                        ),
+                        child: Text(
+                          'Verificar',
+                          style: TextStyle(
+                            fontSize: responsive.dp(2),
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: responsive.hp(18)),
-                ],
+                    SizedBox(height: responsive.hp(18)),
+                  ],
+                ),
               ),
             ),
           ),

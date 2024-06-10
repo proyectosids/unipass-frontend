@@ -1,13 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/NewAccount/mailAuthentication.dart';
-import 'package:flutter_application_unipass/screen/NewAccount/verificacionAccount.dart';
-import 'package:flutter_application_unipass/screen/NewAccount/accountCredentials.dart';
-import 'package:flutter_application_unipass/screen/login/login.dart';
-import 'package:flutter_application_unipass/screen/Preview/preview1.dart';
-import 'package:flutter_application_unipass/screen/Preview/preview2.dart';
-import 'package:flutter_application_unipass/screen/recoverpassword/maillAuthentication.dart';
-import 'package:flutter_application_unipass/screen/recoverpassword/verificationPassword.dart';
-import 'package:flutter_application_unipass/screen/recoverpassword/newPassword.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 
 void main() => runApp(const MyApp());
 
@@ -35,6 +26,11 @@ class MyApp extends StatelessWidget {
         VerificationPassword.routeName: (context) =>
             const VerificationPassword(),
         CreateNewPassword.routeName: (context) => const CreateNewPassword(),
+        HomeStudentScreen.routeName: (context) => HomeStudentScreen(),
+        MenuScreen.routeName: (context) => MenuScreen(),
+        NotificationsScreen.routeName: (context) => NotificationsScreen(),
+        //ProfileScreen.routeName: (context) => ProfileScreen(),
+        Exitstudent.routeName: (context) => Exitstudent()
       },
     );
   }

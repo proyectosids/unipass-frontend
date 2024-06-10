@@ -6,7 +6,8 @@ class TextFieldWidget extends StatelessWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final void Function(String text)? onChanged;
-  final String? Function(String? text)? validator; // Hacemos validator nullable
+  final String? Function(String? text)? validator;
+  final TextEditingController? controller;
 
   const TextFieldWidget({
     Key? key,
@@ -15,6 +16,7 @@ class TextFieldWidget extends StatelessWidget {
     this.obscureText = false,
     this.onChanged,
     this.validator,
+    this.controller,
   }) : super(key: key);
 
   @override
@@ -22,13 +24,14 @@ class TextFieldWidget extends StatelessWidget {
     final Responsive responsive = Responsive.of(context);
 
     return TextFormField(
-      keyboardType: this.keyboardType,
-      obscureText: this.obscureText,
-      onChanged: this.onChanged,
-      validator: this.validator,
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      onChanged: onChanged,
+      validator: validator,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
-        labelText: this.label,
+        labelText: label,
         labelStyle: TextStyle(
           color: Colors.black,
           fontSize: responsive.dp(1.5),

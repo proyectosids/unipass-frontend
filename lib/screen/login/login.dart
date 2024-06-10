@@ -4,7 +4,7 @@ import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class LoginApp extends StatefulWidget {
   static const routeName = '/login';
-  const LoginApp({super.key});
+  const LoginApp({Key? key}) : super(key: key);
 
   @override
   State<LoginApp> createState() => _LoginAppState();
@@ -17,113 +17,208 @@ class _LoginAppState extends State<LoginApp> {
     final double padding = responsive.wp(5); // 5% del ancho de la pantalla
     final double imageHeight = responsive.hp(20);
 
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: padding),
-            child: SingleChildScrollView(
+    return WillPopScope(
+      onWillPop: () async {
+        // Mostrar un diálogo de confirmación antes de salir de la aplicación
+        bool exit = await showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(responsive.wp(10)),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(responsive.wp(5)),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: responsive.hp(5)),
-                  Column(
-                    children: [
-                      Text(
-                        'UniPass ULV',
-                        style: TextStyle(
-                          fontSize: responsive.dp(3),
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: responsive.hp(2)),
-                      Opacity(
-                        opacity: 0.2,
-                        child: Image.asset(
-                          'assets/image/Logo_ULV.png',
-                          height: imageHeight,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: responsive.hp(2)), // Space between sections
                   Text(
-                    'Sé bienvenido a tu app para apoyo institucional',
+                    '¿Salir de la aplicación?',
+                    style: TextStyle(
+                      fontSize: responsive.dp(2.5),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: responsive.hp(5)),
+                  Text(
+                    '¿Estás seguro de que quieres salir de la aplicación?',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: responsive.dp(2),
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      fontSize: responsive.dp(1.8),
+                      color: Colors.grey[600],
                     ),
                   ),
-                  SizedBox(height: responsive.hp(3)),
-                  LoginTextFields(),
-
-                  SizedBox(height: responsive.hp(2)),
-                  Text(
-                    'Olvidaste tu contraseña',
-                    style: TextStyle(
-                      fontSize: responsive.dp(1.5),
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: responsive.hp(2)),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/mailAuthentication');
-                    },
-                    child: Text(
-                      'Recuperar',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: responsive.dp(1.8),
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: responsive.hp(2)),
-                  Divider(
-                    color: Colors.black,
-                    height: responsive.hp(1),
-                    thickness: responsive.hp(0.2),
-                    indent: responsive.wp(5),
-                    endIndent: responsive.wp(5),
-                  ),
-                  SizedBox(height: responsive.hp(2)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Eres nuevo?',
-                        style: TextStyle(
-                          fontSize: responsive.dp(1.5),
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                              context, '/accountAuthentication');
-                        },
-                        child: Text(
-                          'Crear una cuenta',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: responsive.dp(1.8),
-                            decoration: TextDecoration.underline,
+                  SizedBox(height: responsive.hp(5)),
+                  SizedBox(
+                    width: responsive.wp(80),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                          width:
+                              responsive.wp(30), // Ancho del botón "Cancelar"
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: responsive.hp(1.6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(responsive.wp(30)),
+                              ),
+                            ),
+                            child: Text(
+                              'Cancelar',
+                              style: TextStyle(
+                                fontSize: responsive.dp(2),
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: responsive.wp(30), // Ancho del botón "Salir"
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: responsive.hp(1.6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(responsive.wp(30)),
+                              ),
+                            ),
+                            child: Text(
+                              'Salir',
+                              style: TextStyle(
+                                fontSize: responsive.dp(2),
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 20), // Added spacing at the bottom
                 ],
+              ),
+            ),
+          ),
+        );
+
+        // Devolver true para salir de la aplicación si el usuario confirmó, de lo contrario, false
+        return exit;
+      },
+      child: Scaffold(
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: padding),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: responsive.hp(5)),
+                    Column(
+                      children: [
+                        Text(
+                          'UniPass ULV',
+                          style: TextStyle(
+                            fontSize: responsive.dp(3),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: responsive.hp(2)),
+                        Opacity(
+                          opacity: 0.2,
+                          child: Image.asset(
+                            'assets/image/Logo_ULV.png',
+                            height: imageHeight,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                        height: responsive.hp(2)), // Space between sections
+                    Text(
+                      'Sé bienvenido a tu app para apoyo institucional',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: responsive.dp(2),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: responsive.hp(3)),
+                    LoginTextFields(), // Login form
+
+                    SizedBox(height: responsive.hp(2)),
+                    Text(
+                      'Olvidaste tu contraseña',
+                      style: TextStyle(
+                        fontSize: responsive.dp(1.5),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: responsive.hp(2)),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/mailAuthentication');
+                      },
+                      child: Text(
+                        'Recuperar',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: responsive.dp(1.8),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: responsive.hp(2)),
+                    Divider(
+                      color: Colors.black,
+                      height: responsive.hp(1),
+                      thickness: responsive.hp(0.2),
+                      indent: responsive.wp(5),
+                      endIndent: responsive.wp(5),
+                    ),
+                    SizedBox(height: responsive.hp(2)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Eres nuevo?',
+                          style: TextStyle(
+                            fontSize: responsive.dp(1.5),
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, '/accountAuthentication');
+                          },
+                          child: Text(
+                            'Crear una cuenta',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: responsive.dp(1.8),
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20), // Added spacing at the bottom
+                  ],
+                ),
               ),
             ),
           ),

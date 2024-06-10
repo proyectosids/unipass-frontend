@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/screen/widgets/inputAuthentication.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -75,27 +76,9 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                           height: imageHeight,
                         ),
                         SizedBox(height: responsive.hp(3)),
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: responsive.IsTablet ? 480 : 360,
-                          ),
-                          child: TextFormField(
-                            controller: _emailController,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Correo Institucional',
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor, ingresa tu correo institucional';
-                              }
-                              if (!value.endsWith('@ulv.edu.mx')) {
-                                return 'Por favor, ingresa un correo institucional válido (@ulv.edu.mx)';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
+                        InputAuthentication(
+                            responsive: responsive,
+                            emailController: _emailController),
                       ],
                     ),
                     SizedBox(height: responsive.hp(3)),
@@ -107,7 +90,7 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                             : () {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
-                                  Navigator.pushNamed(
+                                  Navigator.pushReplacementNamed(
                                       context, '/verificationPassword');
                                 }
                               },
@@ -141,7 +124,8 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                     SizedBox(height: responsive.hp(2)),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, "/login");
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/login', (route) => false);
                       },
                       child: Text(
                         'Regresar',

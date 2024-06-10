@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/utils/responsive.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 
 class Preview2 extends StatelessWidget {
   static const routeName = '/preview2';
@@ -33,14 +31,12 @@ class Preview2 extends StatelessWidget {
                   ),
                   SizedBox(height: responsive.hp(5)),
                   SvgPicture.asset(
-                    'assets/image/presentation-2.svg', // Corrected to SvgPicture.asset
+                    'assets/image/presentation-2.svg',
                     height: imageHeight,
                   ),
                 ],
               ),
-              SizedBox(
-                height: responsive.hp(2),
-              ),
+              SizedBox(height: responsive.hp(2)),
               Column(
                 children: [
                   Text(
@@ -53,7 +49,7 @@ class Preview2 extends StatelessWidget {
                   ),
                   SizedBox(height: responsive.wp(1.5)),
                   Text(
-                    'Mediante una herramienta que la gran mayoria tenemos que es un dispositivo movil o la web',
+                    'Mediante una herramienta que la gran mayoría tenemos que es un dispositivo móvil o la web',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: responsive.dp(2.4),
@@ -64,18 +60,39 @@ class Preview2 extends StatelessWidget {
                   Text(
                     '¿Estás listo para esto?',
                     style: TextStyle(
-                        fontSize: responsive.dp(2.6),
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  )
+                      fontSize: responsive.dp(2.6),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: responsive.hp(4)),
               SizedBox(
-                width: double.infinity,
+                width: responsive.wp(60),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/login");
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const LoginApp(), // Ajusta esto a la ruta correcta
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          var begin = const Offset(1.0, 0.0);
+                          var end = Offset.zero;
+                          var curve = Curves.ease;
+
+                          var tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
@@ -93,7 +110,7 @@ class Preview2 extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: responsive.hp(2)), // Added spacing at the bottom
+              SizedBox(height: responsive.hp(2)),
             ],
           ),
         ),
