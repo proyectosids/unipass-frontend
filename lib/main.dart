@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UniPass ULV',
-      initialRoute: Preview1.routeName, //Iniciamos la ruta
+      initialRoute: Preview1.routeName,
       routes: {
         Preview1.routeName: (context) => const Preview1(),
         Preview2.routeName: (context) => const Preview2(),
@@ -30,7 +30,19 @@ class MyApp extends StatelessWidget {
         MenuScreen.routeName: (context) => MenuScreen(),
         NotificationsScreen.routeName: (context) => NotificationsScreen(),
         //ProfileScreen.routeName: (context) => ProfileScreen(),
-        Exitstudent.routeName: (context) => Exitstudent()
+        ExitStudent.routeName: (context) => ExitStudent(),
+        HelpFAQUser.routeName: (context) => HelpFAQUser(),
+        DocumentStudent.routeName: (context) => DocumentStudent(),
+        ProfileScreen.routeName: (context) => ProfileScreen(),
+        CreateExitScreen.routeName: (context) => CreateExitScreen(
+              initialDate: DateTime.now(),
+            ),
+        ExitDetailScreen.routeName: (context) => ExitDetailScreen(),
+        EditExitScreen.routeName: (context) => EditExitScreen(),
+        HomeScreen.routeName: (context) => HomeScreen(),
+        PrivacyuserScreen.routeName: (context) => PrivacyuserScreen(),
+        SupportUserScreen.routeName: (context) => SupportUserScreen(),
+        ChangepasswordStudent.routeName: (context) => ChangepasswordStudent(),
       },
     );
   }

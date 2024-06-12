@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/widgets/loginForm.dart';
-import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 
 class LoginApp extends StatefulWidget {
   static const routeName = '/login';

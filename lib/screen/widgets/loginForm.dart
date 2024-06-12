@@ -18,7 +18,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
       // Lógica para cuando la validación es exitosa
       Navigator.pushNamedAndRemoveUntil(
           context,
-          '/indexStudent',
+          '/home',
           (route) =>
               false); // Redirige a la pantalla principal y borra el historial
     }

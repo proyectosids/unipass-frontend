@@ -1,18 +1,20 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 
 class NotificationsScreen extends StatelessWidget {
   static const routeName = '/notificationsStudent';
+
+  const NotificationsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notificaciones'),
+        title: const Text('Notificaciones'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.close, color: Colors.purple),
+            icon: const Icon(Icons.close, color: Colors.purple),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -35,7 +37,7 @@ class NotificationsScreen extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: ListTile(
-        leading: Icon(Icons.notifications, color: Colors.purple),
+        leading: const Icon(Icons.notifications, color: Colors.purple),
         title: Text(title),
         subtitle: Text(subtitle),
       ),
