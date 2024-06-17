@@ -19,6 +19,7 @@ class ExitDetailScreen extends StatelessWidget {
         title: const Text('Detalle salida'),
         backgroundColor: Color(0xFF6D55F4),
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(

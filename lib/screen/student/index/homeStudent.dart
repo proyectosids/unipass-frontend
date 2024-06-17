@@ -27,6 +27,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

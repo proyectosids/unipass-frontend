@@ -108,6 +108,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         ),
         backgroundColor: Color(0xFF6D55F4),
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

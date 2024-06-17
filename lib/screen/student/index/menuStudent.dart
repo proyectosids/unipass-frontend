@@ -9,6 +9,7 @@ class MenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Menu'),
         actions: [
           IconButton(
@@ -19,6 +20,7 @@ class MenuScreen extends StatelessWidget {
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -39,7 +41,7 @@ class MenuScreen extends StatelessWidget {
                     'Ayuda',
                     'assets/image/HelpApp.svg',
                     '/helpUser',
-                    Colors.green,
+                    const Color.fromARGB(255, 101, 181, 104),
                   ),
                   _buildMenuItem(
                     context,
@@ -71,7 +73,13 @@ class MenuScreen extends StatelessWidget {
           children: [
             SvgPicture.asset(assetPath, width: 80, height: 80),
             const SizedBox(height: 8),
-            Text(title),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),

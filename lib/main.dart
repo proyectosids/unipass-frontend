@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         ExitDetailScreen.routeName: (context) => ExitDetailScreen(),
         EditExitScreen.routeName: (context) => EditExitScreen(),
         HomeScreen.routeName: (context) => HomeScreen(),
-        PrivacyuserScreen.routeName: (context) => PrivacyuserScreen(),
+        PrivacyUserScreen.routeName: (context) => PrivacyUserScreen(),
         SupportUserScreen.routeName: (context) => SupportUserScreen(),
         ChangepasswordStudent.routeName: (context) => ChangepasswordStudent(),
       },

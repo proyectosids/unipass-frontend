@@ -14,6 +14,7 @@ class EditExitScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Editar $exitTitle'),
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -21,6 +21,7 @@ class NotificationsScreen extends StatelessWidget {
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(

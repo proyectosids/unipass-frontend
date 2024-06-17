@@ -39,6 +39,7 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
     final double imageHeight = responsive.hp(30);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();

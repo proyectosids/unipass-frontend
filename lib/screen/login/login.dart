@@ -109,6 +109,7 @@ class _LoginAppState extends State<LoginApp> {
         return exit;
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();

@@ -1,14 +1,36 @@
-import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   static const routeName = '/profileStudent';
 
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final ImagePicker _picker = ImagePicker();
+  File? _imageFile;
+  bool _notificationsEnabled =
+      false; // Estado para el interruptor de notificaciones
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _imageFile = pickedFile != null ? File(pickedFile.path) : null;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Perfil'),
         actions: [
           IconButton(
@@ -23,15 +45,39 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/alumno.png'),
+            GestureDetector(
+              onTap: _pickImage,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage:
+                    _imageFile == null ? null : FileImage(_imageFile!),
+                child: _imageFile == null
+                    ? const Icon(
+                        Icons.add_a_photo,
+                        size: 50,
+                        color: Colors.grey,
+                      )
+                    : null,
+              ),
             ),
             const SizedBox(height: 16),
             const Text('Alumno', style: TextStyle(fontSize: 24)),
             const SizedBox(height: 8),
-            const Text('Activar notificaciones'),
-            Switch(value: true, onChanged: (bool value) {}),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Activar notificaciones',
+                    style: TextStyle(fontSize: 16)),
+                Switch(
+                  value: _notificationsEnabled,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _notificationsEnabled = value;
+                    });
+                  },
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Expanded(
               child: GridView.count(
@@ -42,20 +88,16 @@ class ProfileScreen extends StatelessWidget {
                     'Cambiar contraseña',
                     'assets/image/cambiar_contra.svg',
                     '/changeStudent',
-                    Colors.blue,
+                    Color.fromARGB(255, 107, 128, 246),
                   ),
-                  _buildProfileItem(
-                      context,
-                      'Soporte',
-                      'assets/image/soporte.svg',
-                      '/supportUser',
-                      Colors.yellow),
+                  _buildProfileItem(context, 'Soporte',
+                      'assets/image/soporte.svg', '/supportUser', Colors.green),
                   _buildProfileItem(
                       context,
                       'Políticas de Privacidad',
                       'assets/image/politicas.svg',
                       '/privacyUser',
-                      Colors.green),
+                      Color.fromARGB(255, 159, 60, 176)),
                   _buildProfileItem(context, 'Cerrar sesión',
                       'assets/image/cerrar_sesion.svg', '/login', Colors.red),
                 ],
@@ -81,7 +123,11 @@ class ProfileScreen extends StatelessWidget {
           children: [
             SvgPicture.asset(assetPath, width: 80, height: 80),
             const SizedBox(height: 8),
-            Text(title),
+            Text(title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                )),
           ],
         ),
       ),

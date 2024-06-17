@@ -41,6 +41,7 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('FAQ'),
         leading: IconButton(
@@ -113,26 +114,26 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
               ],
             ),
             const SizedBox(height: 16),
-            _buildExpansionPanelList(),
+            _buildExpansionTileList(),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Salidas',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-      ),
+      //bottomNavigationBar: BottomNavigationBar(
+      //  items: const <BottomNavigationBarItem>[
+      //    BottomNavigationBarItem(
+      //      icon: Icon(Icons.home),
+      //      label: 'Inicio',
+      //    ),
+      //    BottomNavigationBarItem(
+      //      icon: Icon(Icons.list),
+      //      label: 'Salidas',
+      //    ),
+      //    BottomNavigationBarItem(
+      //      icon: Icon(Icons.person),
+      //      label: 'Perfil',
+      //    ),
+      //  ],
+      //),
     );
   }
 
@@ -163,26 +164,19 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
     );
   }
 
-  Widget _buildExpansionPanelList() {
-    return ExpansionPanelList(
-      elevation: 1,
-      expandedHeaderPadding: EdgeInsets.all(0),
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          _faqItems[index].isExpanded = !isExpanded;
-        });
-      },
-      children: _faqItems.map<ExpansionPanel>((Item item) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              title: Text(item.headerValue),
-            );
-          },
-          body: ListTile(
-            title: Text(item.expandedValue),
+  Widget _buildExpansionTileList() {
+    return Column(
+      children: _faqItems.map<Widget>((Item item) {
+        return ExpansionTile(
+          title: Text(
+            item.headerValue,
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          isExpanded: item.isExpanded,
+          children: [
+            ListTile(
+              title: Text(item.expandedValue),
+            ),
+          ],
         );
       }).toList(),
     );

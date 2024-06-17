@@ -30,7 +30,12 @@ class TextFieldWidget extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white, // Fondo blanco
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide.none, // Sin borde para mejor apariencia
+        ),
         labelText: label,
         labelStyle: TextStyle(
           color: Colors.black,

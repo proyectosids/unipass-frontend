@@ -11,6 +11,7 @@ class Preview1 extends StatelessWidget {
     final double imageHeight = responsive.hp(30);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),

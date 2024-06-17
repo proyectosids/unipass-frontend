@@ -56,6 +56,7 @@ class _ExitStudentState extends State<ExitStudent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Salidas'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -64,6 +65,7 @@ class _ExitStudentState extends State<ExitStudent> {
           },
         ),
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -126,22 +128,22 @@ class _ExitStudentState extends State<ExitStudent> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Salidas',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-      ),
+      //bottomNavigationBar: BottomNavigationBar(
+      //  items: const <BottomNavigationBarItem>[
+      //    BottomNavigationBarItem(
+      //      icon: Icon(Icons.home),
+      //      label: 'Inicio',
+      //    ),
+      //    BottomNavigationBarItem(
+      //      icon: Icon(Icons.list),
+      //      label: 'Salidas',
+      //    ),
+      //    BottomNavigationBarItem(
+      //      icon: Icon(Icons.person),
+      //      label: 'Perfil',
+      //    ),
+      //  ],
+      //),
     );
   }
 

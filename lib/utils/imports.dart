@@ -32,3 +32,5 @@ export 'package:table_calendar/table_calendar.dart';
 export 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 export 'package:date_picker_timeline/date_picker_timeline.dart';
 export 'package:intl/date_symbol_data_local.dart';
+export 'package:flutter_application_unipass/screen/widgets/textInput.dart';
+export 'package:url_launcher/url_launcher.dart';

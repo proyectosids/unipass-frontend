@@ -195,6 +195,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
