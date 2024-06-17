@@ -113,7 +113,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       String routeName, Color color) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, routeName);
+        if (routeName == '/login') {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            routeName,
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          Navigator.pushNamed(context, routeName);
+        }
       },
       child: Card(
         color: color,

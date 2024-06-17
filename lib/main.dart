@@ -1,4 +1,5 @@
-import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/imports.dart'; // Asegúrate de importar correctamente todos los archivos necesarios
 
 void main() => runApp(const MyApp());
 
@@ -29,20 +30,27 @@ class MyApp extends StatelessWidget {
         HomeStudentScreen.routeName: (context) => HomeStudentScreen(),
         MenuScreen.routeName: (context) => MenuScreen(),
         NotificationsScreen.routeName: (context) => NotificationsScreen(),
-        //ProfileScreen.routeName: (context) => ProfileScreen(),
         ExitStudent.routeName: (context) => ExitStudent(),
         HelpFAQUser.routeName: (context) => HelpFAQUser(),
         DocumentStudent.routeName: (context) => DocumentStudent(),
         ProfileScreen.routeName: (context) => ProfileScreen(),
-        CreateExitScreen.routeName: (context) => CreateExitScreen(
-              initialDate: DateTime.now(),
-            ),
+        CreateExitScreen.routeName: (context) =>
+            CreateExitScreen(initialDate: DateTime.now()),
         ExitDetailScreen.routeName: (context) => ExitDetailScreen(),
         EditExitScreen.routeName: (context) => EditExitScreen(),
         HomeScreen.routeName: (context) => HomeScreen(),
         PrivacyUserScreen.routeName: (context) => PrivacyUserScreen(),
         SupportUserScreen.routeName: (context) => SupportUserScreen(),
         ChangepasswordStudent.routeName: (context) => ChangepasswordStudent(),
+        DocumentAddStudent.routeName: (context) {
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+          return DocumentAddStudent(
+            documentName: args['documentName'],
+            isUploaded: args['isUploaded'],
+            initialFileName: args['fileName'],
+          );
+        },
       },
     );
   }

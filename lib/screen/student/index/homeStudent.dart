@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeStudentScreen extends StatefulWidget {
   static const routeName = '/homeStudent';
@@ -62,14 +61,15 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
           });
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isSelected ? Colors.purple : Color.fromARGB(255, 178, 178, 178),
+          backgroundColor: isSelected
+              ? Colors.purple
+              : const Color.fromARGB(255, 178, 178, 178),
           disabledForegroundColor: Colors.white.withOpacity(0.38),
           disabledBackgroundColor: Colors.white.withOpacity(0.12),
         ),
         child: Text(
           title,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );
@@ -82,10 +82,20 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [
-            _buildCard('Preceptor', 'Nueva regla de salidas a casa',
-                '25 Mayo, 2024', 'assets/image/anuncio.png'),
-            _buildCard('Jefe de área', 'Alumnos pendientes con horas',
-                '22 Mayo, 2024', 'assets/image/anuncio.png'),
+            _buildCard(
+              'Preceptor',
+              'Nueva regla de salidas a casa',
+              '25 Mayo, 2024',
+              Colors.purple,
+              Icons.announcement,
+            ),
+            _buildCard(
+              'Jefe de área',
+              'Alumnos pendientes con horas',
+              '22 Mayo, 2024',
+              Colors.blue,
+              Icons.announcement,
+            ),
           ],
         ),
       );
@@ -95,10 +105,20 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [
-            _buildCard('Preceptor', 'Solicitud a casa', '30 Mayo, 2024',
-                'assets/image/anuncio.png'),
-            _buildCard('Jefe de área', 'Solicitud al pueblo', '23 Mayo, 2024',
-                'assets/image/anuncio.png'),
+            _buildCard(
+              'Preceptor',
+              'Solicitud a casa',
+              '30 Mayo, 2024',
+              Colors.purple,
+              Icons.announcement,
+            ),
+            _buildCard(
+              'Jefe de área',
+              'Solicitud al pueblo',
+              '23 Mayo, 2024',
+              Colors.blue,
+              Icons.announcement,
+            ),
           ],
         ),
       );
@@ -106,26 +126,36 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
   }
 
   Widget _buildCard(
-      String title, String subtitle, String date, String assetPath) {
+      String title, String subtitle, String date, Color color, IconData icon) {
     return Container(
-      width: 250, // Ajusta el ancho de las tarjetas según sea necesario
+      width: 250,
       margin: const EdgeInsets.only(right: 16.0),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              leading: Image.asset(assetPath, width: 40, height: 40),
-              title: Text(title),
-              subtitle: Text(subtitle),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            leading: Icon(icon, color: Colors.white),
+            title: Text(
+              title,
+              style: const TextStyle(color: Colors.white),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(date, style: const TextStyle(color: Colors.grey)),
+            subtitle: Text(
+              subtitle,
+              style: const TextStyle(color: Colors.white70),
             ),
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              date,
+              style: const TextStyle(color: Colors.white70),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -146,7 +176,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: ListTile(
-        leading: Icon(Icons.event, color: Colors.purple),
+        leading: const Icon(Icons.event, color: Colors.purple),
         title: Text(title),
         subtitle: Text(subtitle),
       ),
