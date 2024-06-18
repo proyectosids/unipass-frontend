@@ -16,6 +16,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Hola Alumno'),
         actions: [
           IconButton(

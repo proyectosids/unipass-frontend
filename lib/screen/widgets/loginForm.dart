@@ -11,17 +11,30 @@ class LoginTextFields extends StatefulWidget {
 
 class _LoginTextFieldsState extends State<LoginTextFields> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _username = '';
 
   void _submit() {
     final isOk = _formKey.currentState?.validate() ?? false;
     if (isOk) {
-      // Lógica para cuando la validación es exitosa
-      Navigator.pushNamedAndRemoveUntil(
+      // Validar el tipo de usuario y redirigir a la pantalla correspondiente
+      if (_username == '221068') {
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          //'/homeStudentMenu',
+          '/homeStudentMenu',
+          (route) => false,
+        );
+      } else if (_username == 'EMP2024') {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
           '/homePreceptorMenu',
-          (route) =>
-              false); // Redirige a la pantalla principal y borra el historial
+          (route) => false,
+        );
+      } else {
+        // Manejar otros tipos de usuario o mostrar un mensaje de error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Usuario no reconocido')),
+        );
+      }
     }
   }
 
@@ -40,19 +53,13 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
             TextFieldWidget(
               label: 'Matricula',
               onChanged: (text) {
-                print("user: $text");
+                _username = text; // Guardar el valor del usuario
               },
               validator: (text) {
                 if (text == null || text.isEmpty) {
                   return 'El campo no puede estar vacío';
                 }
-                final int? number = int.tryParse(text);
-                if (number == null) {
-                  return 'El campo debe ser tu matricula';
-                }
-                if (number < 200000 || number > 300000) {
-                  return 'El número debe ser una matricula real';
-                }
+                // La lógica de validación de la matrícula depende de tus requisitos específicos.
                 return null;
               },
             ),
@@ -61,16 +68,13 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
               label: "Contraseña",
               obscureText: true,
               onChanged: (text) {
-                print("password: $text");
+                // Puedes guardar la contraseña si es necesario para la autenticación.
               },
               validator: (text) {
                 if (text == null || text.isEmpty) {
                   return 'El campo no puede estar vacío';
                 }
-                if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,20}$')
-                    .hasMatch(text)) {
-                  return 'La contraseña es incorrecta';
-                }
+                // Puedes añadir más lógica de validación para la contraseña aquí.
                 return null;
               },
             ),

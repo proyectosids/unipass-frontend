@@ -16,7 +16,10 @@ class ExitDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalle salida'),
+        title: const Text(
+          'Detalle salida',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Color(0xFF6D55F4),
       ),
       backgroundColor: Colors.white,

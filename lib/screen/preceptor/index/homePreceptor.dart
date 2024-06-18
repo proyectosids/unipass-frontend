@@ -16,6 +16,7 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Hola Preceptor'),
         actions: [
           IconButton(
@@ -35,7 +36,6 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
             const Text('¿Qué haremos hoy?', style: TextStyle(fontSize: 24)),
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildStatusButton('Avisos', isAvisosSelected),
                 const SizedBox(width: 8),
@@ -44,6 +44,20 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
             ),
             const SizedBox(height: 16),
             _buildCards(),
+            const SizedBox(height: 16),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Crear aviso',
+                    style: TextStyle(color: Colors.white)),
+              ),
+            ),
             const SizedBox(height: 16),
             const Text('Recientes', style: TextStyle(fontSize: 24)),
             _buildActivityList(),
@@ -79,40 +93,27 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
 
   Widget _buildCards() {
     if (isAvisosSelected) {
-      return Column(
-        children: [
-          Row(
-            children: [
-              _buildCard(
-                'Departamento',
-                'No deber horas para prácticas',
-                '25 Mayo, 2024',
-                Colors.purple,
-                Icons.school,
-              ),
-              const SizedBox(width: 16),
-              _buildCard(
-                'Dormitorio',
-                'Subir sus documentos para salir',
-                '22 Mayo, 2024',
-                Colors.blue,
-                Icons.home,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+      return SizedBox(
+        height: 200,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: [
+            _buildCard(
+              'Departamento',
+              'No deber horas para prácticas',
+              '25 Mayo, 2024',
+              Colors.purple,
+              Icons.school,
             ),
-            child: const Text('Crear aviso',
-                style: TextStyle(color: Colors.white)),
-          ),
-        ],
+            _buildCard(
+              'Dormitorio',
+              'Subir sus documentos para salir',
+              '22 Mayo, 2024',
+              Colors.blue,
+              Icons.home,
+            ),
+          ],
+        ),
       );
     } else {
       return Row(
@@ -129,39 +130,35 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
 
   Widget _buildCard(
       String title, String subtitle, String date, Color color, IconData icon) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.only(right: 16.0),
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: Colors.white),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ],
+    return Container(
+      width: 250,
+      margin: const EdgeInsets.only(right: 16.0),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            leading: Icon(icon, color: Colors.white),
+            title: Text(
+              title,
+              style: const TextStyle(color: Colors.white),
             ),
-            const SizedBox(height: 8),
-            Text(
+            subtitle: Text(
               subtitle,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
+              style: const TextStyle(color: Colors.white70),
             ),
-            const SizedBox(height: 8),
-            Text(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
               date,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
+              style: const TextStyle(color: Colors.white70),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

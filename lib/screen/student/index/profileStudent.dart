@@ -41,6 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
