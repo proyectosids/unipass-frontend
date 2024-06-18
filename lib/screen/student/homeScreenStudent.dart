@@ -1,15 +1,15 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
 
-class HomeScreen extends StatefulWidget {
-  static const routeName = '/home';
+class HomeScreenStudent extends StatefulWidget {
+  static const routeName = '/homeStudentMenu';
 
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreenStudent({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomeScreenStudentState createState() => _HomeScreenStudentState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenStudentState extends State<HomeScreenStudent> {
   int selectedIndex = 0;
 
   final List<Widget> screens = [

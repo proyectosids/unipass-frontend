@@ -25,7 +25,7 @@ export 'package:flutter_application_unipass/screen/student/exit_Student/createEx
 export 'package:flutter_application_unipass/screen/student/exit_Student/detailExit.dart';
 export 'package:flutter_application_unipass/screen/student/exit_Student/editExit.dart';
 export 'package:flutter_application_unipass/screen/student/changePasswordStudent.dart';
-export 'package:flutter_application_unipass/screen/student/homeScreen.dart';
+export 'package:flutter_application_unipass/screen/student/homeScreenStudent.dart';
 export 'package:flutter_application_unipass/screen/student/privacyUser.dart';
 export 'package:flutter_application_unipass/screen/student/supportUser.dart';
 export 'package:table_calendar/table_calendar.dart';
@@ -35,3 +35,5 @@ export 'package:intl/date_symbol_data_local.dart';
 export 'package:flutter_application_unipass/screen/widgets/textInput.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:flutter_application_unipass/screen/student/documentAdd.dart';
+export 'package:flutter_application_unipass/screen/preceptor/homeScreenPreceptor.dart';
+export 'package:flutter_application_unipass/screen/preceptor/index/homePreceptor.dart';

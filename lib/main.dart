@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/utils/imports.dart'; // Asegúrate de importar correctamente todos los archivos necesarios
 
 void main() => runApp(const MyApp());
@@ -38,7 +37,7 @@ class MyApp extends StatelessWidget {
             CreateExitScreen(initialDate: DateTime.now()),
         ExitDetailScreen.routeName: (context) => ExitDetailScreen(),
         EditExitScreen.routeName: (context) => EditExitScreen(),
-        HomeScreen.routeName: (context) => HomeScreen(),
+        HomeScreenStudent.routeName: (context) => HomeScreenStudent(),
         PrivacyUserScreen.routeName: (context) => PrivacyUserScreen(),
         SupportUserScreen.routeName: (context) => SupportUserScreen(),
         ChangepasswordStudent.routeName: (context) => ChangepasswordStudent(),
@@ -51,6 +50,8 @@ class MyApp extends StatelessWidget {
             initialFileName: args['fileName'],
           );
         },
+        HomeScreenPreceptor.routeName: (context) => HomeScreenPreceptor(),
+        HomePreceptorScreen.routeName: (context) => HomePreceptorScreen(),
       },
     );
   }
