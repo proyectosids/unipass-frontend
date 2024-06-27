@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/utils/auth_utils.dart';
 
@@ -23,7 +24,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     minute: TimeOfDay.now().minute,
   );
   String _selectedReason = 'Compras';
-  String _selectedTransport = 'En vehículo';
+  String _selectedTransport = 'En vehiculo';
   String _selectedType = 'Pueblo';
   final PermissionService _permissionService = PermissionService();
   final Map<String, int> typeMap = {
@@ -41,6 +42,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
 
   Future<void> _selectDateTime(BuildContext context, bool isStart) async {
     if (_selectedType == 'Pueblo' && !isStart) {
+      // No hacer nada si el tipo es 'Pueblo' y no es la hora de salida
       return;
     }
 
@@ -101,7 +103,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     final DateTime dateTime =
         DateTime(date.year, date.month, date.day, time.hour, time.minute);
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-    final DateFormat timeFormat = DateFormat('hh:mm a');
+    final DateFormat timeFormat = DateFormat('hh:mm a'); // Formato de 12 horas
     return '${dateFormat.format(dateTime)} ${timeFormat.format(dateTime)}';
   }
 
@@ -200,7 +202,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildTransportChip('Caminando'),
-                _buildTransportChip('En vehículo'),
+                _buildTransportChip('En vehiculo'),
               ],
             ),
             SizedBox(height: 20),

@@ -1,7 +1,5 @@
-import 'package:date_picker_timeline/date_picker_widget.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/student/exit_Student/createExit.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 
@@ -22,8 +20,7 @@ class _ExitStudentState extends State<ExitStudent> {
   @override
   void initState() {
     super.initState();
-    initializeDateFormatting(
-        'es_MX', null); // Inicializa la localización en español
+    initializeDateFormatting('es_ES', null);
     _loadExits();
   }
 
@@ -32,19 +29,16 @@ class _ExitStudentState extends State<ExitStudent> {
       List<Map<String, dynamic>> exits =
           await _permissionService.getPermissions();
       setState(() {
-        _exits = exits
-            .map((exit) => exit
-                .map((key, value) => MapEntry(key, value?.toString() ?? '')))
-            .toList();
+        _exits = exits;
       });
     } catch (e) {
       print('Failed to load exits: $e');
     }
   }
 
-  void _addNewExit(Map<String, String> newExit) {
+  void _addNewExit(Map<String, dynamic> newExit) {
     setState(() {
-      _exits.insert(0, newExit); // Insertar al inicio de la lista
+      _exits.insert(0, newExit);
     });
   }
 
@@ -81,9 +75,9 @@ class _ExitStudentState extends State<ExitStudent> {
                 itemCount: _exits.length,
                 itemBuilder: (context, index) {
                   final exit = _exits[index];
-                  return exit['status'] == 'Pendiente'
+                  return exit['StatusPermission'] == 'Pendiente'
                       ? Dismissible(
-                          key: Key(exit['title'] ?? ''),
+                          key: Key(exit['IdPermission'].toString()),
                           direction: DismissDirection.endToStart,
                           confirmDismiss: (direction) async {
                             return await _showConfirmationDialog(context);
@@ -107,7 +101,7 @@ class _ExitStudentState extends State<ExitStudent> {
                             context,
                             exit['title'] ?? '',
                             exit['date'] ?? '',
-                            exit['status'] ?? '',
+                            exit['StatusPermission'] ?? '',
                             exit,
                           ),
                         )
@@ -115,7 +109,7 @@ class _ExitStudentState extends State<ExitStudent> {
                           context,
                           exit['title'] ?? '',
                           exit['date'] ?? '',
-                          exit['status'] ?? '',
+                          exit['StatusPermission'] ?? '',
                           exit,
                         );
                 },
