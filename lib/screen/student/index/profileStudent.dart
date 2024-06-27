@@ -5,8 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profileStudent';
+  final String userType; // Añade este campo
 
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({Key? key, required this.userType}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -28,6 +29,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String profileText = widget.userType == 'student'
+        ? 'Alumno'
+        : 'Empleado'; // Cambia según el tipo de usuario
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -62,7 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text('Alumno', style: TextStyle(fontSize: 24)),
+            Text(profileText,
+                style: const TextStyle(fontSize: 24)), // Usa el texto dinámico
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

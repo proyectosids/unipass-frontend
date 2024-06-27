@@ -1,5 +1,9 @@
-import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:date_picker_timeline/date_picker_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/screen/student/exit_Student/createExit.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_application_unipass/services/permission_service.dart';
 
 class ExitStudent extends StatefulWidget {
   static const routeName = '/ExitStudent';
@@ -12,38 +16,30 @@ class ExitStudent extends StatefulWidget {
 
 class _ExitStudentState extends State<ExitStudent> {
   DateTime _selectedDate = DateTime.now();
-  List<Map<String, String>> _exits = [
-    {
-      'title': 'Salida Pueblo',
-      'date': 'el 2024-06-05 01:00 PM',
-      'status': 'Pendiente',
-      'detail': 'Detalles de la salida al pueblo'
-    },
-    {
-      'title': 'Salida Pueblo',
-      'date': 'el 2024-05-26 10:00 AM',
-      'status': 'Finalizado',
-      'detail': 'Detalles de la salida al pueblo (finalizada)'
-    },
-    {
-      'title': 'Salida Especial',
-      'date': 'el 2024-05-15 11:00 AM',
-      'status': 'Finalizado',
-      'detail': 'Detalles de la salida especial'
-    },
-    {
-      'title': 'Salida A casa',
-      'date': 'el 2024-04-09 09:00 AM',
-      'status': 'Finalizado',
-      'detail': 'Detalles de la salida a casa'
-    },
-  ];
+  List<Map<String, dynamic>> _exits = [];
+  final PermissionService _permissionService = PermissionService();
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting(
-        'es_ES', null); // Inicializa la localización en español
+        'es_MX', null); // Inicializa la localización en español
+    _loadExits();
+  }
+
+  Future<void> _loadExits() async {
+    try {
+      List<Map<String, dynamic>> exits =
+          await _permissionService.getPermissions();
+      setState(() {
+        _exits = exits
+            .map((exit) => exit
+                .map((key, value) => MapEntry(key, value?.toString() ?? '')))
+            .toList();
+      });
+    } catch (e) {
+      print('Failed to load exits: $e');
+    }
   }
 
   void _addNewExit(Map<String, String> newExit) {
@@ -87,7 +83,7 @@ class _ExitStudentState extends State<ExitStudent> {
                   final exit = _exits[index];
                   return exit['status'] == 'Pendiente'
                       ? Dismissible(
-                          key: Key(exit['title']!),
+                          key: Key(exit['title'] ?? ''),
                           direction: DismissDirection.endToStart,
                           confirmDismiss: (direction) async {
                             return await _showConfirmationDialog(context);
@@ -109,17 +105,17 @@ class _ExitStudentState extends State<ExitStudent> {
                           ),
                           child: _buildExitItem(
                             context,
-                            exit['title']!,
-                            exit['date']!,
-                            exit['status']!,
+                            exit['title'] ?? '',
+                            exit['date'] ?? '',
+                            exit['status'] ?? '',
                             exit,
                           ),
                         )
                       : _buildExitItem(
                           context,
-                          exit['title']!,
-                          exit['date']!,
-                          exit['status']!,
+                          exit['title'] ?? '',
+                          exit['date'] ?? '',
+                          exit['status'] ?? '',
                           exit,
                         );
                 },
@@ -128,22 +124,6 @@ class _ExitStudentState extends State<ExitStudent> {
           ],
         ),
       ),
-      //bottomNavigationBar: BottomNavigationBar(
-      //  items: const <BottomNavigationBarItem>[
-      //    BottomNavigationBarItem(
-      //      icon: Icon(Icons.home),
-      //      label: 'Inicio',
-      //    ),
-      //    BottomNavigationBarItem(
-      //      icon: Icon(Icons.list),
-      //      label: 'Salidas',
-      //    ),
-      //    BottomNavigationBarItem(
-      //      icon: Icon(Icons.person),
-      //      label: 'Perfil',
-      //    ),
-      //  ],
-      //),
     );
   }
 
@@ -242,7 +222,7 @@ class _ExitStudentState extends State<ExitStudent> {
   }
 
   Widget _buildExitItem(BuildContext context, String title, String date,
-      String status, Map<String, String> exit) {
+      String status, Map<String, dynamic> exit) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, '/exitDetail', arguments: exit);

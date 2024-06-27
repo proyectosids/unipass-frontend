@@ -11,6 +11,18 @@ class HomePreceptorScreen extends StatefulWidget {
 
 class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
   bool isAvisosSelected = true;
+  List<Map<String, String>> _notices = [
+    {
+      'directedTo': 'Departamento de trabajo',
+      'title': 'No deber horas para prácticas',
+      'date': '25 Mayo, 2024',
+    },
+    {
+      'directedTo': 'Dormitorio',
+      'title': 'Subir sus documentos para salir',
+      'date': '22 Mayo, 2024',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +59,17 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
             const SizedBox(height: 16),
             Center(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final result = await Navigator.pushNamed(
+                    context,
+                    '/noticePreceptor',
+                  );
+                  if (result != null && result is Map<String, String>) {
+                    setState(() {
+                      _notices.add(result);
+                    });
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
                   shape: RoundedRectangleBorder(
@@ -97,29 +119,22 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
         height: 200,
         child: ListView(
           scrollDirection: Axis.horizontal,
-          children: [
-            _buildCard(
-              'Departamento',
-              'No deber horas para prácticas',
-              '25 Mayo, 2024',
+          children: _notices.map((notice) {
+            return _buildCard(
+              notice['directedTo']!,
+              notice['title']!,
+              notice['date']!,
               Colors.purple,
-              Icons.school,
-            ),
-            _buildCard(
-              'Dormitorio',
-              'Subir sus documentos para salir',
-              '22 Mayo, 2024',
-              Colors.blue,
-              Icons.home,
-            ),
-          ],
+              Icons.school, // Puedes cambiar el icono si es necesario
+            );
+          }).toList(),
         ),
       );
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildCircleCard('Pendientes', 7, Colors.yellow),
+          _buildCircleCard('Pendientes', 7, Colors.red),
           _buildCircleCard('Pueblo', 3, Colors.green),
           _buildCircleCard('Especiales', 2, Colors.blue),
           _buildCircleCard('A casa', 2, Colors.orange),
@@ -128,8 +143,8 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
     }
   }
 
-  Widget _buildCard(
-      String title, String subtitle, String date, Color color, IconData icon) {
+  Widget _buildCard(String directedTo, String title, String date, Color color,
+      IconData icon) {
     return Container(
       width: 250,
       margin: const EdgeInsets.only(right: 16.0),
@@ -143,11 +158,11 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
           ListTile(
             leading: Icon(icon, color: Colors.white),
             title: Text(
-              title,
+              directedTo,
               style: const TextStyle(color: Colors.white),
             ),
             subtitle: Text(
-              subtitle,
+              title,
               style: const TextStyle(color: Colors.white70),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_application_unipass/screen/widgets/textInput.dart';
 
@@ -11,28 +12,43 @@ class LoginTextFields extends StatefulWidget {
 
 class _LoginTextFieldsState extends State<LoginTextFields> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _username = '';
+  String _usernameOrEmail = '';
+  String _password = '';
 
-  void _submit() {
+  void _submit() async {
     final isOk = _formKey.currentState?.validate() ?? false;
     if (isOk) {
-      // Validar el tipo de usuario y redirigir a la pantalla correspondiente
-      if (_username == '221068') {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/homeStudentMenu',
-          (route) => false,
-        );
-      } else if (_username == 'EMP2024') {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/homePreceptorMenu',
-          (route) => false,
-        );
-      } else {
-        // Manejar otros tipos de usuario o mostrar un mensaje de error
+      try {
+        final result = await authenticateUser(
+            _usernameOrEmail, _usernameOrEmail, _password);
+        if (result['success']) {
+          String tipoUser = result['user']['TipoUser'];
+          // Redirigir según el tipo de usuario
+          if (tipoUser == 'Alumno') {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/homeStudentMenu', // Ruta para alumnos
+              (route) => false,
+            );
+          } else if (tipoUser == 'Preceptor') {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/homePreceptorMenu', // Ruta para preceptores
+              (route) => false,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Tipo de usuario no reconocido')),
+            );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Credenciales inválidas')),
+          );
+        }
+      } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Usuario no reconocido')),
+          SnackBar(content: Text('Error de autenticación')),
         );
       }
     }
@@ -51,15 +67,15 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
         child: Column(
           children: [
             TextFieldWidget(
-              label: 'Matricula',
+              label: 'Matricula o Correo',
               onChanged: (text) {
-                _username = text; // Guardar el valor del usuario
+                _usernameOrEmail =
+                    text; // Guardar el valor de la matrícula o correo
               },
               validator: (text) {
                 if (text == null || text.isEmpty) {
                   return 'El campo no puede estar vacío';
                 }
-                // La lógica de validación de la matrícula depende de tus requisitos específicos.
                 return null;
               },
             ),
@@ -68,13 +84,12 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
               label: "Contraseña",
               obscureText: true,
               onChanged: (text) {
-                // Puedes guardar la contraseña si es necesario para la autenticación.
+                _password = text; // Guardar el valor de la contraseña
               },
               validator: (text) {
                 if (text == null || text.isEmpty) {
                   return 'El campo no puede estar vacío';
                 }
-                // Puedes añadir más lógica de validación para la contraseña aquí.
                 return null;
               },
             ),

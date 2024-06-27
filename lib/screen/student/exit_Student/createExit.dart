@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Importa el paquete intl
+import 'package:intl/intl.dart';
+import 'package:flutter_application_unipass/services/permission_service.dart';
+import 'package:flutter_application_unipass/utils/auth_utils.dart';
 
 class CreateExitScreen extends StatefulWidget {
   static const routeName = '/createExit';
@@ -23,6 +25,12 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   String _selectedReason = 'Compras';
   String _selectedTransport = 'En vehículo';
   String _selectedType = 'Pueblo';
+  final PermissionService _permissionService = PermissionService();
+  final Map<String, int> typeMap = {
+    'Pueblo': 1,
+    'Especial': 2,
+    'A casa': 3,
+  };
 
   @override
   void initState() {
@@ -33,7 +41,6 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
 
   Future<void> _selectDateTime(BuildContext context, bool isStart) async {
     if (_selectedType == 'Pueblo' && !isStart) {
-      // No hacer nada si el tipo es 'Pueblo' y no es la hora de salida
       return;
     }
 
@@ -94,8 +101,40 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     final DateTime dateTime =
         DateTime(date.year, date.month, date.day, time.hour, time.minute);
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-    final DateFormat timeFormat = DateFormat('hh:mm a'); // Formato de 12 horas
+    final DateFormat timeFormat = DateFormat('hh:mm a');
     return '${dateFormat.format(dateTime)} ${timeFormat.format(dateTime)}';
+  }
+
+  Future<void> _createExit() async {
+    int? userId = await AuthUtils.getUserId();
+    if (userId == null) {
+      print('User ID not found');
+      return;
+    }
+
+    final newExit = {
+      'FechaSolicitada': DateTime.now().toIso8601String(),
+      'StatusPermission': 'Pendiente',
+      'FechaSalida': _selectedStartDate.toIso8601String(),
+      'FechaRegreso': _selectedEndDate.toIso8601String(),
+      'Motivo': _selectedReason,
+      'MedioSalida': _selectedTransport,
+      'Tipo': _selectedType,
+      'IdUsuario': userId,
+      'IdTipoSalida': typeMap[_selectedType],
+    };
+
+    try {
+      final result = await _permissionService.createPermission(newExit);
+      Navigator.pop(context, {
+        'title': 'Salida ${result['Tipo']}',
+        'date': 'el ${_formatDateTime(_selectedStartDate, _selectedStartTime)}',
+        'status': result['StatusPermission'],
+        'detail': 'Detalles de la nueva salida'
+      });
+    } catch (e) {
+      print('Failed to create exit: $e');
+    }
   }
 
   @override
@@ -168,19 +207,9 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFFFFA726),
-                minimumSize:
-                    Size(double.infinity, 50), // Anchura completa del botón
+                minimumSize: Size(double.infinity, 50),
               ),
-              onPressed: () {
-                final newExit = {
-                  'title': 'Salida $_selectedType',
-                  'date':
-                      'el ${_formatDateTime(_selectedStartDate, _selectedStartTime)}',
-                  'status': 'Pendiente',
-                  'detail': 'Detalles de la nueva salida'
-                };
-                Navigator.pop(context, newExit);
-              },
+              onPressed: _createExit,
               child: const Text('Crear salida'),
             ),
           ],
@@ -232,17 +261,14 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               contentPadding: EdgeInsets.all(10),
-              enabled: enabled, // Disable the InputDecorator
+              enabled: enabled,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   _formatDateTime(date, time),
-                  style: TextStyle(
-                      color: enabled
-                          ? Colors.black
-                          : Colors.grey), // Grey out the text if disabled
+                  style: TextStyle(color: enabled ? Colors.black : Colors.grey),
                 ),
                 Icon(Icons.calendar_today,
                     color: enabled ? Colors.black : Colors.grey),

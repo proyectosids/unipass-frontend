@@ -32,7 +32,10 @@ class MyApp extends StatelessWidget {
         ExitStudent.routeName: (context) => ExitStudent(),
         HelpFAQUser.routeName: (context) => HelpFAQUser(),
         DocumentStudent.routeName: (context) => DocumentStudent(),
-        ProfileScreen.routeName: (context) => ProfileScreen(),
+        ProfileScreen.routeName: (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as String;
+          return ProfileScreen(userType: args);
+        },
         CreateExitScreen.routeName: (context) =>
             CreateExitScreen(initialDate: DateTime.now()),
         ExitDetailScreen.routeName: (context) => ExitDetailScreen(),
@@ -52,6 +55,8 @@ class MyApp extends StatelessWidget {
         },
         HomeScreenPreceptor.routeName: (context) => HomeScreenPreceptor(),
         HomePreceptorScreen.routeName: (context) => HomePreceptorScreen(),
+        NoticesScreenPreceptor.routeName: (context) =>
+            const NoticesScreenPreceptor(),
       },
     );
   }

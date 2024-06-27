@@ -15,7 +15,7 @@ class _HomeScreenPreceptorState extends State<HomeScreenPreceptor> {
   final List<Widget> screens = [
     const HomePreceptorScreen(),
     const MenuScreen(),
-    const ProfileScreen(),
+    ProfileScreen(userType: 'preceptor'), // Pasa el tipo de usuario
   ];
 
   @override

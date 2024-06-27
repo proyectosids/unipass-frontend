@@ -37,3 +37,4 @@ export 'package:url_launcher/url_launcher.dart';
 export 'package:flutter_application_unipass/screen/student/documentAdd.dart';
 export 'package:flutter_application_unipass/screen/preceptor/homeScreenPreceptor.dart';
 export 'package:flutter_application_unipass/screen/preceptor/index/homePreceptor.dart';
+export 'package:flutter_application_unipass/screen/preceptor/noticesPreceptor.dart';
