@@ -28,11 +28,28 @@ class _ExitStudentState extends State<ExitStudent> {
     try {
       List<Map<String, dynamic>> exits =
           await _permissionService.getPermissions();
+
+      // Ordenar los permisos por fecha, asegurándose de que el más reciente esté primero
+      exits.sort((a, b) {
+        DateTime dateA = DateTime.parse(a['FechaSolicitada']);
+        DateTime dateB = DateTime.parse(b['FechaSolicitada']);
+        return dateB.compareTo(dateA); // Orden descendente
+      });
+
       setState(() {
         _exits = exits;
       });
     } catch (e) {
       print('Failed to load exits: $e');
+    }
+  }
+
+  Future<void> _cancelExit(int id) async {
+    try {
+      await _permissionService.cancelPermission(id);
+      _loadExits(); // Recargar las salidas después de cancelar
+    } catch (e) {
+      print('Failed to cancel exit: $e');
     }
   }
 
@@ -83,13 +100,8 @@ class _ExitStudentState extends State<ExitStudent> {
                             return await _showConfirmationDialog(context);
                           },
                           onDismissed: (direction) {
-                            setState(() {
-                              _exits.removeAt(index);
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text('${exit['title']} eliminado')),
-                            );
+                            _cancelExit(
+                                exit['IdPermission']); // Cancelar salida
                           },
                           background: Container(
                             color: Colors.red,
