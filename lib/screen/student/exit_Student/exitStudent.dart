@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/utils/auth_utils.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,9 +26,15 @@ class _ExitStudentState extends State<ExitStudent> {
   }
 
   Future<void> _loadExits() async {
+    int? id = await AuthUtils.getUserId();
+    if (id == null) {
+      print('User ID not found');
+      return;
+    }
+
     try {
       List<Map<String, dynamic>> exits =
-          await _permissionService.getPermissions();
+          await _permissionService.getPermissions(id);
 
       // Ordenar los permisos por fecha, asegurándose de que el más reciente esté primero
       exits.sort((a, b) {
@@ -111,16 +118,16 @@ class _ExitStudentState extends State<ExitStudent> {
                           ),
                           child: _buildExitItem(
                             context,
-                            exit['title'] ?? '',
-                            exit['date'] ?? '',
+                            'Salida ${exit['Descripcion'] ?? ''}',
+                            exit['FechaSolicitada'] ?? '',
                             exit['StatusPermission'] ?? '',
                             exit,
                           ),
                         )
                       : _buildExitItem(
                           context,
-                          exit['title'] ?? '',
-                          exit['date'] ?? '',
+                          'Salida ${exit['Descripcion'] ?? ''}',
+                          exit['FechaSolicitada'] ?? '',
                           exit['StatusPermission'] ?? '',
                           exit,
                         );
@@ -229,9 +236,36 @@ class _ExitStudentState extends State<ExitStudent> {
 
   Widget _buildExitItem(BuildContext context, String title, String date,
       String status, Map<String, dynamic> exit) {
+    // Formatear la fecha antes de mostrarla
+    String formattedDate = DateFormat('dd MMMM yyyy, hh:mm a', 'es_ES')
+        .format(DateTime.parse(date));
+
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/exitDetail', arguments: exit);
+        Navigator.pushNamed(
+          context,
+          '/exitDetail',
+          arguments: {
+            'TipoSalida':
+                exit['Descripcion'], // Reemplazar con el campo correspondiente
+            'NombreUsuario':
+                exit['Nombre'], // Reemplazar con el campo correspondiente
+            'LugarPartida':
+                exit['MedioSalida'], // Reemplazar con el campo correspondiente
+            'FechaSalida': exit['FechaSalida'],
+            'FechaRegreso': exit['FechaRegreso'],
+            'AreaTrabajo':
+                exit['Departamento'], // Reemplazar con el campo correspondiente
+            'Observaciones': exit[
+                'Observaciones'], // Reemplazar con el campo correspondiente
+            'Motivo': exit['Motivo'],
+            'PuntoPartida':
+                exit['PuntoPartida'], // Reemplazar con el campo correspondiente
+            'Contacto':
+                exit['Celular'], // Reemplazar con el campo correspondiente
+            'StatusPermission': exit['StatusPermission'],
+          },
+        );
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -245,7 +279,7 @@ class _ExitStudentState extends State<ExitStudent> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(date),
+              Text(formattedDate), // Mostrar la fecha formateada
               const SizedBox(height: 4),
               Text(
                 status,

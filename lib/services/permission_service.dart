@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter_application_unipass/config/config_url.dart';
 
 class PermissionService {
-  Future<List<Map<String, dynamic>>> getPermissions() async {
-    final response = await http.get(Uri.parse('$baseUrl/permission'));
+  Future<List<Map<String, dynamic>>> getPermissions(int id) async {
+    final response = await http.get(Uri.parse('$baseUrl/permission/$id'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -16,7 +16,7 @@ class PermissionService {
 
   Future<void> cancelPermission(int id) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/permission/$id'),
+      Uri.parse('$baseUrl/permission/cancel/$id'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'StatusPermission': 'Cancelado'}),
     );

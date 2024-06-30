@@ -1,6 +1,5 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/utils/auth_utils.dart';
 
@@ -202,7 +201,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildTransportChip('Caminando'),
-                _buildTransportChip('En vehiculo'),
+                _buildTransportChip('En vehicu.lo'),
               ],
             ),
             SizedBox(height: 20),

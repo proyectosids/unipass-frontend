@@ -8,11 +8,11 @@ class ExitDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> exitDetails =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    final Map<String, dynamic> exitDetails =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final Responsive responsive = Responsive.of(context);
 
-    bool isFinalized = exitDetails['status'] == 'Finalizado';
+    bool isFinalized = exitDetails['StatusPermission'] == 'Finalizado';
 
     return Scaffold(
       appBar: AppBar(
@@ -34,21 +34,23 @@ class ExitDetailScreen extends StatelessWidget {
                 children: [
                   Expanded(
                       child: _buildDetailItem(
-                          'Tipo de salida', exitDetails['title']!)),
+                          'Tipo de salida', exitDetails['TipoSalida'])),
                   SizedBox(width: 16),
-                  Expanded(child: _buildDetailItem('Escuela', 'FCA')),
+                  Expanded(
+                      child: _buildDetailItem(
+                          'Usuario', exitDetails['NombreUsuario'])),
                 ],
               ),
-              _buildDetailItem('Lugar de partida', 'En vehículo'),
+              _buildDetailItem('Lugar de partida', exitDetails['LugarPartida']),
               _buildDetailItem(
-                  'Fecha y hora de salida', 'May 20, 2024 11:30 AM'),
+                  'Fecha y hora de salida', exitDetails['FechaSalida']),
               _buildDetailItem(
-                  'Fecha y hora de retorno', 'May 20, 2024 2:00 PM'),
-              _buildDetailItem('Área de trabajo', 'Planta Física'),
-              _buildDetailItem('Observaciones', 'Ninguna'),
-              _buildDetailItem('Motivo', 'Servicios'),
-              _buildDetailItem('Punto de partida', 'Orquidario'),
-              _buildDetailItem('Contacto', '912-215-1574'),
+                  'Fecha y hora de retorno', exitDetails['FechaRegreso']),
+              _buildDetailItem('Área de trabajo', exitDetails['AreaTrabajo']),
+              _buildDetailItem('Observaciones', exitDetails['Observaciones']),
+              _buildDetailItem('Motivo', exitDetails['Motivo']),
+              _buildDetailItem('Punto de partida', exitDetails['PuntoPartida']),
+              _buildDetailItem('Contacto', exitDetails['Contacto']),
               SizedBox(height: 10),
               Text(
                 'Estatus',
@@ -57,7 +59,7 @@ class ExitDetailScreen extends StatelessWidget {
               SizedBox(height: 4),
               Center(
                 child: Chip(
-                  label: Text(exitDetails['status']!),
+                  label: Text(exitDetails['StatusPermission']),
                   backgroundColor: isFinalized ? Colors.green : Colors.orange,
                   labelStyle: TextStyle(color: Colors.white),
                 ),
