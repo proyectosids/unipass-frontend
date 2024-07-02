@@ -21,7 +21,7 @@ class _ExitStudentState extends State<ExitStudent> {
   @override
   void initState() {
     super.initState();
-    initializeDateFormatting('es_ES', null);
+    initializeDateFormatting('es_MX', null);
     _loadExits();
   }
 
@@ -107,8 +107,7 @@ class _ExitStudentState extends State<ExitStudent> {
                             return await _showConfirmationDialog(context);
                           },
                           onDismissed: (direction) {
-                            _cancelExit(exit[
-                                'IdPermission']); // Actualizar el estado del permiso
+                            _cancelExit(exit['IdPermission']);
                           },
                           background: Container(
                             color: Colors.red,
@@ -141,7 +140,7 @@ class _ExitStudentState extends State<ExitStudent> {
   }
 
   Widget _buildHeader() {
-    String formattedDate = DateFormat.yMMMM('es_ES').format(_selectedDate);
+    String formattedDate = DateFormat.yMMMM('es_MX').format(_selectedDate);
     String capitalizedDate = capitalizeFirstLetter(formattedDate);
 
     return Row(
@@ -248,9 +247,15 @@ class _ExitStudentState extends State<ExitStudent> {
 
   Widget _buildExitItem(BuildContext context, String title, String date,
       String status, Map<String, dynamic> exit) {
-    // Formatear la fecha antes de mostrarla
-    String formattedDate = DateFormat('dd MMMM yyyy, hh:mm a', 'es_ES')
-        .format(DateTime.parse(date));
+    DateTime parsedDate;
+    try {
+      parsedDate = DateTime.parse(date);
+    } catch (e) {
+      return Text('Fecha inválida');
+    }
+
+    String formattedDate =
+        DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
 
     return GestureDetector(
       onTap: () {
@@ -291,7 +296,7 @@ class _ExitStudentState extends State<ExitStudent> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(formattedDate), // Mostrar la fecha formateada
+              Text(formattedDate),
               const SizedBox(height: 4),
               Text(
                 status,

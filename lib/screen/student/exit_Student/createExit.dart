@@ -131,7 +131,8 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         'title': 'Salida ${result['Tipo']}',
         'date': 'el ${_formatDateTime(_selectedStartDate, _selectedStartTime)}',
         'status': result['StatusPermission'],
-        'detail': 'Detalles de la nueva salida'
+        'FechaSolicitada': newExit['FechaSolicitada'],
+        'Descripcion': _selectedType,
       });
     } catch (e) {
       print('Failed to create exit: $e');
@@ -211,10 +212,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                 minimumSize: Size(double.infinity, 50),
               ),
               onPressed: _createExit,
-              child: Text(
-                'Crear salida',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: const Text('Crear salida'),
             ),
           ],
         ),

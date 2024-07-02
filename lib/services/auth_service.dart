@@ -21,3 +21,13 @@ Future<Map<String, dynamic>> authenticateUser(
     throw Exception('Failed to authenticate user');
   }
 }
+
+Future<Map<String, dynamic>?> getUserInfo(int userId) async {
+  final response = await http.get(Uri.parse('$baseUrl/user/$userId'));
+
+  if (response.statusCode == 200) {
+    return json.decode(response.body);
+  } else {
+    throw Exception('Failed to load user info');
+  }
+}
