@@ -60,7 +60,8 @@ class ExitDetailScreen extends StatelessWidget {
               Center(
                 child: Chip(
                   label: Text(exitDetails['StatusPermission']),
-                  backgroundColor: isFinalized ? Colors.green : Colors.orange,
+                  backgroundColor:
+                      _getStatusColor(exitDetails['StatusPermission']),
                   labelStyle: TextStyle(color: Colors.white),
                 ),
               ),
@@ -96,6 +97,18 @@ class ExitDetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Aprobado':
+        return Colors.green;
+      case 'Cancelado':
+      case 'Rechazado':
+        return Colors.red;
+      default:
+        return Colors.orange; // Pendiente or other statuses
+    }
   }
 
   Widget _buildDetailItem(String title, String value) {

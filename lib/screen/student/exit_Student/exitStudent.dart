@@ -54,7 +54,7 @@ class _ExitStudentState extends State<ExitStudent> {
   Future<void> _cancelExit(int id) async {
     try {
       await _permissionService.cancelPermission(id);
-      _loadExits(); // Recargar las salidas después de cancelar
+      await _loadExits(); // Recargar las salidas después de cancelar
     } catch (e) {
       print('Failed to cancel exit: $e');
     }
@@ -107,8 +107,8 @@ class _ExitStudentState extends State<ExitStudent> {
                             return await _showConfirmationDialog(context);
                           },
                           onDismissed: (direction) {
-                            _cancelExit(
-                                exit['IdPermission']); // Cancelar salida
+                            _cancelExit(exit[
+                                'IdPermission']); // Actualizar el estado del permiso
                           },
                           background: Container(
                             color: Colors.red,
@@ -234,6 +234,18 @@ class _ExitStudentState extends State<ExitStudent> {
     );
   }
 
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Aprobado':
+        return Colors.green;
+      case 'Cancelado':
+      case 'Rechazado':
+        return Colors.red;
+      default:
+        return Colors.orange; // Pendiente or other statuses
+    }
+  }
+
   Widget _buildExitItem(BuildContext context, String title, String date,
       String status, Map<String, dynamic> exit) {
     // Formatear la fecha antes de mostrarla
@@ -284,7 +296,7 @@ class _ExitStudentState extends State<ExitStudent> {
               Text(
                 status,
                 style: TextStyle(
-                  color: status == 'Pendiente' ? Colors.orange : Colors.green,
+                  color: _getStatusColor(status),
                 ),
               ),
             ],

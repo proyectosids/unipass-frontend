@@ -201,7 +201,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildTransportChip('Caminando'),
-                _buildTransportChip('En vehicu.lo'),
+                _buildTransportChip('En vehiculo'),
               ],
             ),
             SizedBox(height: 20),
@@ -211,7 +211,10 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                 minimumSize: Size(double.infinity, 50),
               ),
               onPressed: _createExit,
-              child: const Text('Crear salida'),
+              child: Text(
+                'Crear salida',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),

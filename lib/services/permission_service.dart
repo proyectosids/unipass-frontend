@@ -16,7 +16,7 @@ class PermissionService {
 
   Future<void> cancelPermission(int id) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/permission/cancel/$id'),
+      Uri.parse('$baseUrl/permission/$id'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'StatusPermission': 'Cancelado'}),
     );
