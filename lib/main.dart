@@ -26,24 +26,25 @@ class MyApp extends StatelessWidget {
         VerificationPassword.routeName: (context) =>
             const VerificationPassword(),
         CreateNewPassword.routeName: (context) => const CreateNewPassword(),
-        HomeStudentScreen.routeName: (context) => HomeStudentScreen(),
-        MenuScreen.routeName: (context) => MenuScreen(),
-        NotificationsScreen.routeName: (context) => NotificationsScreen(),
-        ExitStudent.routeName: (context) => ExitStudent(),
-        HelpFAQUser.routeName: (context) => HelpFAQUser(),
-        DocumentStudent.routeName: (context) => DocumentStudent(),
+        HomeStudentScreen.routeName: (context) => const HomeStudentScreen(),
+        MenuScreen.routeName: (context) => const MenuScreen(),
+        NotificationsScreen.routeName: (context) => const NotificationsScreen(),
+        ExitStudent.routeName: (context) => const ExitStudent(),
+        HelpFAQUser.routeName: (context) => const HelpFAQUser(),
+        DocumentStudent.routeName: (context) => const DocumentStudent(),
         ProfileScreen.routeName: (context) {
           final args = ModalRoute.of(context)!.settings.arguments as String;
           return ProfileScreen(userType: args);
         },
         CreateExitScreen.routeName: (context) =>
             CreateExitScreen(initialDate: DateTime.now()),
-        ExitDetailScreen.routeName: (context) => ExitDetailScreen(),
-        EditExitScreen.routeName: (context) => EditExitScreen(),
-        HomeScreenStudent.routeName: (context) => HomeScreenStudent(),
-        PrivacyUserScreen.routeName: (context) => PrivacyUserScreen(),
-        SupportUserScreen.routeName: (context) => SupportUserScreen(),
-        ChangepasswordStudent.routeName: (context) => ChangepasswordStudent(),
+        ExitDetailScreen.routeName: (context) => const ExitDetailScreen(),
+        EditExitScreen.routeName: (context) => const EditExitScreen(),
+        HomeScreenStudent.routeName: (context) => const HomeScreenStudent(),
+        PrivacyUserScreen.routeName: (context) => const PrivacyUserScreen(),
+        SupportUserScreen.routeName: (context) => const SupportUserScreen(),
+        ChangepasswordStudent.routeName: (context) =>
+            const ChangepasswordStudent(),
         DocumentAddStudent.routeName: (context) {
           final args = ModalRoute.of(context)!.settings.arguments
               as Map<String, dynamic>;
@@ -53,8 +54,8 @@ class MyApp extends StatelessWidget {
             initialFileName: args['fileName'],
           );
         },
-        HomeScreenPreceptor.routeName: (context) => HomeScreenPreceptor(),
-        HomePreceptorScreen.routeName: (context) => HomePreceptorScreen(),
+        HomeScreenPreceptor.routeName: (context) => const HomeScreenPreceptor(),
+        HomePreceptorScreen.routeName: (context) => const HomePreceptorScreen(),
         NoticesScreenPreceptor.routeName: (context) =>
             const NoticesScreenPreceptor(),
       },

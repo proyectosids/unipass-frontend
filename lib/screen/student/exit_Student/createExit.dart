@@ -2,6 +2,8 @@ import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/utils/auth_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
 
 class CreateExitScreen extends StatefulWidget {
   static const routeName = '/createExit';
@@ -11,6 +13,7 @@ class CreateExitScreen extends StatefulWidget {
       : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CreateExitScreenState createState() => _CreateExitScreenState();
 }
 
@@ -23,8 +26,8 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     minute: TimeOfDay.now().minute,
   );
   String _selectedReason = 'Compras';
-  String _selectedTransport = 'En vehiculo';
-  String _selectedType = 'Pueblo';
+  String _selectedTransport = '';
+  String _selectedType = '';
   final PermissionService _permissionService = PermissionService();
   final Map<String, int> typeMap = {
     'Pueblo': 1,
@@ -106,10 +109,24 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     return '${dateFormat.format(dateTime)} ${timeFormat.format(dateTime)}';
   }
 
-  Future<void> _createExit() async {
+  Future<void> _createExit(BuildContext context) async {
     int? userId = await AuthUtils.getUserId();
     if (userId == null) {
       print('User ID not found');
+      return;
+    }
+
+    Map<String, dynamic>? userInfo = await getUserInfo(userId);
+    if (userInfo == null) {
+      print('User info not found');
+      return;
+    }
+
+    String userSex = userInfo['Sexo'];
+    // Validar el día según el sexo, solo si el tipo de salida es 'Pueblo'
+    if (_selectedType == 'Pueblo' &&
+        !_isValidDayForSex(userSex, _selectedStartDate)) {
+      _showInvalidDayAlert(context, userSex);
       return;
     }
 
@@ -139,15 +156,46 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     }
   }
 
+  bool _isValidDayForSex(String sex, DateTime date) {
+    final int dayOfWeek =
+        date.weekday; // 1 = Lunes, 2 = Martes, ..., 7 = Domingo
+    if (sex == 'Mujer' && (dayOfWeek == 1 || dayOfWeek == 3)) {
+      return true;
+    } else if (sex == 'Hombre' && (dayOfWeek == 2 || dayOfWeek == 4)) {
+      return true;
+    }
+    return false;
+  }
+
+  void _showInvalidDayAlert(BuildContext context, String sex) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Día no permitido'),
+          content: Text(sex == 'Mujer'
+              ? 'Las mujeres solo pueden crear salidas los lunes y miércoles.'
+              : 'Los hombres solo pueden crear salidas los martes y jueves.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Crear salida',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color(0xFF6D55F4),
+        backgroundColor: const Color(0xFF6D55F4),
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -155,11 +203,11 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Tipo de salida',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -168,14 +216,14 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                 _buildChoiceChip('A casa'),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildDateTimePicker('Fecha y hora de salida', _selectedStartDate,
                 _selectedStartTime, true),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildDateTimePicker('Fecha y hora de retorno', _selectedEndDate,
                 _selectedEndTime, false,
                 enabled: _selectedType != 'Pueblo'),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: _selectedReason,
               decoration: const InputDecoration(labelText: 'Motivo'),
@@ -192,12 +240,12 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                 });
               },
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'Medio por el cual saldrás',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -205,15 +253,18 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                 _buildTransportChip('En vehiculo'),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFFFA726),
-                minimumSize: Size(double.infinity, 50),
-              ),
-              onPressed: _createExit,
-              child: const Text('Crear salida'),
-            ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFA726),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _createExit(context);
+                  });
+                },
+                child: const Text('Crear salida')),
           ],
         ),
       ),
@@ -229,7 +280,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
           _selectedType = label;
         });
       },
-      selectedColor: Color.fromRGBO(182, 217, 59, 1),
+      selectedColor: const Color.fromRGBO(182, 217, 59, 1),
     );
   }
 
@@ -242,7 +293,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
           _selectedTransport = label;
         });
       },
-      selectedColor: Color.fromRGBO(182, 217, 59, 1),
+      selectedColor: const Color.fromRGBO(182, 217, 59, 1),
     );
   }
 
@@ -254,15 +305,15 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         InkWell(
           onTap: enabled ? () => _selectDateTime(context, isStart) : null,
           child: InputDecorator(
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.all(10),
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.all(10),
               enabled: enabled,
             ),
             child: Row(

@@ -38,3 +38,7 @@ export 'package:flutter_application_unipass/screen/student/documentAdd.dart';
 export 'package:flutter_application_unipass/screen/preceptor/homeScreenPreceptor.dart';
 export 'package:flutter_application_unipass/screen/preceptor/index/homePreceptor.dart';
 export 'package:flutter_application_unipass/screen/preceptor/noticesPreceptor.dart';
+//Cloudinary
+export 'package:cloudinary_flutter/cloudinary_context.dart';
+export 'package:cloudinary_flutter/image/cld_image.dart';
+export 'package:cloudinary_url_gen/cloudinary.dart';

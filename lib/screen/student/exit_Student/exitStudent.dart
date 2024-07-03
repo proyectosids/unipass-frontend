@@ -38,8 +38,8 @@ class _ExitStudentState extends State<ExitStudent> {
 
       // Ordenar los permisos por fecha, asegurándose de que el más reciente esté primero
       exits.sort((a, b) {
-        DateTime dateA = DateTime.parse(a['FechaSolicitada']);
-        DateTime dateB = DateTime.parse(b['FechaSolicitada']);
+        DateTime dateA = DateTime.parse(a['FechaSolicitada'] ?? '');
+        DateTime dateB = DateTime.parse(b['FechaSolicitada'] ?? '');
         return dateB.compareTo(dateA); // Orden descendente
       });
 
@@ -119,6 +119,7 @@ class _ExitStudentState extends State<ExitStudent> {
                             context,
                             'Salida ${exit['Descripcion'] ?? ''}',
                             exit['FechaSolicitada'] ?? '',
+                            exit['FechaSalida'] ?? '',
                             exit['StatusPermission'] ?? '',
                             exit,
                           ),
@@ -127,6 +128,7 @@ class _ExitStudentState extends State<ExitStudent> {
                           context,
                           'Salida ${exit['Descripcion'] ?? ''}',
                           exit['FechaSolicitada'] ?? '',
+                          exit['FechaSalida'] ?? '',
                           exit['StatusPermission'] ?? '',
                           exit,
                         );
@@ -159,10 +161,12 @@ class _ExitStudentState extends State<ExitStudent> {
                   initialDate: _selectedDate,
                 ),
               ),
-            );
-            if (result != null) {
-              _addNewExit(result);
-            }
+            ).then((value) {
+              if (value != null) {
+                _addNewExit(value);
+                _loadExits(); // Recargar las salidas cuando regresas de la otra pantalla
+              }
+            });
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple,
@@ -246,16 +250,21 @@ class _ExitStudentState extends State<ExitStudent> {
   }
 
   Widget _buildExitItem(BuildContext context, String title, String date,
-      String status, Map<String, dynamic> exit) {
+      String dateE, String status, Map<String, dynamic> exit) {
     DateTime parsedDate;
+    DateTime parsedDateE;
     try {
       parsedDate = DateTime.parse(date);
+      parsedDateE = DateTime.parse(dateE);
     } catch (e) {
       return Text('Fecha inválida');
     }
 
     String formattedDate =
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
+
+    String formattedDateE =
+        DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDateE);
 
     return GestureDetector(
       onTap: () {
@@ -296,17 +305,25 @@ class _ExitStudentState extends State<ExitStudent> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(formattedDate),
+              Text(formattedDateE),
               const SizedBox(height: 4),
-              Text(
-                status,
-                style: TextStyle(
-                  color: _getStatusColor(status),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    status,
+                    style: TextStyle(
+                      color: _getStatusColor(status),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  Text(formattedDate)
+                ],
               ),
             ],
           ),
-          trailing: Icon(Icons.more_vert),
         ),
       ),
     );
