@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 class ExitDetailScreen extends StatelessWidget {
@@ -20,7 +19,7 @@ class ExitDetailScreen extends StatelessWidget {
           'Detalle salida',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color(0xFF6D55F4),
+        backgroundColor: const Color(0xFF6D55F4),
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -35,7 +34,7 @@ class ExitDetailScreen extends StatelessWidget {
                   Expanded(
                       child: _buildDetailItem(
                           'Tipo de salida', exitDetails['TipoSalida'])),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                       child: _buildDetailItem(
                           'Usuario', exitDetails['NombreUsuario'])),
@@ -51,40 +50,40 @@ class ExitDetailScreen extends StatelessWidget {
               _buildDetailItem('Motivo', exitDetails['Motivo']),
               _buildDetailItem('Punto de partida', exitDetails['PuntoPartida']),
               _buildDetailItem('Contacto', exitDetails['Contacto']),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Estatus',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Center(
                 child: Chip(
                   label: Text(exitDetails['StatusPermission']),
                   backgroundColor:
                       _getStatusColor(exitDetails['StatusPermission']),
-                  labelStyle: TextStyle(color: Colors.white),
+                  labelStyle: const TextStyle(color: Colors.white),
                 ),
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Avance del proceso',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildProgressBar(responsive, isFinalized),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Center(
                 child: Text(
                   'A la espera para salir de la universidad',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFFA726),
-                    minimumSize: Size(double.infinity, 50),
+                    backgroundColor: const Color(0xFFFFA726),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
                   onPressed: () {
                     Navigator.pop(context);
@@ -119,14 +118,14 @@ class ExitDetailScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(fontSize: 16, color: Colors.black87),
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),
-          Divider(color: Colors.orange, thickness: 1),
+          const Divider(color: Colors.orange, thickness: 1),
         ],
       ),
     );
@@ -150,10 +149,11 @@ class ExitDetailScreen extends StatelessWidget {
       {required bool isActive}) {
     return CircleAvatar(
       radius: responsive.wp(4),
-      backgroundColor: isActive ? Color.fromRGBO(182, 217, 59, 1) : Colors.grey,
+      backgroundColor:
+          isActive ? const Color.fromRGBO(182, 217, 59, 1) : Colors.grey,
       child: Text(
         step,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),

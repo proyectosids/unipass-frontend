@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/widgets/textInput.dart';
+import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class NewAccountCredentials extends StatefulWidget {

@@ -76,7 +76,7 @@ class _VerificationOTPState extends State<VerificationOTP> {
         controller: controller,
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: OutlineInputBorder(),
           counterText: '', // Aquí deshabilitamos el contador de caracteres
         ),

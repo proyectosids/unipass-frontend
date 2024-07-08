@@ -37,12 +37,12 @@ class _DocumentStudentState extends State<DocumentStudent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.of(context).pop(),
             ),
             Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -92,7 +92,7 @@ class _DocumentStudentState extends State<DocumentStudent> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: documents.length,
@@ -102,7 +102,7 @@ class _DocumentStudentState extends State<DocumentStudent> {
                   String? fileName = documentFiles[key];
                   return Card(
                     child: ListTile(
-                      leading: Icon(Icons.insert_drive_file),
+                      leading: const Icon(Icons.insert_drive_file),
                       title: Text(key),
                       subtitle: fileName != null
                           ? Text('Archivo adjunto: $fileName')

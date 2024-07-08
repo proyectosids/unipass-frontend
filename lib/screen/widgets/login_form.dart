@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
-import 'package:flutter_application_unipass/screen/widgets/textInput.dart';
+import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
 
 class LoginTextFields extends StatefulWidget {
   const LoginTextFields({super.key});
@@ -38,17 +38,17 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Tipo de usuario no reconocido')),
+              const SnackBar(content: Text('Tipo de usuario no reconocido')),
             );
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Credenciales inválidas')),
+            const SnackBar(content: Text('Credenciales inválidas')),
           );
         }
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error de autenticación')),
+          const SnackBar(content: Text('Error de autenticación')),
         );
       }
     }

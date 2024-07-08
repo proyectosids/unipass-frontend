@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DocumentAddStudent extends StatefulWidget {
@@ -22,6 +25,7 @@ class DocumentAddStudent extends StatefulWidget {
 class _DocumentAddStudentState extends State<DocumentAddStudent> {
   bool isFileAttached = false;
   String? fileName;
+  File? file;
 
   @override
   void initState() {
@@ -36,6 +40,7 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
     if (result != null) {
       setState(() {
         fileName = result.files.single.name;
+        file = File(result.files.single.path!);
         isFileAttached = true;
       });
     }
@@ -44,17 +49,42 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
   Future<void> _removeFile() async {
     setState(() {
       fileName = null;
+      file = null;
       isFileAttached = false;
     });
   }
 
   Future<void> _onSave() async {
-    if (isFileAttached && fileName != null) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('${widget.documentName}_isUploaded', isFileAttached);
-      await prefs.setString('${widget.documentName}_fileName', fileName ?? '');
-      Navigator.of(context)
-          .pop({'isUploaded': isFileAttached, 'fileName': fileName});
+    if (isFileAttached && file != null) {
+      final uri = Uri.parse(
+          'http://localhost:3000/doctos'); // Ajusta esta URL según tu configuración
+      final request = http.MultipartRequest('POST', uri);
+
+      request.files.add(await http.MultipartFile.fromPath('file', file!.path));
+      request.fields['IdDocumento'] =
+          '1'; // Ajusta estos campos según tus necesidades
+      request.fields['IdUser'] = '1';
+
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.bytesToString();
+        final data = json.decode(responseData);
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool(
+            '${widget.documentName}_isUploaded', isFileAttached);
+        await prefs.setString(
+            '${widget.documentName}_fileName', fileName ?? '');
+        await prefs.setString(
+            '${widget.documentName}_fileUrl', data['Archivo'] ?? '');
+
+        Navigator.of(context)
+            .pop({'isUploaded': isFileAttached, 'fileName': fileName});
+      } else {
+        // Maneja el error aquí
+        print('Error uploading file');
+      }
     }
   }
 
@@ -65,7 +95,7 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
         title: Text(widget.documentName),
         backgroundColor: Colors.deepPurple,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -134,17 +164,17 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: _removeFile,
-                  child: const Text(
-                    'Quitar documento',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     textStyle: const TextStyle(fontSize: 18),
+                  ),
+                  child: const Text(
+                    'Quitar documento',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -155,11 +185,6 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
               child: ElevatedButton(
                 onPressed:
                     (isFileAttached && fileName != null) ? _onSave : null,
-                child: const Text(
-                  'Enviar documento',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: (isFileAttached && fileName != null)
                       ? Colors.orange
@@ -168,6 +193,11 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   textStyle: const TextStyle(fontSize: 18),
+                ),
+                child: const Text(
+                  'Enviar documento',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

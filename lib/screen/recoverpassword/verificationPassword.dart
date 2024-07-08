@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/widgets/verificationOTP.dart';
+import 'package:flutter_application_unipass/screen/widgets/verification_otp.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class VerificationPassword extends StatefulWidget {
