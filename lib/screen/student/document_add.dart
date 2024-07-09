@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'dart:io';
+import 'package:flutter_application_unipass/services/document_service.dart';
+import 'package:flutter_application_unipass/utils/auth_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DocumentAddStudent extends StatefulWidget {
@@ -23,71 +24,6 @@ class DocumentAddStudent extends StatefulWidget {
 }
 
 class _DocumentAddStudentState extends State<DocumentAddStudent> {
-  bool isFileAttached = false;
-  String? fileName;
-  File? file;
-
-  @override
-  void initState() {
-    super.initState();
-    isFileAttached = widget.isUploaded;
-    fileName = widget.initialFileName;
-  }
-
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setState(() {
-        fileName = result.files.single.name;
-        file = File(result.files.single.path!);
-        isFileAttached = true;
-      });
-    }
-  }
-
-  Future<void> _removeFile() async {
-    setState(() {
-      fileName = null;
-      file = null;
-      isFileAttached = false;
-    });
-  }
-
-  Future<void> _onSave() async {
-    if (isFileAttached && file != null) {
-      final uri = Uri.parse(
-          'http://localhost:3000/doctos'); // Ajusta esta URL según tu configuración
-      final request = http.MultipartRequest('POST', uri);
-
-      request.files.add(await http.MultipartFile.fromPath('file', file!.path));
-      request.fields['IdDocumento'] =
-          '1'; // Ajusta estos campos según tus necesidades
-      request.fields['IdUser'] = '1';
-
-      final response = await request.send();
-
-      if (response.statusCode == 200) {
-        final responseData = await response.stream.bytesToString();
-        final data = json.decode(responseData);
-
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setBool(
-            '${widget.documentName}_isUploaded', isFileAttached);
-        await prefs.setString(
-            '${widget.documentName}_fileName', fileName ?? '');
-        await prefs.setString(
-            '${widget.documentName}_fileUrl', data['Archivo'] ?? '');
-
-        Navigator.of(context)
-            .pop({'isUploaded': isFileAttached, 'fileName': fileName});
-      } else {
-        // Maneja el error aquí
-        print('Error uploading file');
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,4 +142,103 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
       ),
     );
   }
+
+  bool isFileAttached = false;
+  String? fileName;
+  File? file;
+  final DocumentService _documentService = DocumentService();
+
+  @override
+  void initState() {
+    super.initState();
+    isFileAttached = widget.isUploaded;
+    fileName = widget.initialFileName;
+  }
+
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      setState(() {
+        fileName = result.files.single.name;
+        file = File(result.files.single.path!);
+        isFileAttached = true;
+      });
+    }
+  }
+
+  Future<void> _removeFile() async {
+    setState(() {
+      fileName = null;
+      file = null;
+      isFileAttached = false;
+    });
+  }
+
+  Future<void> _onSave() async {
+    // Recuperar idUser de SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? id = await AuthUtils.getUserId();
+    if (id == null) {
+      print('User ID not found');
+      return;
+    }
+
+    Map<String, dynamic>? userInfo = await getUserInfo(id);
+    if (userInfo == null) {
+      print('User info not found');
+      return;
+    }
+
+    // Recuperar nivel académico y sexo de SharedPreferences o algún otro método
+    String nivelAcademico = userInfo['NivelAcademico'];
+    String sexo = userInfo['Sexo'];
+    print(nivelAcademico);
+    print(sexo);
+
+    // Determinar idDocumento
+    int idDocumento =
+        determineIdDocumento(widget.documentName, nivelAcademico, sexo);
+
+    if (isFileAttached && file != null) {
+      try {
+        String fileUrl = await _documentService.uploadDocument(
+            file!, idDocumento, id); //Los IDs necesarios para la funcion
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool(
+            '${widget.documentName}_isUploaded', isFileAttached);
+        await prefs.setString(
+            '${widget.documentName}_fileName', fileName ?? '');
+        await prefs.setString('${widget.documentName}_fileUrl', fileUrl);
+
+        Navigator.of(context)
+            .pop({'isUploaded': isFileAttached, 'fileName': fileName});
+      } catch (e) {
+        // Maneja el error
+        print('Error uploading file: $e');
+      }
+    }
+  }
+}
+
+int determineIdDocumento(
+    String documentName, String nivelAcademico, String genero) {
+  if (documentName == 'Reglamento ULV') {
+    return 1;
+  } else if (documentName == 'Reglamento dormitorio') {
+    if (nivelAcademico == 'Bachiller' && genero == 'Hombre') {
+      return 3;
+    } else if (nivelAcademico == 'Universitario' && genero == 'Hombre') {
+      return 2;
+    } else if (nivelAcademico == 'Universitario' && genero == 'Mujer') {
+      return 4;
+    } else if (nivelAcademico == 'Bachiller' && genero == 'Mujer') {
+      return 5;
+    }
+  } else if (documentName == 'Acuerdo de consentimiento') {
+    return 6;
+  } else if (documentName == 'Convenio de salidas') {
+    return 7;
+  }
+  throw Exception('No matching idDocumento found');
 }

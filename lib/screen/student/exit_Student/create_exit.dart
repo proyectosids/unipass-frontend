@@ -172,14 +172,14 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Día no permitido'),
+          title: const Text('Día no permitido'),
           content: Text(sex == 'Mujer'
               ? 'Las mujeres solo pueden crear salidas los lunes y miércoles.'
               : 'Los hombres solo pueden crear salidas los martes y jueves.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );

@@ -12,15 +12,15 @@ class _DocumentStudentState extends State<DocumentStudent> {
   Map<String, bool> documents = {
     'Reglamento ULV': false,
     'Reglamento dormitorio': false,
-    'Antidoping': false,
-    'Acuerdo Salidas': false,
+    'Acuerdo de consentimiento': false,
+    'Convenio de salidas': false,
   };
 
   Map<String, String?> documentFiles = {
     'Reglamento ULV': null,
     'Reglamento dormitorio': null,
-    'Antidoping': null,
-    'Acuerdo Salidas': null,
+    'Acuerdo de consentimiento': null,
+    'Convenio de salidas': null,
   };
 
   @override
