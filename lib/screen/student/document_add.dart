@@ -24,6 +24,82 @@ class DocumentAddStudent extends StatefulWidget {
 }
 
 class _DocumentAddStudentState extends State<DocumentAddStudent> {
+  bool isFileAttached = false;
+  String? fileName;
+  File? file;
+  final DocumentService _documentService = DocumentService();
+
+  @override
+  void initState() {
+    super.initState();
+    isFileAttached = widget.isUploaded;
+    fileName = widget.initialFileName;
+  }
+
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      setState(() {
+        fileName = result.files.single.name;
+        file = File(result.files.single.path!);
+        isFileAttached = true;
+      });
+    }
+  }
+
+  Future<void> _removeFile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      fileName = null;
+      file = null;
+      isFileAttached = false;
+    });
+    await prefs.remove('${widget.documentName}_isUploaded');
+    await prefs.remove('${widget.documentName}_fileName');
+  }
+
+  Future<void> _onSave() async {
+    int? id = await AuthUtils.getUserId();
+    if (id == null) {
+      print('User ID not found');
+      return;
+    }
+
+    Map<String, dynamic>? userInfo = await getUserInfo(id);
+    if (userInfo == null) {
+      print('User info not found');
+      return;
+    }
+
+    String nivelAcademico = userInfo['NivelAcademico'];
+    String sexo = userInfo['Sexo'];
+    int idDocumento =
+        determineIdDocumento(widget.documentName, nivelAcademico, sexo);
+
+    if (isFileAttached && file != null) {
+      try {
+        String fileUrl =
+            await _documentService.uploadDocument(file!, idDocumento, id);
+        await _saveDocumentState(widget.documentName, isFileAttached, fileName);
+
+        Navigator.of(context)
+            .pop({'isUploaded': isFileAttached, 'fileName': fileName});
+      } catch (e) {
+        print('Error uploading file: $e');
+      }
+    }
+  }
+
+  Future<void> _saveDocumentState(
+      String documentName, bool isUploaded, String? fileName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('${documentName}_isUploaded', isUploaded);
+    if (fileName != null) {
+      await prefs.setString('${documentName}_fileName', fileName);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,7 +170,7 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
               ),
             ),
             const Spacer(),
-            if (isFileAttached) // Mostrar botón de quitar solo si hay un archivo adjunto
+            if (isFileAttached)
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -141,83 +217,6 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
         ),
       ),
     );
-  }
-
-  bool isFileAttached = false;
-  String? fileName;
-  File? file;
-  final DocumentService _documentService = DocumentService();
-
-  @override
-  void initState() {
-    super.initState();
-    isFileAttached = widget.isUploaded;
-    fileName = widget.initialFileName;
-  }
-
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setState(() {
-        fileName = result.files.single.name;
-        file = File(result.files.single.path!);
-        isFileAttached = true;
-      });
-    }
-  }
-
-  Future<void> _removeFile() async {
-    setState(() {
-      fileName = null;
-      file = null;
-      isFileAttached = false;
-    });
-  }
-
-  Future<void> _onSave() async {
-    // Recuperar idUser de SharedPreferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? id = await AuthUtils.getUserId();
-    if (id == null) {
-      print('User ID not found');
-      return;
-    }
-
-    Map<String, dynamic>? userInfo = await getUserInfo(id);
-    if (userInfo == null) {
-      print('User info not found');
-      return;
-    }
-
-    // Recuperar nivel académico y sexo de SharedPreferences o algún otro método
-    String nivelAcademico = userInfo['NivelAcademico'];
-    String sexo = userInfo['Sexo'];
-    print(nivelAcademico);
-    print(sexo);
-
-    // Determinar idDocumento
-    int idDocumento =
-        determineIdDocumento(widget.documentName, nivelAcademico, sexo);
-
-    if (isFileAttached && file != null) {
-      try {
-        String fileUrl = await _documentService.uploadDocument(
-            file!, idDocumento, id); //Los IDs necesarios para la funcion
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setBool(
-            '${widget.documentName}_isUploaded', isFileAttached);
-        await prefs.setString(
-            '${widget.documentName}_fileName', fileName ?? '');
-        await prefs.setString('${widget.documentName}_fileUrl', fileUrl);
-
-        Navigator.of(context)
-            .pop({'isUploaded': isFileAttached, 'fileName': fileName});
-      } catch (e) {
-        // Maneja el error
-        print('Error uploading file: $e');
-      }
-    }
   }
 }
 

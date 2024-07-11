@@ -1,3 +1,5 @@
+import 'package:flutter_application_unipass/services/document_service.dart';
+import 'package:flutter_application_unipass/utils/auth_utils.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 class DocumentStudent extends StatefulWidget {
@@ -22,6 +24,64 @@ class _DocumentStudentState extends State<DocumentStudent> {
     'Acuerdo de consentimiento': null,
     'Convenio de salidas': null,
   };
+
+  final DocumentService _documentService = DocumentService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDocumentStates();
+  }
+
+  Future<void> _loadDocumentStates() async {
+    int? userId = await AuthUtils.getUserId();
+    if (userId == null) return;
+
+    try {
+      List<Map<String, dynamic>> userDocuments =
+          await _documentService.getDocumentsByUser(userId);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      setState(() {
+        for (var doc in userDocuments) {
+          String documentName = _getDocumentNameById(doc['IdDocumento']);
+          documents[documentName] = true;
+          documentFiles[documentName] = doc['Archivo'];
+          prefs.setBool('${documentName}_isUploaded', true);
+          prefs.setString('${documentName}_fileName', doc['Archivo']);
+        }
+      });
+    } catch (e) {
+      print('Error loading documents: $e');
+    }
+  }
+
+  String _getDocumentNameById(int id) {
+    switch (id) {
+      case 1:
+        return 'Reglamento ULV';
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+        return 'Reglamento dormitorio';
+      case 6:
+        return 'Acuerdo de consentimiento';
+      case 7:
+        return 'Convenio de salidas';
+      default:
+        return 'Documento desconocido';
+    }
+  }
+
+  Future<void> _saveDocumentState(
+      String documentName, bool isUploaded, String? fileName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('${documentName}_isUploaded', isUploaded);
+    if (fileName != null) {
+      await prefs.setString('${documentName}_fileName', fileName);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +186,8 @@ class _DocumentStudentState extends State<DocumentStudent> {
                             documents[key] = result['isUploaded'];
                             documentFiles[key] = result['fileName'];
                           });
+                          _saveDocumentState(
+                              key, result['isUploaded'], result['fileName']);
                         }
                       },
                     ),
