@@ -104,10 +104,16 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.documentName),
+        title: Text(
+          widget.documentName,
+          style: const TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.deepPurple,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -122,10 +128,10 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
             ),
             const SizedBox(height: 8),
             Text(
-              isFileAttached ? 'Aceptado' : 'Pendiente',
+              isFileAttached ? 'Pendiente' : 'No Adjunto',
               style: TextStyle(
                 fontSize: 16,
-                color: isFileAttached ? Colors.green : Colors.orange,
+                color: isFileAttached ? Colors.orange : Colors.red,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -170,26 +176,6 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
               ),
             ),
             const Spacer(),
-            if (isFileAttached)
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _removeFile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    textStyle: const TextStyle(fontSize: 18),
-                  ),
-                  child: const Text(
-                    'Quitar documento',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
             const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,

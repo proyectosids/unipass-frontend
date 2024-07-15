@@ -55,14 +55,16 @@ class DocumentService {
     }
   }
 
-  Future<void> deleteDocument(int id, int idUser) async {
+  Future<void> deleteDocument(int idUser, int idDocumento) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/doctos/$id'),
+      Uri.parse('$baseUrl/doctos/$idUser'),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'IdUser': idUser}),
+      body: json.encode({"IdDocumento": '$idDocumento'}),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
       throw Exception('Failed to delete document');
     }
   }

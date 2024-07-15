@@ -9,7 +9,7 @@ export 'package:flutter_application_unipass/screen/recoverpassword/maillAuthenti
 export 'package:flutter_application_unipass/screen/recoverpassword/verificationPassword.dart';
 export 'package:flutter_application_unipass/screen/recoverpassword/newPassword.dart';
 export 'package:flutter_application_unipass/screen/student/index/homeStudent.dart';
-export 'package:flutter_application_unipass/screen/student/index/menuStudent.dart';
+export 'package:flutter_application_unipass/screen/student/index/menu_student.dart';
 export 'package:flutter_application_unipass/screen/student/notifications_students.dart';
 export 'package:flutter_application_unipass/screen/student/exit_Student/exit_student.dart';
 export 'package:carousel_slider/carousel_slider.dart';

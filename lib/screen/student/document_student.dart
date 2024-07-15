@@ -25,6 +25,13 @@ class _DocumentStudentState extends State<DocumentStudent> {
     'Convenio de salidas': null,
   };
 
+  Map<String, int?> documentIds = {
+    'Reglamento ULV': null,
+    'Reglamento dormitorio': null,
+    'Acuerdo de consentimiento': null,
+    'Convenio de salidas': null,
+  };
+
   final DocumentService _documentService = DocumentService();
 
   @override
@@ -35,7 +42,10 @@ class _DocumentStudentState extends State<DocumentStudent> {
 
   Future<void> _loadDocumentStates() async {
     int? userId = await AuthUtils.getUserId();
-    if (userId == null) return;
+    if (userId == null) {
+      print('User ID is null');
+      return;
+    }
 
     try {
       List<Map<String, dynamic>> userDocuments =
@@ -45,10 +55,13 @@ class _DocumentStudentState extends State<DocumentStudent> {
       setState(() {
         for (var doc in userDocuments) {
           String documentName = _getDocumentNameById(doc['IdDocumento']);
-          documents[documentName] = true;
-          documentFiles[documentName] = doc['Archivo'];
-          prefs.setBool('${documentName}_isUploaded', true);
-          prefs.setString('${documentName}_fileName', doc['Archivo']);
+          if (documents.containsKey(documentName)) {
+            documents[documentName] = true;
+            documentFiles[documentName] = doc['Archivo'];
+            documentIds[documentName] = doc['IdDocumento'];
+            prefs.setBool('${documentName}_isUploaded', true);
+            prefs.setString('${documentName}_fileName', doc['Archivo']);
+          }
         }
       });
     } catch (e) {
@@ -80,6 +93,46 @@ class _DocumentStudentState extends State<DocumentStudent> {
     await prefs.setBool('${documentName}_isUploaded', isUploaded);
     if (fileName != null) {
       await prefs.setString('${documentName}_fileName', fileName);
+    }
+  }
+
+  Future<void> _deleteDocument(String documentName) async {
+    if (documents[documentName] == false) {
+      print('No se puede eliminar un documento que no está adjunto.');
+      return;
+    }
+
+    int? userId = await AuthUtils.getUserId();
+    if (userId == null) {
+      print('User ID is null');
+      return;
+    }
+
+    try {
+      int? documentId = documentIds[documentName];
+      if (documentId != null) {
+        await _documentService.deleteDocument(userId, documentId);
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('${documentName}_isUploaded', false);
+        await prefs.remove('${documentName}_fileName');
+
+        //setState(() {
+        //  documents[documentName] = false;
+        //  documentFiles[documentName] = null;
+        //  documentIds[documentName] = null;
+        //  documents.remove(documentName); // Remove the document from the map
+        //});
+
+        // Después de eliminar, recargar la pantalla
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => DocumentStudent(),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error deleting document: $e');
     }
   }
 
@@ -160,36 +213,55 @@ class _DocumentStudentState extends State<DocumentStudent> {
                   String key = documents.keys.elementAt(index);
                   bool value = documents[key]!;
                   String? fileName = documentFiles[key];
-                  return Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.insert_drive_file),
-                      title: Text(key),
-                      subtitle: fileName != null
-                          ? Text('Archivo adjunto: $fileName')
-                          : null,
-                      trailing: Icon(
-                        value ? Icons.check_circle : Icons.cancel,
-                        color: value ? Colors.green : Colors.red,
-                      ),
-                      onTap: () async {
-                        final result = await Navigator.of(context).pushNamed(
-                          DocumentAddStudent.routeName,
-                          arguments: {
-                            'documentName': key,
-                            'isUploaded': value,
-                            'fileName': fileName,
-                          },
-                        ) as Map<String, dynamic>?;
 
-                        if (result != null) {
-                          setState(() {
-                            documents[key] = result['isUploaded'];
-                            documentFiles[key] = result['fileName'];
-                          });
-                          _saveDocumentState(
-                              key, result['isUploaded'], result['fileName']);
-                        }
-                      },
+                  return Dismissible(
+                    key: Key(key),
+                    direction: value
+                        ? DismissDirection.endToStart
+                        : DismissDirection.none,
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    onDismissed: (direction) async {
+                      await _deleteDocument(key);
+                    },
+                    child: Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.insert_drive_file),
+                        title: Text(key),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              value ? Icons.check_circle : Icons.cancel,
+                              color: value ? Colors.green : Colors.red,
+                            ),
+                          ],
+                        ),
+                        onTap: () async {
+                          final result = await Navigator.of(context).pushNamed(
+                            DocumentAddStudent.routeName,
+                            arguments: {
+                              'documentName': key,
+                              'isUploaded': value,
+                              'fileName': fileName,
+                            },
+                          ) as Map<String, dynamic>?;
+
+                          if (result != null) {
+                            setState(() {
+                              documents[key] = result['isUploaded'];
+                              documentFiles[key] = result['fileName'];
+                              documentIds[key] = result['IdDocumento'];
+                            });
+                            _saveDocumentState(
+                                key, result['isUploaded'], result['fileName']);
+                          }
+                        },
+                      ),
                     ),
                   );
                 },
