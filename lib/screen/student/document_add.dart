@@ -7,7 +7,7 @@ import 'package:flutter_application_unipass/utils/auth_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DocumentAddStudent extends StatefulWidget {
-  static const routeName = '/documentAddStudent'; // Ruta nombrada
+  static const routeName = '/documentAddStudent';
   final String documentName;
   final bool isUploaded;
   final String? initialFileName;
@@ -16,11 +16,11 @@ class DocumentAddStudent extends StatefulWidget {
     required this.documentName,
     required this.isUploaded,
     this.initialFileName,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
-  State<DocumentAddStudent> createState() => _DocumentAddStudentState();
+  _DocumentAddStudentState createState() => _DocumentAddStudentState();
 }
 
 class _DocumentAddStudentState extends State<DocumentAddStudent> {
@@ -79,12 +79,14 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
 
     if (isFileAttached && file != null) {
       try {
-        String fileUrl =
-            await _documentService.uploadDocument(file!, idDocumento, id);
+        await _documentService.uploadDocument(file!, idDocumento, id);
         await _saveDocumentState(widget.documentName, isFileAttached, fileName);
 
-        Navigator.of(context)
-            .pop({'isUploaded': isFileAttached, 'fileName': fileName});
+        Navigator.of(context).pop({
+          'isUploaded': isFileAttached,
+          'fileName': fileName,
+          'IdDocumento': idDocumento,
+        });
       } catch (e) {
         print('Error uploading file: $e');
       }

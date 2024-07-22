@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/services/document_service.dart';
+import 'package:flutter_application_unipass/utils/auth_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_application_unipass/config/config_url.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profileStudent';
@@ -15,16 +18,48 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final ImagePicker _picker = ImagePicker();
-  File? _imageFile;
+  File? imageFile;
+  String? profileImageUrl;
   bool _notificationsEnabled =
       false; // Estado para el interruptor de notificaciones
+  final DocumentService _documentService = DocumentService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    int? idDocumento = 8;
+    int? id = await AuthUtils.getUserId();
+    if (id == null) {
+      print('User ID not found');
+      return;
+    }
+    String? imageUrl = await _documentService.getProfile(id, idDocumento);
+    setState(() {
+      profileImageUrl = imageUrl != null ? '$baseUrl$imageUrl' : null;
+    });
+  }
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    int? idDocumento = 8;
+    int? id = await AuthUtils.getUserId();
+    if (id == null) {
+      print('User ID not found');
+      return;
+    }
 
     setState(() {
-      _imageFile = pickedFile != null ? File(pickedFile.path) : null;
+      imageFile = pickedFile != null ? File(pickedFile.path) : null;
     });
+
+    if (imageFile != null) {
+      await _documentService.uploadDocument(imageFile!, idDocumento, id);
+      _loadProfileImage();
+    }
   }
 
   @override
@@ -54,10 +89,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             GestureDetector(
               onTap: _pickImage,
               child: CircleAvatar(
-                radius: 50,
-                backgroundImage:
-                    _imageFile == null ? null : FileImage(_imageFile!),
-                child: _imageFile == null
+                radius: 60,
+                backgroundImage: imageFile != null
+                    ? FileImage(imageFile!)
+                    : (profileImageUrl != null
+                        ? NetworkImage(profileImageUrl!)
+                        : null) as ImageProvider<Object>?,
+                child: imageFile == null && profileImageUrl == null
                     ? const Icon(
                         Icons.add_a_photo,
                         size: 50,
@@ -95,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'Cambiar contraseña',
                     'assets/image/cambiar_contra.svg',
                     '/changeStudent',
-                    Color.fromARGB(255, 107, 128, 246),
+                    const Color.fromARGB(255, 107, 128, 246),
                   ),
                   _buildProfileItem(context, 'Soporte',
                       'assets/image/soporte.svg', '/supportUser', Colors.green),
@@ -104,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       'Políticas de Privacidad',
                       'assets/image/politicas.svg',
                       '/privacyUser',
-                      Color.fromARGB(255, 159, 60, 176)),
+                      const Color.fromARGB(255, 159, 60, 176)),
                   _buildProfileItem(context, 'Cerrar sesión',
                       'assets/image/cerrar_sesion.svg', '/login', Colors.red),
                 ],
@@ -139,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SvgPicture.asset(assetPath, width: 80, height: 80),
             const SizedBox(height: 8),
             Text(title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 )),

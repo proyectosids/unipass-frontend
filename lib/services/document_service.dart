@@ -1,27 +1,101 @@
+import 'dart:async';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_application_unipass/config/config_url.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 class DocumentService {
-  Future<String> uploadDocument(File file, int idDocumento, int idUser) async {
-    final uri = Uri.parse('$baseUrl/doctos');
+  Future<void> uploadDocument(File file, int idDocumento, int idUser) async {
+    final uri = Uri.parse('$baseUrl/doctosMul');
     final request = http.MultipartRequest('POST', uri);
 
-    request.files.add(await http.MultipartFile.fromPath('file', file.path));
+    // Agregar campos
     request.fields['IdDocumento'] = idDocumento.toString();
     request.fields['IdUser'] = idUser.toString();
+
+    // Obtener el tipo MIME del archivo
+    String? mimeType = lookupMimeType(file.path);
+    final mediaType = mimeType != null
+        ? MediaType.parse(mimeType)
+        : MediaType('application', 'octet-stream');
+
+    // Agregar el archivo a la solicitud
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'Archivo',
+        file.path,
+        contentType: mediaType,
+      ),
+    );
 
     final response = await request.send();
 
     if (response.statusCode == 200) {
+      print('Document uploaded successfully');
       final responseData = await response.stream.bytesToString();
-      final data = json.decode(responseData);
-      return data['Archivo'];
+      print(responseData);
     } else {
-      throw Exception('Failed to upload document');
+      print('Failed to upload document. Status code: ${response.statusCode}');
+      print(await response.stream.bytesToString());
     }
   }
+
+  Future<String?> getProfile(int idUser, int idDocumento) async {
+    print(idUser);
+    print(idDocumento);
+    final uri =
+        Uri.parse('$baseUrl/doctosProfile/$idUser?IdDocumento=$idDocumento');
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['Archivo']; // Ajustar según la respuesta de tu API
+    } else {
+      print('Failed to get profile image. Status code: ${response.statusCode}');
+      return null;
+    }
+  }
+  //Future<void> uploadDocument(File file, int idDocumento, int idUser) async {
+  //  print(file);
+  //  print(idDocumento);
+  //  print(idUser);
+  //  final response = await http.post(Uri.parse('$baseUrl/doctosMul'),
+  //      headers: {'Content-Type': 'application/json'},
+  //      body: json.encode({
+  //        "IdDocumento": '$idDocumento',
+  //        "IdUser": '$idUser',
+  //        "Archivo": '$file'
+  //      }));
+  //  if (response.statusCode == 200) {
+  //    return json.decode(response.body);
+  //  } else {
+  //    throw Exception('Failed to delete document');
+  //  }
+  //}
+
+  //Future<String> uploadDocument(File file, int idDocumento, int idUser) async {
+  //  final uri = Uri.parse('$baseUrl/doctosMul');
+  //  final request = http.MultipartRequest('POST', uri);
+  //  print(file);
+  //  print(idDocumento);
+  //  print(idUser);
+  //  request.files.add(await http.MultipartFile.fromPath('Archivo', file.path));
+  //  request.fields['IdDocumento'] = idDocumento.toString();
+  //  request.fields['IdUser'] = idUser.toString();
+//
+  //  final response = await request.send();
+//
+  //  if (response.statusCode == 200) {
+  //    final responseData = await response.stream.bytesToString();
+  //    final data = json.decode(responseData);
+  //    return data['Archivo'];
+  //  } else {
+  //    throw Exception('Failed to upload document');
+  //  }
+  //}
 
   Future<List<Map<String, dynamic>>> getDocuments() async {
     final response = await http.get(Uri.parse('$baseUrl/doctos'));
@@ -57,7 +131,7 @@ class DocumentService {
 
   Future<void> deleteDocument(int idUser, int idDocumento) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/doctos/$idUser'),
+      Uri.parse('$baseUrl/doctosMul/$idUser'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({"IdDocumento": '$idDocumento'}),
     );

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/config/config_url.dart';
 import 'package:flutter_application_unipass/services/document_service.dart';
 import 'package:flutter_application_unipass/utils/auth_utils.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
@@ -117,22 +119,25 @@ class _DocumentStudentState extends State<DocumentStudent> {
         await prefs.setBool('${documentName}_isUploaded', false);
         await prefs.remove('${documentName}_fileName');
 
-        //setState(() {
-        //  documents[documentName] = false;
-        //  documentFiles[documentName] = null;
-        //  documentIds[documentName] = null;
-        //  documents.remove(documentName); // Remove the document from the map
-        //});
-
-        // Después de eliminar, recargar la pantalla
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (BuildContext context) => DocumentStudent(),
+            builder: (BuildContext context) => const DocumentStudent(),
           ),
         );
       }
     } catch (e) {
       print('Error deleting document: $e');
+    }
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse('$baseUrl$url');
+    try {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -242,23 +247,24 @@ class _DocumentStudentState extends State<DocumentStudent> {
                           ],
                         ),
                         onTap: () async {
-                          final result = await Navigator.of(context).pushNamed(
-                            DocumentAddStudent.routeName,
-                            arguments: {
-                              'documentName': key,
-                              'isUploaded': value,
-                              'fileName': fileName,
-                            },
-                          ) as Map<String, dynamic>?;
+                          if (value && fileName != null) {
+                            _launchURL(fileName);
+                          } else {
+                            final result =
+                                await Navigator.of(context).pushNamed(
+                              DocumentAddStudent.routeName,
+                              arguments: {
+                                'documentName': key,
+                                'isUploaded': value,
+                                'fileName': fileName,
+                              },
+                            );
 
-                          if (result != null) {
-                            setState(() {
-                              documents[key] = result['isUploaded'];
-                              documentFiles[key] = result['fileName'];
-                              documentIds[key] = result['IdDocumento'];
-                            });
-                            _saveDocumentState(
-                                key, result['isUploaded'], result['fileName']);
+                            if (result != null) {
+                              setState(() {
+                                _loadDocumentStates();
+                              });
+                            }
                           }
                         },
                       ),

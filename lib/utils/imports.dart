@@ -20,7 +20,7 @@ export 'package:flutter_svg/flutter_svg.dart';
 export 'package:flutter_application_unipass/screen/options_users/help_user.dart';
 export 'package:flutter_application_unipass/screen/widgets/login_form.dart';
 export 'package:flutter_application_unipass/screen/student/document_student.dart';
-export 'package:flutter_application_unipass/screen/student/index/profileStudent.dart';
+export 'package:flutter_application_unipass/screen/student/index/profile_student.dart';
 export 'package:flutter_application_unipass/screen/student/exit_Student/create_exit.dart';
 export 'package:flutter_application_unipass/screen/student/exit_Student/detail_exit.dart';
 export 'package:flutter_application_unipass/screen/student/exit_Student/editExit.dart';
