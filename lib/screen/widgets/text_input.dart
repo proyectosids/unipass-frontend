@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Asegúrate de importar esto para los inputFormatters
 import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class TextFieldWidget extends StatelessWidget {
@@ -8,6 +9,8 @@ class TextFieldWidget extends StatelessWidget {
   final void Function(String text)? onChanged;
   final String? Function(String? text)? validator;
   final TextEditingController? controller;
+  final List<TextInputFormatter>?
+      inputFormatters; // Parámetro opcional para inputFormatters
 
   const TextFieldWidget({
     Key? key,
@@ -17,6 +20,7 @@ class TextFieldWidget extends StatelessWidget {
     this.onChanged,
     this.validator,
     this.controller,
+    this.inputFormatters, // Inicializa el parámetro
   }) : super(key: key);
 
   @override
@@ -29,6 +33,8 @@ class TextFieldWidget extends StatelessWidget {
       obscureText: obscureText,
       onChanged: onChanged,
       validator: validator,
+      inputFormatters:
+          inputFormatters, // Pasa los inputFormatters al TextFormField
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white, // Fondo blanco

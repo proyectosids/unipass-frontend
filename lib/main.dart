@@ -1,16 +1,26 @@
-import 'package:flutter_application_unipass/utils/imports.dart'; // Asegúrate de importar correctamente todos los archivos necesarios
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
+
+  runApp(MyApp(isFirstTime: isFirstTime));
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isFirstTime;
+
+  const MyApp({super.key, required this.isFirstTime});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UniPass ULV',
-      initialRoute: Preview1.routeName,
+      initialRoute: isFirstTime ? Preview1.routeName : LoginApp.routeName,
       routes: {
         Preview1.routeName: (context) => const Preview1(),
         Preview2.routeName: (context) => const Preview2(),
@@ -58,6 +68,10 @@ class MyApp extends StatelessWidget {
         HomePreceptorScreen.routeName: (context) => const HomePreceptorScreen(),
         NoticesScreenPreceptor.routeName: (context) =>
             const NoticesScreenPreceptor(),
+        ConfirmDataUser.routeName: (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as String;
+          return ConfirmDataUser(userId: args);
+        },
       },
     );
   }

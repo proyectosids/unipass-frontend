@@ -4,10 +4,14 @@ class Preview2 extends StatelessWidget {
   static const routeName = '/preview2';
   const Preview2({super.key});
 
+  Future<void> _setFirstTimeFlag() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFirstTime', false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
-
     final double padding = responsive.wp(5);
     final double imageHeight = responsive.hp(30);
 
@@ -72,10 +76,11 @@ class Preview2 extends StatelessWidget {
               SizedBox(
                 width: responsive.wp(60),
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await _setFirstTimeFlag();
                     Navigator.pushNamedAndRemoveUntil(
                       context,
-                      '/login', // Ajusta esto a la ruta correcta
+                      LoginApp.routeName, // Ajusta esto a la ruta correcta
                       (Route<dynamic> route) => false,
                     );
                   },

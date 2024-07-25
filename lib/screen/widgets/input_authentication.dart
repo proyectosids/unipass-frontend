@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:flutter/services.dart'; // Importa esta librería para usar inputFormatters
 
 class InputAuthentication extends StatelessWidget {
   const InputAuthentication({
@@ -20,26 +21,20 @@ class InputAuthentication extends StatelessWidget {
       ),
       child: TextFieldWidget(
         controller: emailController,
-        label: 'Correo Institucional o Matrícula',
+        label: 'Número Matrícula',
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Por favor, ingresa tu correo institucional o matrícula';
+            return 'Por favor, ingresa tu matrícula';
           }
-          final int? number = int.tryParse(value);
-          if (number != null) {
-            // Validación para matrícula
-            if (number < 200000 || number > 300000) {
-              return 'Debe ser una matrícula real ';
-            }
-          } else {
-            // Validación para correo institucional
-            final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@ulv\.edu\.mx$');
-            if (!emailRegex.hasMatch(value)) {
-              return 'Por favor, ingresa un correo válido (@ulv.edu.mx)';
-            }
-          }
+
           return null;
         },
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly, // Solo permite dígitos
+          LengthLimitingTextInputFormatter(
+              10), // Limita la longitud a 10 caracteres
+        ],
+        keyboardType: TextInputType.number, // Muestra el teclado numérico
       ),
     );
   }

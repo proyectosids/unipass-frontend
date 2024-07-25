@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/widgets/input_authentication.dart';
+import 'package:flutter_application_unipass/screen/NewAccount/date_preview.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:flutter_application_unipass/screen/widgets/input_authentication.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class NewAccountAuthentication extends StatefulWidget {
@@ -92,8 +93,11 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                             : () {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
-                                  Navigator.pushNamedAndRemoveUntil(context,
-                                      '/verificationAccount', (route) => false);
+                                  Navigator.pushNamed(
+                                    context,
+                                    ConfirmDataUser.routeName,
+                                    arguments: _emailController.text,
+                                  );
                                 }
                               },
                         style: ElevatedButton.styleFrom(

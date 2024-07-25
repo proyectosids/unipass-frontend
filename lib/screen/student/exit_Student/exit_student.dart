@@ -271,23 +271,16 @@ class _ExitStudentState extends State<ExitStudent> {
           context,
           '/exitDetail',
           arguments: {
-            'TipoSalida':
-                exit['Descripcion'], // Reemplazar con el campo correspondiente
-            'NombreUsuario':
-                exit['Nombre'], // Reemplazar con el campo correspondiente
-            'LugarPartida':
-                exit['MedioSalida'], // Reemplazar con el campo correspondiente
+            'TipoSalida': exit['Descripcion'],
+            'NombreUsuario': exit['Nombre'],
+            'LugarPartida': exit['MedioSalida'],
             'FechaSalida': exit['FechaSalida'],
             'FechaRegreso': exit['FechaRegreso'],
-            'AreaTrabajo':
-                exit['Departamento'], // Reemplazar con el campo correspondiente
-            'Observaciones': exit[
-                'Observaciones'], // Reemplazar con el campo correspondiente
+            'AreaTrabajo': exit['Departamento'],
+            'Observaciones': exit['Observaciones'],
             'Motivo': exit['Motivo'],
-            'PuntoPartida':
-                exit['PuntoPartida'], // Reemplazar con el campo correspondiente
-            'Contacto':
-                exit['Celular'], // Reemplazar con el campo correspondiente
+            'PuntoPartida': exit['PuntoPartida'],
+            'Contacto': exit['Celular'],
             'StatusPermission': exit['StatusPermission'],
           },
         );
