@@ -15,7 +15,7 @@ Future<Map<String, dynamic>> authenticateUser(
 
   if (response.statusCode == 200) {
     Map<String, dynamic> userData = json.decode(response.body);
-    await AuthUtils.saveUserId(userData['user']['IdUser']); // Guarda el IdUser
+    await AuthUtils.saveUserId(userData['user']['IdLogin']); // Guarda el IdUser
     return userData;
   } else {
     throw Exception('Failed to authenticate user');

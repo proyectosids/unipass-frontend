@@ -24,7 +24,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
         if (result['success']) {
           String tipoUser = result['user']['TipoUser'];
           // Redirigir según el tipo de usuario
-          if (tipoUser == 'Alumno') {
+          if (tipoUser == 'ALUMNO') {
             Navigator.pushNamedAndRemoveUntil(
               context,
               '/homeStudentMenu', // Ruta para alumnos

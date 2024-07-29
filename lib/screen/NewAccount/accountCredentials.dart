@@ -1,10 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
-import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:flutter_application_unipass/services/register_service.dart';
 
 class NewAccountCredentials extends StatefulWidget {
   static const routeName = '/accountCredentials';
-  const NewAccountCredentials({super.key});
+  final Map<String, dynamic> userData;
+
+  const NewAccountCredentials({Key? key, required this.userData})
+      : super(key: key);
 
   @override
   _NewAccountCredentialsState createState() => _NewAccountCredentialsState();
@@ -15,14 +17,11 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  final TextEditingController _matriculaController = TextEditingController();
 
   @override
   void dispose() {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _matriculaController
-        .dispose(); // Asegúrate de disponer del controlador de matrícula
     super.dispose();
   }
 
@@ -92,6 +91,35 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
     );
   }
 
+  Future<void> _registerUser() async {
+    if (_formKey.currentState?.validate() == true) {
+      try {
+        final registerService = RegisterService();
+        final userData = {
+          'Matricula': widget.userData['matricula'],
+          'Contraseña': _passwordController.text,
+          'Correo': widget.userData['correoInstitucional'],
+          'Nombre': widget.userData['nombres'],
+          'Apellidos': widget.userData['apellidos'],
+          'TipoUser': widget.userData['type'],
+          'Sexo': widget.userData['sexo'],
+          'FechaNacimiento': widget.userData['fechaNacimiento'],
+          'Celular': widget.userData['celular'],
+        };
+        await registerService.registerUser(userData);
+        _showSuccessDialog();
+      } catch (e) {
+        String errorMessage = 'Error: $e';
+        if (e.toString().contains('Usuario ya registrado')) {
+          errorMessage = 'El usuario ya está registrado';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
+    }
+  }
+
   Future<bool> _onWillPop() async {
     final Responsive responsive = Responsive.of(context);
     return (await showDialog(
@@ -114,7 +142,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                   ),
                   SizedBox(height: responsive.hp(5)),
                   Text(
-                    '¿Estás seguro de que quieres salir del proceso de cambio de contraseña?',
+                    '¿Estás seguro de que quieres salir del proceso de crear cuenta?',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: responsive.dp(1.8),
@@ -192,6 +220,11 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(5);
+
+    // Recuperar los argumentos pasados desde la pantalla anterior
+    final userData =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -238,30 +271,13 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                       ),
                     ),
                     SizedBox(height: responsive.hp(4)),
-                    Container(
-                      constraints: BoxConstraints(
-                        maxWidth: responsive.IsTablet ? 480 : 360,
-                      ),
-                      child: TextFieldWidget(
-                        controller: _matriculaController,
-                        label: 'Ingresa tu matrícula',
-                        keyboardType: TextInputType.number,
-                        validator: (text) {
-                          if (text == null || text.isEmpty) {
-                            return 'El campo no puede estar vacío';
-                          }
-                          final int? number = int.tryParse(text);
-                          if (number == null) {
-                            return 'El campo debe ser tu matricula';
-                          }
-                          if (number < 200000 || number > 300000) {
-                            return 'El número debe ser una matricula real';
-                          }
-                          return null;
-                        },
-                      ),
+                    Text(
+                      'Usuario: ${userData['matricula']}',
+                      style: TextStyle(
+                          fontSize: responsive.dp(2.2),
+                          color: Colors.grey[600]),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Container(
                       constraints: BoxConstraints(
                         maxWidth: responsive.IsTablet ? 480 : 360,
@@ -276,11 +292,6 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                         validator: (text) {
                           if (text == null || text.isEmpty) {
                             return 'El campo no puede estar vacío';
-                          }
-                          if (!RegExp(
-                                  r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,20}$')
-                              .hasMatch(text)) {
-                            return 'La contraseña debe tener entre 8 y 20 caracteres.\nDebe contener al menos una mayucula \nDebe contener al menos un numero';
                           }
                           return null;
                         },
@@ -313,12 +324,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                     SizedBox(
                       width: responsive.wp(60),
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() == true) {
-                            // Acción al presionar el botón de guardar contraseña
-                            _showSuccessDialog();
-                          }
-                        },
+                        onPressed: _registerUser,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
                           padding: EdgeInsets.symmetric(

@@ -4,7 +4,10 @@ import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class VerificationNewAccount extends StatefulWidget {
   static const routeName = '/verificationAccount';
-  const VerificationNewAccount({super.key});
+  final Map<String, dynamic> userData;
+
+  const VerificationNewAccount({Key? key, required this.userData})
+      : super(key: key);
 
   @override
   _VerificationNewAccountState createState() => _VerificationNewAccountState();
@@ -58,6 +61,8 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(5);
+    final userData = widget.userData;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -87,19 +92,24 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                         Text(
                           'Se ha enviado un correo',
                           style: TextStyle(
-                            fontSize: responsive.dp(2.6),
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                              fontSize: responsive.dp(2.6),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
                         ),
                         SizedBox(height: responsive.hp(5)),
                         Text(
-                          'Enviamos un mensaje al correo que proporcionaste un código para crear tu cuenta.',
+                          'Enviamos un mensaje al correo asociado a tu matricula para crear tu cuenta.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: responsive.dp(2.2),
-                            color: Colors.grey[600],
-                          ),
+                              fontSize: responsive.dp(2.2),
+                              color: const Color.fromARGB(255, 0, 0, 0)),
+                        ),
+                        SizedBox(height: responsive.hp(5)),
+                        Text(
+                          'Correo: ${userData['correoInstitucional']}',
+                          style: TextStyle(
+                              fontSize: responsive.dp(2.2),
+                              color: Colors.grey[600]),
                         ),
                       ],
                     ),
@@ -117,7 +127,8 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                         onPressed: _isButtonEnabled
                             ? () {
                                 Navigator.pushReplacementNamed(
-                                    context, '/accountCredentials');
+                                    context, '/accountCredentials',
+                                    arguments: userData);
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
@@ -132,9 +143,7 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                         child: Text(
                           'Verificar',
                           style: TextStyle(
-                            fontSize: responsive.dp(2),
-                            color: Colors.white,
-                          ),
+                              fontSize: responsive.dp(2), color: Colors.white),
                         ),
                       ),
                     ),

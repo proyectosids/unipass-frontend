@@ -111,8 +111,9 @@ class _ExitStudentState extends State<ExitStudent> {
                           background: Container(
                             color: Colors.red,
                             alignment: Alignment.centerRight,
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Icon(Icons.delete, color: Colors.white),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child:
+                                const Icon(Icons.delete, color: Colors.white),
                           ),
                           child: _buildExitItem(
                             context,
@@ -172,7 +173,7 @@ class _ExitStudentState extends State<ExitStudent> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           ),
           child: const Text(
             'Nueva Salida',
@@ -185,7 +186,7 @@ class _ExitStudentState extends State<ExitStudent> {
 
   Widget _buildDatePicker() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: DatePicker(
         DateTime.now(),
         height: 100,
@@ -193,10 +194,10 @@ class _ExitStudentState extends State<ExitStudent> {
         initialSelectedDate: _selectedDate,
         selectionColor: Colors.purple,
         selectedTextColor: Colors.white,
-        dayTextStyle: TextStyle(color: Colors.black),
+        dayTextStyle: const TextStyle(color: Colors.black),
         dateTextStyle:
-            TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        monthTextStyle: TextStyle(color: Colors.black),
+            const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        monthTextStyle: const TextStyle(color: Colors.black),
         onDateChange: (date) {
           setState(() {
             _selectedDate = date;
@@ -256,7 +257,7 @@ class _ExitStudentState extends State<ExitStudent> {
       parsedDate = DateTime.parse(date);
       parsedDateE = DateTime.parse(dateE);
     } catch (e) {
-      return Text('Fecha inválida');
+      return const Text('Fecha inválida');
     }
 
     String formattedDate =
@@ -288,7 +289,7 @@ class _ExitStudentState extends State<ExitStudent> {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
-          leading: SizedBox(
+          leading: const SizedBox(
             width: 40,
             height: 40,
             child: Icon(Icons.event),

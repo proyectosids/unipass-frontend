@@ -154,7 +154,7 @@ class _LoginAppState extends State<LoginApp> {
                       ),
                     ),
                     SizedBox(height: responsive.hp(3)),
-                    LoginTextFields(), // Login form
+                    const LoginTextFields(), // Login form
 
                     SizedBox(height: responsive.hp(2)),
                     Text(

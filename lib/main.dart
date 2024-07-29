@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 void main() async {
@@ -27,10 +25,16 @@ class MyApp extends StatelessWidget {
         LoginApp.routeName: (context) => const LoginApp(),
         NewAccountAuthentication.routeName: (context) =>
             const NewAccountAuthentication(),
-        VerificationNewAccount.routeName: (context) =>
-            const VerificationNewAccount(),
-        NewAccountCredentials.routeName: (context) =>
-            const NewAccountCredentials(),
+        VerificationNewAccount.routeName: (context) {
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+          return VerificationNewAccount(userData: args);
+        },
+        NewAccountCredentials.routeName: (context) {
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+          return NewAccountCredentials(userData: args);
+        },
         AuthenticationPassword.routeName: (context) =>
             const AuthenticationPassword(),
         VerificationPassword.routeName: (context) =>
