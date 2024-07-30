@@ -67,6 +67,31 @@ class Student {
       cursoEscolar: json['CURSO_ESCOLAR'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'MATRICULA': matricula,
+      'NOMBRE': nombre,
+      'APELLIDOS': apellidos,
+      'FECHA_NACIMIENTO': fechaNacimiento.toIso8601String(),
+      'SEXO': sexo,
+      'EDAD': edad,
+      'TEL_FIJO': telFijo,
+      'CELULAR': celular,
+      'CORREO_PERSONAL': correoPersonal,
+      'CORREO_INSTITUCIONAL': correoInstitucional,
+      'PAIS': pais,
+      'ESTADO': estado,
+      'CIUDAD': ciudad,
+      'DIRECCION': direccion,
+      'CP': cp,
+      'CURP': curp,
+      'NIVEL_EDUCATIVO': nivelAcademico,
+      'CAMPO': campus,
+      'LeNombreEscuelaOficial': nombreEscuela,
+      'CURSO_ESCOLAR': cursoEscolar,
+    };
+  }
 }
 
 class Tutor {
@@ -108,6 +133,21 @@ class Tutor {
       correo: json['EMAIL_TUTOR'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'NOMBRE_TUTOR': nombre,
+      'APELLIDOS_TUTOR': apellidos,
+      'TELETONO_TUTOR': telefono,
+      'DIRECCION_TUTOR': direccion,
+      'PAIS_TUTOR': pais,
+      'ESTADO_TUTOR': estado,
+      'CIUDAD_TUTOR': ciudad,
+      'CP_TUTOR': cp,
+      'MOVIL_TUTOR': celular,
+      'EMAIL_TUTOR': correo,
+    };
+  }
 }
 
 class Work {
@@ -124,6 +164,13 @@ class Work {
       jefeDepartamento: json['JEFE DEPARTAMENTO'] ?? '',
       nombreDepartamento: json['DEPARTAMENTO'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'JEFE DEPARTAMENTO': jefeDepartamento,
+      'DEPARTAMENTO': nombreDepartamento,
+    };
   }
 }
 
@@ -169,6 +216,22 @@ class Employee {
       departamento: json['DEPARTAMENTO'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'MATRICULA': matricula,
+      'CAMPUS': campus,
+      'NOMBRES': nombres,
+      'APELLIDOS': apellidos,
+      'FECHA_NACIMIENTO': fechaNacimiento.toIso8601String(),
+      'EDAD': edad,
+      'SEXO': sexo,
+      'CELULAR': celular,
+      'EMAIl_INSTITUCIONAL': emailInstitucional,
+      'ID_DEPARATAMENTO': idDepartamento,
+      'DEPARTAMENTO': departamento,
+    };
+  }
 }
 
 class UserData {
@@ -202,5 +265,15 @@ class UserData {
           ?.map((i) => Employee.fromJson(i))
           .toList(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'student': students?.map((s) => s.toJson()).toList(),
+      'type': type,
+      'Tutor': tutors?.map((t) => t.toJson()).toList(),
+      'work': works?.map((w) => w.toJson()).toList(),
+      'employee': employees?.map((e) => e.toJson()).toList(),
+    };
   }
 }

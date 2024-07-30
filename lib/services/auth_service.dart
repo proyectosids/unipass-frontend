@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_application_unipass/config/config_url.dart'; // Importa la configuración
-import 'package:flutter_application_unipass/utils/auth_utils.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 
 Future<Map<String, dynamic>> authenticateUser(
     String matricula, String correo, String contrasena) async {

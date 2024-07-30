@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/services/document_service.dart';
-import 'package:flutter_application_unipass/utils/auth_utils.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter_svg/flutter_svg.dart';

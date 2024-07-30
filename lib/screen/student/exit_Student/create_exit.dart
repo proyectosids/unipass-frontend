@@ -1,7 +1,7 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
-import 'package:flutter_application_unipass/utils/auth_utils.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
 

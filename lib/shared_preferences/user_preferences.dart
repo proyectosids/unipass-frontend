@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_application_unipass/models/users.dart';
 
 class AuthUtils {
   static const String _userIdKey = 'userId';
@@ -16,5 +17,14 @@ class AuthUtils {
   static Future<void> clearUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userIdKey);
+  }
+
+  static Future<void> saveUserInfo(UserData userData) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (userData.students != null && userData.students!.isNotEmpty) {
+      Student student = userData.students!.first;
+      await prefs.setString('nivelAcademico', student.nivelAcademico);
+      await prefs.setString('sexo', student.sexo);
+    }
   }
 }

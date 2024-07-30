@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/models/users.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
+import 'package:flutter_application_unipass/services/register_service.dart'; // Importar el servicio de registro
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Importar SharedPreferences
+// Importar dart:convert para usar jsonEncode
 
 class LoginTextFields extends StatefulWidget {
   const LoginTextFields({super.key});
@@ -15,6 +19,15 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
   String _usernameOrEmail = '';
   String _password = '';
 
+  Future<void> saveUserInfo(UserData userData) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (userData.students != null && userData.students!.isNotEmpty) {
+      Student student = userData.students!.first;
+      await prefs.setString('nivelAcademico', student.nivelAcademico);
+      await prefs.setString('sexo', student.sexo);
+    }
+  }
+
   void _submit() async {
     final isOk = _formKey.currentState?.validate() ?? false;
     if (isOk) {
@@ -23,6 +36,15 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
             _usernameOrEmail, _usernameOrEmail, _password);
         if (result['success']) {
           String tipoUser = result['user']['TipoUser'];
+          String userId = result['user']['Matricula'];
+
+          // Llamar al servicio con la matrícula del usuario
+          final registerService = RegisterService();
+          final userData = await registerService.getDatosUser(userId);
+
+          // Guardar la información del usuario en SharedPreferences
+          await saveUserInfo(userData);
+
           // Redirigir según el tipo de usuario
           if (tipoUser == 'ALUMNO') {
             Navigator.pushNamedAndRemoveUntil(
@@ -67,7 +89,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
         child: Column(
           children: [
             TextFieldWidget(
-              label: 'Matricula o Correo',
+              label: 'Matricula o correo',
               onChanged: (text) {
                 _usernameOrEmail =
                     text; // Guardar el valor de la matrícula o correo

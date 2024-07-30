@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_application_unipass/config/config_url.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
@@ -14,7 +15,7 @@ class DocumentService {
 
     // Agregar campos
     request.fields['IdDocumento'] = idDocumento.toString();
-    request.fields['IdUser'] = idUser.toString();
+    request.fields['IdLogin'] = idUser.toString();
 
     // Obtener el tipo MIME del archivo
     String? mimeType = lookupMimeType(file.path);

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 
 class HomeStudentScreen extends StatefulWidget {
   static const routeName = '/homeStudent';

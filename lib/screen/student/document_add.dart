@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'dart:io';
 import 'package:flutter_application_unipass/services/document_service.dart';
-import 'package:flutter_application_unipass/utils/auth_utils.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DocumentAddStudent extends StatefulWidget {
@@ -28,12 +27,29 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
   String? fileName;
   File? file;
   final DocumentService _documentService = DocumentService();
+  String? nivelAcademico;
+  String? sexo;
 
   @override
   void initState() {
     super.initState();
     isFileAttached = widget.isUploaded;
     fileName = widget.initialFileName;
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nivelAcademico = prefs.getString('nivelAcademico');
+      sexo = prefs.getString('sexo');
+    });
+
+    if (nivelAcademico == null || sexo == null) {
+      print('Nivel académico o sexo no encontrado en SharedPreferences');
+    } else {
+      print('Nivel académico: $nivelAcademico, Sexo: $sexo');
+    }
   }
 
   Future<void> _pickFile() async {
@@ -66,16 +82,13 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
       return;
     }
 
-    Map<String, dynamic>? userInfo = await getUserInfo(id);
-    if (userInfo == null) {
-      print('User info not found');
+    if (nivelAcademico == null || sexo == null) {
+      print('Nivel académico o sexo no encontrado en SharedPreferences');
       return;
     }
 
-    String nivelAcademico = userInfo['NivelAcademico'];
-    String sexo = userInfo['Sexo'];
     int idDocumento =
-        determineIdDocumento(widget.documentName, nivelAcademico, sexo);
+        determineIdDocumento(widget.documentName, nivelAcademico!, sexo!);
 
     if (isFileAttached && file != null) {
       try {
@@ -213,13 +226,13 @@ int determineIdDocumento(
   if (documentName == 'Reglamento ULV') {
     return 1;
   } else if (documentName == 'Reglamento dormitorio') {
-    if (nivelAcademico == 'Bachiller' && genero == 'Hombre') {
+    if (nivelAcademico == 'Bachiller' && genero == 'M') {
       return 3;
-    } else if (nivelAcademico == 'Universitario' && genero == 'Hombre') {
+    } else if (nivelAcademico == 'UNIVERSITARIO' && genero == 'M') {
       return 2;
-    } else if (nivelAcademico == 'Universitario' && genero == 'Mujer') {
+    } else if (nivelAcademico == 'UNIVERSITARIO' && genero == 'F') {
       return 4;
-    } else if (nivelAcademico == 'Bachiller' && genero == 'Mujer') {
+    } else if (nivelAcademico == 'Bachiller' && genero == 'F') {
       return 5;
     }
   } else if (documentName == 'Acuerdo de consentimiento') {
