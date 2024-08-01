@@ -26,5 +26,14 @@ class AuthUtils {
       await prefs.setString('nivelAcademico', student.nivelAcademico);
       await prefs.setString('sexo', student.sexo);
     }
+    if (userData.works != null && userData.works!.isNotEmpty) {
+      Work work = userData.works!.first;
+      await prefs.setString('trabajo', work.jefeDepartamento);
+    }
+  }
+
+  static Future<String?> getTrabajo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('trabajo');
   }
 }

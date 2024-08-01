@@ -26,7 +26,6 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     minute: TimeOfDay.now().minute,
   );
   String _selectedReason = 'Compras';
-  String _selectedTransport = '';
   String _selectedType = '';
   final PermissionService _permissionService = PermissionService();
   final Map<String, int> typeMap = {
@@ -39,7 +38,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   void initState() {
     super.initState();
     _selectedStartDate = widget.initialDate;
-    _selectedEndDate = _selectedStartDate.add(Duration(hours: 4));
+    _selectedEndDate = _selectedStartDate.add(const Duration(hours: 4));
   }
 
   Future<void> _selectDateTime(BuildContext context, bool isStart) async {
@@ -136,9 +135,8 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       'FechaSalida': _selectedStartDate.toIso8601String(),
       'FechaRegreso': _selectedEndDate.toIso8601String(),
       'Motivo': _selectedReason,
-      'MedioSalida': _selectedTransport,
       'Tipo': _selectedType,
-      'IdUsuario': userId,
+      'IdUser': userId,
       'IdTipoSalida': typeMap[_selectedType],
     };
 
@@ -159,9 +157,9 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   bool _isValidDayForSex(String sex, DateTime date) {
     final int dayOfWeek =
         date.weekday; // 1 = Lunes, 2 = Martes, ..., 7 = Domingo
-    if (sex == 'Mujer' && (dayOfWeek == 1 || dayOfWeek == 3)) {
+    if (sex == 'F' && (dayOfWeek == 1 || dayOfWeek == 3)) {
       return true;
-    } else if (sex == 'Hombre' && (dayOfWeek == 2 || dayOfWeek == 4)) {
+    } else if (sex == 'M' && (dayOfWeek == 2 || dayOfWeek == 4)) {
       return true;
     }
     return false;
@@ -173,7 +171,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Día no permitido'),
-          content: Text(sex == 'Mujer'
+          content: Text(sex == 'F'
               ? 'Las mujeres solo pueden crear salidas los lunes y miércoles.'
               : 'Los hombres solo pueden crear salidas los martes y jueves.'),
           actions: [
@@ -241,19 +239,6 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               },
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Medio por el cual saldrás',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildTransportChip('Caminando'),
-                _buildTransportChip('En vehiculo'),
-              ],
-            ),
-            const SizedBox(height: 20),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFA726),
@@ -264,7 +249,13 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                     _createExit(context);
                   });
                 },
-                child: const Text('Crear salida')),
+                child: const Text(
+                  'Crear salida',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                )),
           ],
         ),
       ),
@@ -278,19 +269,6 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       onSelected: (bool selected) {
         setState(() {
           _selectedType = label;
-        });
-      },
-      selectedColor: const Color.fromRGBO(182, 217, 59, 1),
-    );
-  }
-
-  Widget _buildTransportChip(String label) {
-    return ChoiceChip(
-      label: Text(label),
-      selected: _selectedTransport == label,
-      onSelected: (bool selected) {
-        setState(() {
-          _selectedTransport = label;
         });
       },
       selectedColor: const Color.fromRGBO(182, 217, 59, 1),

@@ -40,15 +40,13 @@ class ExitDetailScreen extends StatelessWidget {
                           'Usuario', exitDetails['NombreUsuario'])),
                 ],
               ),
-              _buildDetailItem('Lugar de partida', exitDetails['LugarPartida']),
               _buildDetailItem(
                   'Fecha y hora de salida', exitDetails['FechaSalida']),
               _buildDetailItem(
                   'Fecha y hora de retorno', exitDetails['FechaRegreso']),
-              _buildDetailItem('Área de trabajo', exitDetails['AreaTrabajo']),
+              //_buildDetailItem('Área de trabajo', exitDetails['AreaTrabajo']),
               _buildDetailItem('Observaciones', exitDetails['Observaciones']),
               _buildDetailItem('Motivo', exitDetails['Motivo']),
-              _buildDetailItem('Punto de partida', exitDetails['PuntoPartida']),
               _buildDetailItem('Contacto', exitDetails['Contacto']),
               const SizedBox(height: 10),
               const Text(
@@ -88,7 +86,13 @@ class ExitDetailScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Cerrar'),
+                  child: const Text(
+                    'Cerrar',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20),
+                  ),
                 ),
               ),
             ],
