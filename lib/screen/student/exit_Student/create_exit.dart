@@ -4,6 +4,7 @@ import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
+import 'package:flutter_application_unipass/models/permission.dart';
 
 class CreateExitScreen extends StatefulWidget {
   static const routeName = '/createExit';
@@ -121,7 +122,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       return;
     }
 
-    String userSex = userInfo['Sexo'];
+    String userSex = userInfo['Sexo'] ?? ''; // Manejo de posibles valores null
     // Validar el día según el sexo, solo si el tipo de salida es 'Pueblo'
     if (_selectedType == 'Pueblo' &&
         !_isValidDayForSex(userSex, _selectedStartDate)) {
@@ -142,14 +143,41 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
 
     try {
       final result = await _permissionService.createPermission(newExit);
-      Navigator.pop(context, {
-        'title': 'Salida ${result['Tipo']}',
-        'date': 'el ${_formatDateTime(_selectedStartDate, _selectedStartTime)}',
-        'status': result['StatusPermission'],
-        'FechaSolicitada': newExit['FechaSolicitada'],
-        'Descripcion': _selectedType,
-      });
+
+      // Crear instancia de Permission
+      Permission newPermission = Permission(
+        id: result['IdPermission'] as int? ?? 0,
+        fechasolicitud: DateTime.parse(newExit['FechaSolicitada'] as String),
+        statusPermission: result['StatusPermission'] as String? ?? 'Pendiente',
+        fechasalida: DateTime.parse(newExit['FechaSalida'] as String),
+        fecharegreso: DateTime.parse(newExit['FechaRegreso'] as String),
+        motivo: newExit['Motivo'] as String? ?? '',
+        idlogin: newExit['IdUser'] as int? ?? 0,
+        idsalida: newExit['IdTipoSalida'] as int? ?? 0,
+        observaciones: '', // Agrega cualquier campo adicional requerido
+        descripcion: newExit['Tipo'] as String? ?? '',
+        nombre: userInfo['Nombre'] as String? ?? '',
+        apellidos: userInfo['Apellidos'] as String? ?? '',
+        contacto: userInfo['Celular'] as String? ?? '',
+        trabajo: userInfo['DEPARTAMENTO'] as String? ??
+            '', // Agrega cualquier campo adicional requerido
+        jefetrabajo: '', // Agrega cualquier campo adicional requerido
+        nombretutor: '', // Agrega cualquier campo adicional requerido
+        apellidotutor: '', // Agrega cualquier campo adicional requerido
+        moviltutor: '', // Agrega cualquier campo adicional requerido
+        matricula: userInfo['MATRICULA'] as String? ?? '',
+        correo: userInfo['Correo'] as String? ?? '',
+        tipoUser: userInfo['TipoUser'] as String? ?? '',
+        sexo: userInfo['Sexo'] as String? ?? '',
+        fechaNacimiento: DateTime.parse(
+            userInfo['FechaNacimiento'] as String? ?? '1900-01-01'),
+        celular: userInfo['Celular'] as String? ?? '',
+      );
+
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context, newPermission);
     } catch (e) {
+      // ignore: avoid_print
       print('Failed to create exit: $e');
     }
   }
@@ -240,22 +268,22 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFA726),
-                  minimumSize: const Size(double.infinity, 50),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFA726),
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              onPressed: () {
+                _createExit(context);
+              },
+              child: const Text(
+                'Crear salida',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
                 ),
-                onPressed: () {
-                  setState(() {
-                    _createExit(context);
-                  });
-                },
-                child: const Text(
-                  'Crear salida',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
-                )),
+              ),
+            ),
           ],
         ),
       ),

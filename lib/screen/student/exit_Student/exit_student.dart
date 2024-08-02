@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/models/permission.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
@@ -9,59 +10,70 @@ class ExitStudent extends StatefulWidget {
   const ExitStudent({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _ExitStudentState createState() => _ExitStudentState();
 }
 
 class _ExitStudentState extends State<ExitStudent> {
   DateTime _selectedDate = DateTime.now();
-  List<Map<String, dynamic>> _exits = [];
+  List<Permission> _permissions = [];
   final PermissionService _permissionService = PermissionService();
+  String? matricula;
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('es_MX', null);
-    _loadExits();
+    _loadPermissions();
   }
 
-  Future<void> _loadExits() async {
+  Future<void> _loadPermissions() async {
     int? id = await AuthUtils.getUserId();
     if (id == null) {
       print('User ID not found');
       return;
     }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    matricula = prefs.getString('matricula');
+
+    if (matricula == null) {
+      print('Matricula not found');
+      return;
+    }
 
     try {
-      List<Map<String, dynamic>> exits =
-          await _permissionService.getPermissions(id);
+      List<Permission> permissions =
+          await _permissionService.getPermissions(id, matricula!);
+
+      // Imprimir los permisos para depuración
+      permissions.forEach((permission) {
+        print(
+            'Permission: ${permission.descripcion}, ${permission.fechasolicitud}');
+      });
 
       // Ordenar los permisos por fecha, asegurándose de que el más reciente esté primero
-      exits.sort((a, b) {
-        DateTime dateA = DateTime.parse(a['FechaSolicitada'] ?? '');
-        DateTime dateB = DateTime.parse(b['FechaSolicitada'] ?? '');
-        return dateB.compareTo(dateA); // Orden descendente
-      });
+      permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
 
       setState(() {
-        _exits = exits;
+        _permissions = permissions;
       });
     } catch (e) {
-      print('Failed to load exits: $e');
+      print('Failed to load permissions: $e');
     }
   }
 
-  Future<void> _cancelExit(int id) async {
+  Future<void> _cancelPermission(int id) async {
     try {
       await _permissionService.cancelPermission(id);
-      await _loadExits(); // Recargar las salidas después de cancelar
+      await _loadPermissions(); // Recargar las salidas después de cancelar
     } catch (e) {
-      print('Failed to cancel exit: $e');
+      print('Failed to cancel permission: $e');
     }
   }
 
-  void _addNewExit(Map<String, dynamic> newExit) {
+  void _addNewPermission(Permission newPermission) {
     setState(() {
-      _exits.insert(0, newExit);
+      _permissions.insert(0, newPermission);
     });
   }
 
@@ -95,18 +107,18 @@ class _ExitStudentState extends State<ExitStudent> {
             const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
-                itemCount: _exits.length,
+                itemCount: _permissions.length,
                 itemBuilder: (context, index) {
-                  final exit = _exits[index];
-                  return exit['StatusPermission'] == 'Pendiente'
+                  final permission = _permissions[index];
+                  return permission.statusPermission == 'Pendiente'
                       ? Dismissible(
-                          key: Key(exit['IdPermission'].toString()),
+                          key: Key(permission.id.toString()),
                           direction: DismissDirection.endToStart,
                           confirmDismiss: (direction) async {
                             return await _showConfirmationDialog(context);
                           },
                           onDismissed: (direction) {
-                            _cancelExit(exit['IdPermission']);
+                            _cancelPermission(permission.id);
                           },
                           background: Container(
                             color: Colors.red,
@@ -115,22 +127,22 @@ class _ExitStudentState extends State<ExitStudent> {
                             child:
                                 const Icon(Icons.delete, color: Colors.white),
                           ),
-                          child: _buildExitItem(
+                          child: _buildPermissionItem(
                             context,
-                            'Salida ${exit['Descripcion'] ?? ''}',
-                            exit['FechaSolicitada'] ?? '',
-                            exit['FechaSalida'] ?? '',
-                            exit['StatusPermission'] ?? '',
-                            exit,
+                            'Salida ${permission.descripcion}',
+                            permission.fechasolicitud.toIso8601String(),
+                            permission.fechasalida.toIso8601String(),
+                            permission.statusPermission,
+                            permission,
                           ),
                         )
-                      : _buildExitItem(
+                      : _buildPermissionItem(
                           context,
-                          'Salida ${exit['Descripcion'] ?? ''}',
-                          exit['FechaSolicitada'] ?? '',
-                          exit['FechaSalida'] ?? '',
-                          exit['StatusPermission'] ?? '',
-                          exit,
+                          'Salida ${permission.descripcion}',
+                          permission.fechasolicitud.toIso8601String(),
+                          permission.fechasalida.toIso8601String(),
+                          permission.statusPermission,
+                          permission,
                         );
                 },
               ),
@@ -161,12 +173,12 @@ class _ExitStudentState extends State<ExitStudent> {
                   initialDate: _selectedDate,
                 ),
               ),
-            ).then((value) {
-              if (value != null) {
-                _addNewExit(value);
-                _loadExits(); // Recargar las salidas cuando regresas de la otra pantalla
-              }
-            });
+            );
+
+            if (result != null && result is Permission) {
+              _addNewPermission(result);
+              _loadPermissions(); // Recargar las salidas cuando regresas de la otra pantalla
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple,
@@ -249,8 +261,8 @@ class _ExitStudentState extends State<ExitStudent> {
     }
   }
 
-  Widget _buildExitItem(BuildContext context, String title, String date,
-      String dateE, String status, Map<String, dynamic> exit) {
+  Widget _buildPermissionItem(BuildContext context, String title, String date,
+      String dateE, String status, Permission permission) {
     DateTime parsedDate;
     DateTime parsedDateE;
     try {
@@ -262,7 +274,6 @@ class _ExitStudentState extends State<ExitStudent> {
 
     String formattedDate =
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
-
     String formattedDateE =
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDateE);
 
@@ -272,16 +283,16 @@ class _ExitStudentState extends State<ExitStudent> {
           context,
           '/exitDetail',
           arguments: {
-            'TipoSalida': exit['Descripcion'],
-            'NombreUsuario': exit['Nombre'],
-            'LugarPartida': exit['MedioSalida'],
-            'FechaSalida': exit['FechaSalida'],
-            'FechaRegreso': exit['FechaRegreso'],
-            //'AreaTrabajo': exit['Departamento'],
-            'Observaciones': exit['Observaciones'],
-            'Motivo': exit['Motivo'],
-            'Contacto': exit['Celular'],
-            'StatusPermission': exit['StatusPermission'],
+            'TipoSalida': permission.descripcion,
+            'NombreAlumno': permission.nombre,
+            'ApellidosAlumno': permission.apellidos,
+            'FechaSalida': permission.fechasalida.toIso8601String(),
+            'FechaRegreso': permission.fecharegreso.toIso8601String(),
+            'Observaciones': permission.observaciones,
+            'Motivo': permission.motivo,
+            'Contacto': permission.celular,
+            'StatusPermission': permission.statusPermission,
+            'Trabajo': permission.trabajo,
           },
         );
       },
@@ -289,7 +300,7 @@ class _ExitStudentState extends State<ExitStudent> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
           leading: const SizedBox(
-            width: 40,
+            width: 15,
             height: 40,
             child: Icon(Icons.event),
           ),

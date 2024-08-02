@@ -25,10 +25,12 @@ class AuthUtils {
       Student student = userData.students!.first;
       await prefs.setString('nivelAcademico', student.nivelAcademico);
       await prefs.setString('sexo', student.sexo);
+      await prefs.setString('matricula', student.matricula);
     }
     if (userData.works != null && userData.works!.isNotEmpty) {
       Work work = userData.works!.first;
       await prefs.setString('trabajo', work.jefeDepartamento);
+      await prefs.setString('nombreDepartamento', work.nombreDepartamento);
     }
   }
 

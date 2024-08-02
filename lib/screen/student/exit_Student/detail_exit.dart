@@ -13,6 +13,9 @@ class ExitDetailScreen extends StatelessWidget {
 
     bool isFinalized = exitDetails['StatusPermission'] == 'Finalizado';
 
+    String nombreCompleto =
+        '${exitDetails['NombreAlumno'] ?? ''} ${exitDetails['ApellidosAlumno'] ?? ''}';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -28,27 +31,31 @@ class ExitDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildDetailItem('Alumno', nombreCompleto),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                      child: _buildDetailItem(
-                          'Tipo de salida', exitDetails['TipoSalida'])),
+                    child: _buildDetailItem(
+                        'Tipo de salida', exitDetails['TipoSalida'] ?? ''),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _buildDetailItem(
-                          'Usuario', exitDetails['NombreUsuario'])),
+                    child:
+                        _buildDetailItem('Motivo', exitDetails['Motivo'] ?? ''),
+                  ),
                 ],
               ),
               _buildDetailItem(
-                  'Fecha y hora de salida', exitDetails['FechaSalida']),
+                  'Fecha y hora de salida', exitDetails['FechaSalida'] ?? ''),
               _buildDetailItem(
-                  'Fecha y hora de retorno', exitDetails['FechaRegreso']),
-              //_buildDetailItem('Área de trabajo', exitDetails['AreaTrabajo']),
-              _buildDetailItem('Observaciones', exitDetails['Observaciones']),
-              _buildDetailItem('Motivo', exitDetails['Motivo']),
-              _buildDetailItem('Contacto', exitDetails['Contacto']),
-              const SizedBox(height: 10),
+                  'Fecha y hora de retorno', exitDetails['FechaRegreso'] ?? ''),
+              _buildDetailItem(
+                  'Observaciones', exitDetails['Observaciones'] ?? ''),
+              _buildDetailItem(
+                  'Contacto Personal', exitDetails['Contacto'] ?? ''),
+              _buildDetailItem('Trabajo', exitDetails['Trabajo'] ?? ''),
+              const SizedBox(height: 5),
               const Text(
                 'Estatus',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -56,7 +63,7 @@ class ExitDetailScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Center(
                 child: Chip(
-                  label: Text(exitDetails['StatusPermission']),
+                  label: Text(exitDetails['StatusPermission'] ?? ''),
                   backgroundColor:
                       _getStatusColor(exitDetails['StatusPermission']),
                   labelStyle: const TextStyle(color: Colors.white),
@@ -124,7 +131,7 @@ class ExitDetailScreen extends StatelessWidget {
             title,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 1),
           Text(
             value,
             style: const TextStyle(fontSize: 16, color: Colors.black87),

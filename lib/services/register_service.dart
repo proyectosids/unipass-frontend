@@ -12,6 +12,12 @@ class RegisterService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)['data'] ??
           jsonDecode(response.body)['Data'];
+
+      // Verificar que los datos no sean nulos
+      if (data == null) {
+        throw Exception('Invalid data received from API');
+      }
+
       return UserData.fromJson(data);
     } else {
       throw Exception('Failed to search user info');

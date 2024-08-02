@@ -25,6 +25,9 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
       Student student = userData.students!.first;
       await prefs.setString('nivelAcademico', student.nivelAcademico);
       await prefs.setString('sexo', student.sexo);
+      await prefs.setString('matricula', student.matricula);
+      Work work = userData.works!.first;
+      await prefs.setString('nombreDepartamento', work.nombreDepartamento);
     }
   }
 

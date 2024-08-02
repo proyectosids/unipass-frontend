@@ -11,8 +11,18 @@ class Permission {
   final String descripcion;
   final String nombre;
   final String apellidos;
-  final String trabajo;
   final String contacto;
+  final String trabajo;
+  final String jefetrabajo;
+  final String nombretutor;
+  final String apellidotutor;
+  final String moviltutor;
+  final String matricula;
+  final String correo;
+  final String tipoUser;
+  final String sexo;
+  final DateTime fechaNacimiento;
+  final String celular;
 
   Permission({
     required this.id,
@@ -27,36 +37,71 @@ class Permission {
     required this.descripcion,
     required this.nombre,
     required this.apellidos,
-    required this.trabajo,
     required this.contacto,
+    required this.trabajo,
+    required this.jefetrabajo,
+    required this.nombretutor,
+    required this.apellidotutor,
+    required this.moviltutor,
+    required this.matricula,
+    required this.correo,
+    required this.tipoUser,
+    required this.sexo,
+    required this.fechaNacimiento,
+    required this.celular,
   });
 
-  factory Permission.fromJson(Map<String, dynamic> json) {
+  factory Permission.fromJson(
+      Map<String, dynamic> json, Map<String, dynamic> userJson) {
     return Permission(
       id: json['IdPermission'] ?? 0,
-      fechasolicitud: json['FechaSolicitada'] ?? '',
+      fechasolicitud: DateTime.parse(json['FechaSolicitada'] ?? '1900-01-01'),
       statusPermission: json['StatusPermission'] ?? '',
-      fechasalida: json['FechaSalida'] ?? '',
-      fecharegreso: json['FechaRegreso'] ?? '',
+      fechasalida: DateTime.parse(json['FechaSalida'] ?? '1900-01-01'),
+      fecharegreso: DateTime.parse(json['FechaRegreso'] ?? '1900-01-01'),
       motivo: json['Motivo'] ?? '',
-      idlogin: json['IdLogin'] ?? '',
-      idsalida: json['IdTipoSalida'] ?? '',
+      idlogin: json['IdLogin'] ?? 0,
+      idsalida: json['IdTipoSalida'] ?? 0,
       observaciones: json['Observaciones'] ?? '',
       descripcion: json['Descripcion'] ?? '',
       nombre: json['Nombre'] ?? '',
       apellidos: json['Apellidos'] ?? '',
-      trabajo: json['Trabajo'] ?? '',
-      contacto: json['Celular'] ?? '',
+      contacto: userJson['student'] != null && userJson['student'].isNotEmpty
+          ? userJson['student'][0]['CELULAR'] ?? ''
+          : '',
+      trabajo: userJson['work'] != null && userJson['work'].isNotEmpty
+          ? userJson['work'][0]['DEPARTAMENTO'] ?? ''
+          : '',
+      jefetrabajo: userJson['work'] != null && userJson['work'].isNotEmpty
+          ? userJson['work'][0]['JEFE DEPARTAMENTO'] ?? ''
+          : '',
+      nombretutor: userJson['Tutor'] != null && userJson['Tutor'].isNotEmpty
+          ? userJson['Tutor'][0]['NOMBRE_TUTOR'] ?? ''
+          : '',
+      apellidotutor: userJson['Tutor'] != null && userJson['Tutor'].isNotEmpty
+          ? userJson['Tutor'][0]['APELLIDOS_TUTOR'] ?? ''
+          : '',
+      moviltutor: userJson['Tutor'] != null && userJson['Tutor'].isNotEmpty
+          ? userJson['Tutor'][0]['MOVIL_TUTOR'] ?? ''
+          : '',
+      matricula: userJson['student'] != null && userJson['student'].isNotEmpty
+          ? userJson['student'][0]['MATRICULA'] ?? ''
+          : '',
+      correo: json['Correo'] ?? '',
+      tipoUser: json['TipoUser'] ?? '',
+      sexo: json['Sexo'] ?? '',
+      fechaNacimiento: DateTime.parse(json['FechaNacimiento'] ?? '1900-01-01'),
+      celular: json['Celular'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'IdPermission': id,
-      'FechaSolicitada': fechasolicitud,
+      'FechaSolicitada': fechasolicitud.toIso8601String(),
       'StatusPermission': statusPermission,
-      'FechaSalida': fechasalida,
-      'FechaRegreso': fecharegreso,
+      'FechaSalida': fechasalida.toIso8601String(),
+      'FechaRegreso': fecharegreso.toIso8601String(),
       'Motivo': motivo,
       'IdLogin': idlogin,
       'IdTipoSalida': idsalida,
@@ -64,8 +109,18 @@ class Permission {
       'Descripcion': descripcion,
       'Nombre': nombre,
       'Apellidos': apellidos,
-      'Trabajo': trabajo,
-      'Celular': contacto,
+      'CELULAR': contacto,
+      'Departamento': trabajo,
+      'JEFE DEPARTAMENTO': jefetrabajo,
+      'NOMBRE_TUTOR': nombretutor,
+      'APELLIDOS_TUTOR': apellidotutor,
+      'MOVIL_TUTOR': moviltutor,
+      'MATRICULA': matricula,
+      'Correo': correo,
+      'TipoUser': tipoUser,
+      'Sexo': sexo,
+      'FechaNacimiento': fechaNacimiento.toIso8601String(),
+      'Celular': celular,
     };
   }
 }
