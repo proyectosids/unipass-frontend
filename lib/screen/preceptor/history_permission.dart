@@ -1,26 +1,25 @@
 import 'package:flutter_application_unipass/models/permission.dart';
-import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 
-class ExitStudent extends StatefulWidget {
-  static const routeName = '/ExitStudent';
+class HistoryPermissionAuthorization extends StatefulWidget {
+  static const routeName = '/AuthorizationPreceptor';
 
-  const ExitStudent({Key? key}) : super(key: key);
+  const HistoryPermissionAuthorization({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _ExitStudentState createState() => _ExitStudentState();
+  _HistoryPermissionAuthorizationState createState() =>
+      _HistoryPermissionAuthorizationState();
 }
 
-class _ExitStudentState extends State<ExitStudent> {
+class _HistoryPermissionAuthorizationState
+    extends State<HistoryPermissionAuthorization> {
   DateTime _selectedDate = DateTime.now();
   List<Permission> _permissions = [];
   final PermissionService _permissionService =
       PermissionService(RegisterService());
-  String? matricula;
 
   @override
   void initState() {
@@ -30,13 +29,8 @@ class _ExitStudentState extends State<ExitStudent> {
   }
 
   Future<void> _loadPermissions() async {
-    int? id = await AuthUtils.getUserId();
-    if (id == null) {
-      print('User ID not found');
-      return;
-    }
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    matricula = prefs.getString('matricula');
+    String? matricula = prefs.getString('matricula');
 
     if (matricula == null) {
       print('Matricula not found');
@@ -45,15 +39,8 @@ class _ExitStudentState extends State<ExitStudent> {
 
     try {
       List<Permission> permissions =
-          await _permissionService.getPermissions(id, matricula!);
+          await _permissionService.getPermissionForAutorizacion(matricula);
 
-      // Imprimir los permisos para depuración
-      permissions.forEach((permission) {
-        print(
-            'Permission: ${permission.descripcion}, ${permission.fechasolicitud}');
-      });
-
-      // Ordenar los permisos por fecha, asegurándose de que el más reciente esté primero
       permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
 
       setState(() {
@@ -62,21 +49,6 @@ class _ExitStudentState extends State<ExitStudent> {
     } catch (e) {
       print('Failed to load permissions: $e');
     }
-  }
-
-  Future<void> _cancelPermission(int id) async {
-    try {
-      await _permissionService.cancelPermission(id);
-      await _loadPermissions(); // Recargar las salidas después de cancelar
-    } catch (e) {
-      print('Failed to cancel permission: $e');
-    }
-  }
-
-  void _addNewPermission(Permission newPermission) {
-    setState(() {
-      _permissions.insert(0, newPermission);
-    });
   }
 
   @override
@@ -112,40 +84,14 @@ class _ExitStudentState extends State<ExitStudent> {
                 itemCount: _permissions.length,
                 itemBuilder: (context, index) {
                   final permission = _permissions[index];
-                  return permission.statusPermission == 'Pendiente'
-                      ? Dismissible(
-                          key: Key(permission.id.toString()),
-                          direction: DismissDirection.endToStart,
-                          confirmDismiss: (direction) async {
-                            return await _showConfirmationDialog(context);
-                          },
-                          onDismissed: (direction) {
-                            _cancelPermission(permission.id);
-                          },
-                          background: Container(
-                            color: Colors.red,
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child:
-                                const Icon(Icons.delete, color: Colors.white),
-                          ),
-                          child: _buildPermissionItem(
-                            context,
-                            'SALIDA ${permission.descripcion}',
-                            permission.fechasolicitud.toIso8601String(),
-                            permission.fechasalida.toIso8601String(),
-                            permission.statusPermission,
-                            permission,
-                          ),
-                        )
-                      : _buildPermissionItem(
-                          context,
-                          'SALIDA ${permission.descripcion}',
-                          permission.fechasolicitud.toIso8601String(),
-                          permission.fechasalida.toIso8601String(),
-                          permission.statusPermission,
-                          permission,
-                        );
+                  return _buildPermissionItem(
+                    context,
+                    'SALIDA ${permission.descripcion} DE ${permission.nombre}',
+                    permission.fechasolicitud.toIso8601String(),
+                    permission.fechasalida.toIso8601String(),
+                    permission.statusPermission,
+                    permission,
+                  );
                 },
               ),
             ),
@@ -178,8 +124,9 @@ class _ExitStudentState extends State<ExitStudent> {
             );
 
             if (result != null && result is Permission) {
-              _addNewPermission(result);
-              _loadPermissions(); // Recargar las salidas cuando regresas de la otra pantalla
+              setState(() {
+                _permissions.insert(0, result);
+              });
             }
           },
           style: ElevatedButton.styleFrom(
@@ -228,29 +175,6 @@ class _ExitStudentState extends State<ExitStudent> {
     return input[0].toUpperCase() + input.substring(1);
   }
 
-  Future<bool?> _showConfirmationDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Confirmación'),
-          content:
-              const Text('¿Estás seguro de que deseas eliminar esta salida?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Eliminar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Aprobado':
@@ -259,20 +183,14 @@ class _ExitStudentState extends State<ExitStudent> {
       case 'Rechazado':
         return Colors.red;
       default:
-        return Colors.orange; // Pendiente or other statuses
+        return Colors.orange; // Pendiente o cualquier otro estado
     }
   }
 
   Widget _buildPermissionItem(BuildContext context, String title, String date,
       String dateE, String status, Permission permission) {
-    DateTime parsedDate;
-    DateTime parsedDateE;
-    try {
-      parsedDate = DateTime.parse(date);
-      parsedDateE = DateTime.parse(dateE);
-    } catch (e) {
-      return const Text('Fecha inválida');
-    }
+    DateTime parsedDate = DateTime.parse(date);
+    DateTime parsedDateE = DateTime.parse(dateE);
 
     String formattedDate =
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
@@ -317,14 +235,10 @@ class _ExitStudentState extends State<ExitStudent> {
                 children: [
                   Text(
                     status,
-                    style: TextStyle(
-                      color: _getStatusColor(status),
-                    ),
+                    style: TextStyle(color: _getStatusColor(status)),
                   ),
-                  const SizedBox(
-                    width: 25,
-                  ),
-                  Text(formattedDate)
+                  const SizedBox(width: 25),
+                  Text(formattedDate),
                 ],
               ),
             ],

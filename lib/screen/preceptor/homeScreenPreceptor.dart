@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/screen/preceptor/index/menu_preceptor.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 class HomeScreenPreceptor extends StatefulWidget {
@@ -14,7 +15,7 @@ class _HomeScreenPreceptorState extends State<HomeScreenPreceptor> {
 
   final List<Widget> screens = [
     const HomePreceptorScreen(),
-    const MenuScreen(),
+    const MenuPreceptorScreen(),
     ProfileScreen(userType: 'preceptor'), // Pasa el tipo de usuario
   ];
 

@@ -21,13 +21,24 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
 
   Future<void> saveUserInfo(UserData userData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     if (userData.students != null && userData.students!.isNotEmpty) {
+      // Guardar información de estudiantes si existe
       Student student = userData.students!.first;
       await prefs.setString('nivelAcademico', student.nivelAcademico);
       await prefs.setString('sexo', student.sexo);
-      await prefs.setString('matricula', student.matricula);
-      Work work = userData.works!.first;
-      await prefs.setString('nombreDepartamento', work.nombreDepartamento);
+      await prefs.setString('matricula', student.matricula.toString());
+
+      if (userData.works != null && userData.works!.isNotEmpty) {
+        Work work = userData.works!.first;
+        await prefs.setString('nombreDepartamento', work.nombreDepartamento);
+      }
+    } else if (userData.employees != null && userData.employees!.isNotEmpty) {
+      // Guardar información de empleados si no hay datos de estudiantes
+      Employee employee = userData.employees!.first;
+      await prefs.setString('sexo', employee.sexo);
+      await prefs.setString('matricula', employee.matricula.toString());
+      await prefs.setString('nombreDepartamento', employee.departamento);
     }
   }
 
@@ -55,7 +66,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
               '/homeStudentMenu', // Ruta para alumnos
               (route) => false,
             );
-          } else if (tipoUser == 'Preceptor') {
+          } else if (tipoUser == 'PRECEPTOR') {
             Navigator.pushNamedAndRemoveUntil(
               context,
               '/homePreceptorMenu', // Ruta para preceptores

@@ -38,4 +38,13 @@ class AuthUtils {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('trabajo');
   }
+
+  static Future<void> clearUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('nivelAcademico');
+    await prefs.remove('sexo');
+    await prefs.remove('matricula');
+    await prefs.remove('trabajo');
+    await prefs.remove('nombreDepartamento');
+  }
 }

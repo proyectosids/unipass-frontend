@@ -5,6 +5,7 @@ import 'package:flutter_application_unipass/shared_preferences/user_preferences.
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/models/permission.dart';
+import 'package:flutter_application_unipass/services/register_service.dart';
 
 class CreateExitScreen extends StatefulWidget {
   static const routeName = '/createExit';
@@ -28,7 +29,8 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   );
   String _selectedReason = 'Compras';
   String _selectedType = '';
-  final PermissionService _permissionService = PermissionService();
+  final PermissionService _permissionService =
+      PermissionService(RegisterService());
   final Map<String, int> typeMap = {
     'Pueblo': 1,
     'Especial': 2,

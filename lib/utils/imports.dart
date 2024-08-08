@@ -8,7 +8,7 @@ export 'package:flutter_application_unipass/screen/Preview/preview2.dart';
 export 'package:flutter_application_unipass/screen/recoverpassword/maillAuthentication.dart';
 export 'package:flutter_application_unipass/screen/recoverpassword/verificationPassword.dart';
 export 'package:flutter_application_unipass/screen/recoverpassword/newPassword.dart';
-export 'package:flutter_application_unipass/screen/student/index/homeStudent.dart';
+export 'package:flutter_application_unipass/screen/student/index/home_student.dart';
 export 'package:flutter_application_unipass/screen/student/index/menu_student.dart';
 export 'package:flutter_application_unipass/screen/student/notifications_students.dart';
 export 'package:flutter_application_unipass/screen/student/exit_Student/exit_student.dart';
@@ -36,7 +36,7 @@ export 'package:flutter_application_unipass/screen/widgets/text_input.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:flutter_application_unipass/screen/student/document_add.dart';
 export 'package:flutter_application_unipass/screen/preceptor/homeScreenPreceptor.dart';
-export 'package:flutter_application_unipass/screen/preceptor/index/homePreceptor.dart';
+export 'package:flutter_application_unipass/screen/preceptor/index/home_preceptor.dart';
 export 'package:flutter_application_unipass/screen/preceptor/noticesPreceptor.dart';
 export 'package:flutter_application_unipass/screen/NewAccount/date_preview.dart';
 //Cloudinary

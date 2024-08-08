@@ -55,10 +55,13 @@ class Permission {
       Map<String, dynamic> json, Map<String, dynamic> userJson) {
     return Permission(
       id: json['IdPermission'] ?? 0,
-      fechasolicitud: DateTime.parse(json['FechaSolicitada'] ?? '1900-01-01'),
+      fechasolicitud:
+          DateTime.tryParse(json['FechaSolicitada'] ?? '') ?? DateTime(1900),
       statusPermission: json['StatusPermission'] ?? '',
-      fechasalida: DateTime.parse(json['FechaSalida'] ?? '1900-01-01'),
-      fecharegreso: DateTime.parse(json['FechaRegreso'] ?? '1900-01-01'),
+      fechasalida:
+          DateTime.tryParse(json['FechaSalida'] ?? '') ?? DateTime(1900),
+      fecharegreso:
+          DateTime.tryParse(json['FechaRegreso'] ?? '') ?? DateTime(1900),
       motivo: json['Motivo'] ?? '',
       idlogin: json['IdLogin'] ?? 0,
       idsalida: json['IdTipoSalida'] ?? 0,
@@ -67,30 +70,31 @@ class Permission {
       nombre: json['Nombre'] ?? '',
       apellidos: json['Apellidos'] ?? '',
       contacto: userJson['student'] != null && userJson['student'].isNotEmpty
-          ? userJson['student'][0]['CELULAR'] ?? ''
+          ? (userJson['student'][0]['CELULAR'] ?? '')
           : '',
       trabajo: userJson['work'] != null && userJson['work'].isNotEmpty
-          ? userJson['work'][0]['DEPARTAMENTO'] ?? ''
+          ? (userJson['work'][0]['DEPARTAMENTO'] ?? '')
           : '',
       jefetrabajo: userJson['work'] != null && userJson['work'].isNotEmpty
-          ? userJson['work'][0]['JEFE DEPARTAMENTO'] ?? ''
+          ? (userJson['work'][0]['JEFE DEPARTAMENTO'] ?? '')
           : '',
       nombretutor: userJson['Tutor'] != null && userJson['Tutor'].isNotEmpty
-          ? userJson['Tutor'][0]['NOMBRE_TUTOR'] ?? ''
+          ? (userJson['Tutor'][0]['NOMBRE_TUTOR'] ?? '')
           : '',
       apellidotutor: userJson['Tutor'] != null && userJson['Tutor'].isNotEmpty
-          ? userJson['Tutor'][0]['APELLIDOS_TUTOR'] ?? ''
+          ? (userJson['Tutor'][0]['APELLIDOS_TUTOR'] ?? '')
           : '',
       moviltutor: userJson['Tutor'] != null && userJson['Tutor'].isNotEmpty
-          ? userJson['Tutor'][0]['MOVIL_TUTOR'] ?? ''
+          ? (userJson['Tutor'][0]['MOVIL_TUTOR'] ?? '')
           : '',
       matricula: userJson['student'] != null && userJson['student'].isNotEmpty
-          ? userJson['student'][0]['MATRICULA'] ?? ''
+          ? (userJson['student'][0]['MATRICULA'] ?? '')
           : '',
       correo: json['Correo'] ?? '',
       tipoUser: json['TipoUser'] ?? '',
       sexo: json['Sexo'] ?? '',
-      fechaNacimiento: DateTime.parse(json['FechaNacimiento'] ?? '1900-01-01'),
+      fechaNacimiento:
+          DateTime.tryParse(json['FechaNacimiento'] ?? '') ?? DateTime(1900),
       celular: json['Celular'] ?? '',
     );
   }

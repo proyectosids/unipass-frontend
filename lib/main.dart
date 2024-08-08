@@ -1,3 +1,5 @@
+import 'package:flutter_application_unipass/screen/preceptor/history_permission.dart';
+import 'package:flutter_application_unipass/screen/preceptor/index/menu_preceptor.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 void main() async {
@@ -76,6 +78,9 @@ class MyApp extends StatelessWidget {
           final args = ModalRoute.of(context)!.settings.arguments as String;
           return ConfirmDataUser(userId: args);
         },
+        HistoryPermissionAuthorization.routeName: (context) =>
+            const HistoryPermissionAuthorization(),
+        MenuPreceptorScreen.routeName: (context) => const MenuPreceptorScreen(),
       },
     );
   }
