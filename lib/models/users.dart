@@ -151,25 +151,33 @@ class Tutor {
 }
 
 class Work {
-  final String jefeDepartamento;
+  final int idDepto;
   final String nombreDepartamento;
+  final int idJefe;
+  final String jefeDepartamento;
 
   Work({
-    required this.jefeDepartamento,
+    required this.idDepto,
     required this.nombreDepartamento,
+    required this.idJefe,
+    required this.jefeDepartamento,
   });
 
   factory Work.fromJson(Map<String, dynamic> json) {
     return Work(
-      jefeDepartamento: json['JEFE DEPARTAMENTO'] ?? '',
+      idDepto: json['ID DEPTO'] ?? '',
       nombreDepartamento: json['DEPARTAMENTO'] ?? '',
+      idJefe: json['ID JEFE'] ?? '',
+      jefeDepartamento: json['JEFE DEPARTAMENTO'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'JEFE DEPARTAMENTO': jefeDepartamento,
+      'ID DEPTO': idDepto,
       'DEPARTAMENTO': nombreDepartamento,
+      'ID JEFE': idJefe,
+      'JEFE DEPARTAMENTO': jefeDepartamento,
     };
   }
 }

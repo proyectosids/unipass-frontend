@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
@@ -30,7 +31,8 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   String _selectedReason = 'Compras';
   String _selectedType = '';
   final PermissionService _permissionService =
-      PermissionService(RegisterService());
+      PermissionService(RegisterService(), AuthorizeService());
+  final AuthServices _authService = AuthServices();
   final Map<String, int> typeMap = {
     'Pueblo': 1,
     'Especial': 2,
@@ -118,7 +120,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       return;
     }
 
-    Map<String, dynamic>? userInfo = await getUserInfo(userId);
+    Map<String, dynamic>? userInfo = await _authService.getUserInfo(userId);
     if (userInfo == null) {
       print('User info not found');
       return;
@@ -161,8 +163,9 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         nombre: userInfo['Nombre'] as String? ?? '',
         apellidos: userInfo['Apellidos'] as String? ?? '',
         contacto: userInfo['Celular'] as String? ?? '',
-        trabajo: userInfo['DEPARTAMENTO'] as String? ??
-            '', // Agrega cualquier campo adicional requerido
+        idTrabajo: userInfo['ID DEPTO'] as int? ?? 0,
+        trabajo: userInfo['DEPARTAMENTO'] as String? ?? '',
+        idJefeTrabajo: userInfo['ID JEFE'] as int? ?? 0,
         jefetrabajo: '', // Agrega cualquier campo adicional requerido
         nombretutor: '', // Agrega cualquier campo adicional requerido
         apellidotutor: '', // Agrega cualquier campo adicional requerido

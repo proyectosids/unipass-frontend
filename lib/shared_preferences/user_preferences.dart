@@ -29,8 +29,10 @@ class AuthUtils {
     }
     if (userData.works != null && userData.works!.isNotEmpty) {
       Work work = userData.works!.first;
-      await prefs.setString('trabajo', work.jefeDepartamento);
+      await prefs.setInt('idDepto', work.idDepto);
       await prefs.setString('nombreDepartamento', work.nombreDepartamento);
+      await prefs.setInt('idJefe', work.idJefe);
+      await prefs.setString('trabajo', work.jefeDepartamento);
     }
   }
 
@@ -44,7 +46,9 @@ class AuthUtils {
     await prefs.remove('nivelAcademico');
     await prefs.remove('sexo');
     await prefs.remove('matricula');
-    await prefs.remove('trabajo');
+    await prefs.remove('idDepto');
     await prefs.remove('nombreDepartamento');
+    await prefs.remove('idJefe');
+    await prefs.remove('trabajo');
   }
 }

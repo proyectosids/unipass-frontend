@@ -18,6 +18,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _usernameOrEmail = '';
   String _password = '';
+  final AuthServices _authService = AuthServices();
 
   Future<void> saveUserInfo(UserData userData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,7 +32,10 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
 
       if (userData.works != null && userData.works!.isNotEmpty) {
         Work work = userData.works!.first;
+        await prefs.setInt('idDepto', work.idDepto);
         await prefs.setString('nombreDepartamento', work.nombreDepartamento);
+        await prefs.setInt('idJefe', work.idJefe);
+        await prefs.setString('trabajo', work.jefeDepartamento);
       }
     } else if (userData.employees != null && userData.employees!.isNotEmpty) {
       // Guardar información de empleados si no hay datos de estudiantes
@@ -46,7 +50,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
     final isOk = _formKey.currentState?.validate() ?? false;
     if (isOk) {
       try {
-        final result = await authenticateUser(
+        final result = await _authService.authenticateUser(
             _usernameOrEmail, _usernameOrEmail, _password);
         if (result['success']) {
           String tipoUser = result['user']['TipoUser'];

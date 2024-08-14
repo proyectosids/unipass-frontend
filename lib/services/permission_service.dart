@@ -1,3 +1,5 @@
+import 'package:flutter_application_unipass/services/authorize_service.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_application_unipass/config/config_url.dart';
@@ -6,8 +8,9 @@ import 'package:flutter_application_unipass/services/register_service.dart';
 
 class PermissionService {
   final RegisterService _registerService;
+  final AuthorizeService _authorizeService;
 
-  PermissionService(this._registerService);
+  PermissionService(this._registerService, this._authorizeService);
 
   Future<List<Permission>> getPermissions(int id, String matricula) async {
     // Obtener datos del usuario
@@ -62,6 +65,23 @@ class PermissionService {
     );
 
     if (response.statusCode == 200) {
+      final permissionCreated = json.decode(response.body);
+      print(permissionCreated);
+      int IdPermission = permissionCreated['Id'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? idDepto = prefs.getInt('idDepto');
+      int? idJefe = prefs.getInt('idJefe');
+      String? nivelAcdemico = prefs.getString('nivelAcademico');
+      String? sexo = prefs.getString('sexo');
+      await _authorizeService.asignarAuthorice(idJefe!, idDepto!, IdPermission);
+      final asigPreceptor =
+          await _authorizeService.asignarPreceptor(nivelAcdemico!, sexo!);
+      print(asigPreceptor);
+      final idPrece = await _registerService.getPreceptor(asigPreceptor!);
+      print(idPrece);
+      await _authorizeService.asignarAuthorice(
+          idPrece!, asigPreceptor, IdPermission);
+
       return json.decode(response.body);
     } else {
       throw Exception('Failed to create permission');

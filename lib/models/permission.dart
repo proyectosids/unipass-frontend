@@ -12,7 +12,9 @@ class Permission {
   final String nombre;
   final String apellidos;
   final String contacto;
+  final int idTrabajo;
   final String trabajo;
+  final int idJefeTrabajo;
   final String jefetrabajo;
   final String nombretutor;
   final String apellidotutor;
@@ -38,7 +40,9 @@ class Permission {
     required this.nombre,
     required this.apellidos,
     required this.contacto,
+    required this.idTrabajo,
     required this.trabajo,
+    required this.idJefeTrabajo,
     required this.jefetrabajo,
     required this.nombretutor,
     required this.apellidotutor,
@@ -72,8 +76,14 @@ class Permission {
       contacto: userJson['student'] != null && userJson['student'].isNotEmpty
           ? (userJson['student'][0]['CELULAR'] ?? '')
           : '',
+      idTrabajo: userJson['work'] != null && userJson['work'].isNotEmpty
+          ? (userJson['work'][0]['ID DEPTO'] ?? '')
+          : '',
       trabajo: userJson['work'] != null && userJson['work'].isNotEmpty
           ? (userJson['work'][0]['DEPARTAMENTO'] ?? '')
+          : '',
+      idJefeTrabajo: userJson['work'] != null && userJson['work'].isNotEmpty
+          ? (userJson['work'][0]['ID JEFE'] ?? '')
           : '',
       jefetrabajo: userJson['work'] != null && userJson['work'].isNotEmpty
           ? (userJson['work'][0]['JEFE DEPARTAMENTO'] ?? '')
@@ -114,7 +124,9 @@ class Permission {
       'Nombre': nombre,
       'Apellidos': apellidos,
       'CELULAR': contacto,
-      'Departamento': trabajo,
+      'ID DEPTO': idTrabajo,
+      'DEPARTAMENTO': trabajo,
+      'ID JEFE': idJefeTrabajo,
       'JEFE DEPARTAMENTO': jefetrabajo,
       'NOMBRE_TUTOR': nombretutor,
       'APELLIDOS_TUTOR': apellidotutor,

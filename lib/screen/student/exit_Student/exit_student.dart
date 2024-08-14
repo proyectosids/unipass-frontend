@@ -1,4 +1,6 @@
 import 'package:flutter_application_unipass/models/permission.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
+import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +21,7 @@ class _ExitStudentState extends State<ExitStudent> {
   DateTime _selectedDate = DateTime.now();
   List<Permission> _permissions = [];
   final PermissionService _permissionService =
-      PermissionService(RegisterService());
+      PermissionService(RegisterService(), AuthorizeService());
   String? matricula;
 
   @override
@@ -81,10 +83,16 @@ class _ExitStudentState extends State<ExitStudent> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Salidas'),
+        title: Text(
+          'Salidas',
+          style: TextStyle(fontSize: responsive.dp(2.5)),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -94,7 +102,7 @@ class _ExitStudentState extends State<ExitStudent> {
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -265,6 +273,7 @@ class _ExitStudentState extends State<ExitStudent> {
 
   Widget _buildPermissionItem(BuildContext context, String title, String date,
       String dateE, String status, Permission permission) {
+    final Responsive responsive = Responsive.of(context);
     DateTime parsedDate;
     DateTime parsedDateE;
     try {
@@ -301,12 +310,15 @@ class _ExitStudentState extends State<ExitStudent> {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
-          leading: const SizedBox(
-            width: 15,
-            height: 40,
-            child: Icon(Icons.event),
+          leading: SizedBox(
+            width: responsive.wp(5),
+            height: responsive.hp(20),
+            child: const Icon(Icons.event),
           ),
-          title: Text(title),
+          title: Text(
+            title,
+            style: TextStyle(fontSize: responsive.dp(1.5)),
+          ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
