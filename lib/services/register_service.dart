@@ -1,6 +1,4 @@
-import 'package:cloudinary_url_gen/config/cloud_config.dart';
 import 'package:flutter_application_unipass/models/users.dart';
-import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_application_unipass/config/config_url.dart';
@@ -37,6 +35,20 @@ class RegisterService {
       print(
           'Fallo al obtener el jefe de trabajo. Status code: ${respuesta.statusCode}');
       return null;
+    }
+  }
+
+  Future<bool?> getValidarJefe(String idEmpleado) async {
+    final uri = Uri.parse('$endpointUrl/api/datos/getjefe/$idEmpleado');
+    final respuesta = await http.get(uri);
+
+    if (respuesta.statusCode == 200) {
+      final data = json.decode(respuesta.body);
+      if (data != null && data.toString().isNotEmpty && data == idEmpleado) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 

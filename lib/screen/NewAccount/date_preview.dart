@@ -55,6 +55,7 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
               'matricula': user.matricula,
               'nombres': isAlumno ? user.nombre : user.nombres,
               'apellidos': user.apellidos,
+              'residencia': isAlumno ? user.residencia : 'NA',
               'sexo': user.sexo,
               'correoInstitucional':
                   isAlumno ? user.correoInstitucional : user.emailInstitucional,
@@ -141,6 +142,18 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                         ),
                         Text(
                           checkEmpty(userData.students![0].nivelAcademico),
+                          style: TextStyle(
+                              fontSize: responsive.dp(1.8),
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'RESIDENCIA:',
+                          style: TextStyle(
+                            fontSize: responsive.dp(1.6),
+                          ),
+                        ),
+                        Text(
+                          checkEmpty(userData.students![0].residencia),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
                               fontWeight: FontWeight.bold),
@@ -288,7 +301,33 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                     width: responsive
                         .wp(60), // Botón ocupa todo el ancho disponible
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        if (userData.type == 'EMPLEADO') {
+                          final registerService = RegisterService();
+                          bool? validojefe =
+                              await registerService.getValidarJefe(
+                                  userData.employees![0].matricula.toString());
+                          if (validojefe != true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'El usuario no es un jefe de departamento')),
+                            );
+                            return;
+                          }
+                        }
+                        if (userData.type == 'ALUMNO') {
+                          if (!isAlumno ||
+                              userData.students![0].residencia != 'INTERNO') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Necesitas ser un alumno interno')),
+                            );
+                            return;
+                          }
+                        }
+
                         Navigator.pushReplacementNamed(
                             context, '/verificationAccount',
                             arguments: userInfo);

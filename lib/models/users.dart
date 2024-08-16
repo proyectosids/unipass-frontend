@@ -2,6 +2,7 @@ class Student {
   final String matricula;
   final String nombre;
   final String apellidos;
+  final String residencia;
   final DateTime fechaNacimiento;
   final String sexo;
   final int edad;
@@ -24,6 +25,7 @@ class Student {
     required this.matricula,
     required this.nombre,
     required this.apellidos,
+    required this.residencia,
     required this.fechaNacimiento,
     required this.sexo,
     required this.edad,
@@ -48,6 +50,7 @@ class Student {
       matricula: json['MATRICULA'] ?? '',
       nombre: json['NOMBRE'] ?? '',
       apellidos: json['APELLIDOS'] ?? '',
+      residencia: json['RESIDENCIA'],
       fechaNacimiento: DateTime.parse(json['FECHA_NACIMIENTO'] ?? '1900-01-01'),
       sexo: json['SEXO'] ?? '',
       edad: json['EDAD'] ?? 0,
@@ -73,6 +76,7 @@ class Student {
       'MATRICULA': matricula,
       'NOMBRE': nombre,
       'APELLIDOS': apellidos,
+      'RESIDENCIA': residencia,
       'FECHA_NACIMIENTO': fechaNacimiento.toIso8601String(),
       'SEXO': sexo,
       'EDAD': edad,

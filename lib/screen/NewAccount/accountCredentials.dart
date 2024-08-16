@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 
@@ -97,18 +95,29 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
     if (_formKey.currentState?.validate() == true) {
       try {
         final registerService = RegisterService();
+
+        List<int> dormitorios = [315, 316, 317, 318];
+        String? tipoUsuario;
+
+        for (var i = 0; i < 4; i++) {
+          int? preceMatricula =
+              await registerService.getPreceptor(dormitorios[i]);
+          if (preceMatricula == widget.userData['matricula']) {
+            tipoUsuario = 'PRECEPTOR';
+            break; // Si ya encontraste el tipo de usuario, puedes salir del bucle
+          }
+        }
+        tipoUsuario ??= widget.userData['type'];
         final userData = {
           'Matricula': widget.userData['matricula'].toString(),
           'Contraseña': _passwordController.text,
           'Correo': widget.userData['correoInstitucional'],
           'Nombre': widget.userData['nombres'],
           'Apellidos': widget.userData['apellidos'],
-          'TipoUser': widget.userData['type'],
+          'TipoUser': tipoUsuario,
           'Sexo': widget.userData['sexo'],
           'FechaNacimiento': widget.userData['fechaNacimiento'],
           'Celular': widget.userData['celular'],
-          //'Dormitorio': DeterminarDormitorio(
-          //    widget.userData['nivelAcademico'], widget.userData['sexo']),
         };
         await registerService.registerUser(userData);
         _showSuccessDialog();
@@ -360,15 +369,15 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
   }
 }
 
-int DeterminarDormitorio(String nivelAcademico, String sexo) {
-  if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'M') {
-    return 1;
-  } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'M') {
-    return 2;
-  } else if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'F') {
-    return 3;
-  } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'F') {
-    return 4;
-  }
-  throw Exception('Nivel Academico no identificados');
-}
+// int DeterminarDormitorio(String empMatricula) {
+//   if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'M') {
+//     return 1;
+//   } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'M') {
+//     return 2;
+//   } else if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'F') {
+//     return 3;
+//   } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'F') {
+//     return 4;
+//   }
+//   throw Exception('Nivel Academico no identificados');
+// }
