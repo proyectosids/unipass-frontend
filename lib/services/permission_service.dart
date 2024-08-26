@@ -123,4 +123,40 @@ class PermissionService {
       throw Exception('Fallo en la carga de permisos para autorizacion');
     }
   }
+
+  Future<List<Permission>> getPermissionForAutorizacionPrece(
+      String idEmpleado) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/PermissionsPreceptor/$idEmpleado'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> permissionData = json.decode(response.body);
+
+      if (permissionData == null) {
+        throw Exception('Informacion no recibida de la API');
+      }
+
+      List<Permission> permissionsEmployee = [];
+      for (var permissionJson in permissionData) {
+        String matricula = permissionJson['Matricula'];
+        // Obtener datos del usuario para cada permiso
+        final userResponse = await _registerService.getDatosUser(matricula);
+        final userData = userResponse.toJson();
+
+        //Verificar los datos del usuario
+        if (userData == null ||
+            userData['student'] == null ||
+            userData['student'].isEmpty) {
+          throw Exception('Informacion del usuario no recibida de la API');
+        }
+
+        //Combinar datos para el modelo
+        Permission permission = Permission.fromJson(permissionJson, userData);
+        permissionsEmployee.add(permission);
+      }
+      return permissionsEmployee;
+    } else {
+      throw Exception('Fallo en la carga de permisos para autorizacion');
+    }
+  }
 }

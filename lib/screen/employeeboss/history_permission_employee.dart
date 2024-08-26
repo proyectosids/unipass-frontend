@@ -1,5 +1,4 @@
 import 'package:flutter_application_unipass/models/permission.dart';
-import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
@@ -7,18 +6,18 @@ import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
 
-class HistoryPermissionAuthorization extends StatefulWidget {
-  static const routeName = '/AuthorizationPreceptor';
+class PermissionAuthorizationEmployee extends StatefulWidget {
+  static const routeName = '/AuthorizationEmployee';
 
-  const HistoryPermissionAuthorization({Key? key}) : super(key: key);
+  const PermissionAuthorizationEmployee({Key? key}) : super(key: key);
 
   @override
-  _HistoryPermissionAuthorizationState createState() =>
-      _HistoryPermissionAuthorizationState();
+  _PermissionAuthorizationEmployeeState createState() =>
+      _PermissionAuthorizationEmployeeState();
 }
 
-class _HistoryPermissionAuthorizationState
-    extends State<HistoryPermissionAuthorization> {
+class _PermissionAuthorizationEmployeeState
+    extends State<PermissionAuthorizationEmployee> {
   DateTime _selectedDate = DateTime.now();
   List<Permission> _permissions = [];
   List<Permission> _filteredPermissions = []; // Lista filtrada
@@ -76,7 +75,7 @@ class _HistoryPermissionAuthorizationState
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          'Solicitudes de Salidas',
+          'Solicitudes de Permisos',
           style: TextStyle(fontSize: responsive.dp(2.5)),
         ),
         leading: IconButton(
@@ -221,8 +220,9 @@ class _HistoryPermissionAuthorizationState
       onTap: () {
         Navigator.pushNamed(
           context,
-          '/exitDetail',
+          '/infoPermission',
           arguments: {
+            'IdPermission': permission.id,
             'TipoSalida': permission.descripcion,
             'NombreAlumno': permission.nombre,
             'ApellidosAlumno': permission.apellidos,
@@ -233,6 +233,9 @@ class _HistoryPermissionAuthorizationState
             'Contacto': permission.celular,
             'StatusPermission': permission.statusPermission,
             'Trabajo': permission.trabajo,
+            'NombreTutor': permission.nombretutor,
+            'ApellidosTutor': permission.apellidotutor,
+            'ContactoTutor': permission.moviltutor,
           },
         );
       },

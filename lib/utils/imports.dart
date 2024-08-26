@@ -1,7 +1,7 @@
 export 'package:flutter/material.dart';
-export 'package:flutter_application_unipass/screen/NewAccount/mailAuthentication.dart';
-export 'package:flutter_application_unipass/screen/NewAccount/verificacionAccount.dart';
-export 'package:flutter_application_unipass/screen/NewAccount/accountCredentials.dart';
+export 'package:flutter_application_unipass/screen/new_account/mailAuthentication.dart';
+export 'package:flutter_application_unipass/screen/new_account/verificacionAccount.dart';
+export 'package:flutter_application_unipass/screen/new_account/accountCredentials.dart';
 export 'package:flutter_application_unipass/screen/login/login.dart';
 export 'package:flutter_application_unipass/screen/Preview/preview1.dart';
 export 'package:flutter_application_unipass/screen/Preview/preview2.dart';
@@ -38,7 +38,16 @@ export 'package:flutter_application_unipass/screen/student/document_add.dart';
 export 'package:flutter_application_unipass/screen/preceptor/homeScreenPreceptor.dart';
 export 'package:flutter_application_unipass/screen/preceptor/index/home_preceptor.dart';
 export 'package:flutter_application_unipass/screen/preceptor/noticesPreceptor.dart';
-export 'package:flutter_application_unipass/screen/NewAccount/date_preview.dart';
+export 'package:flutter_application_unipass/screen/new_account/date_preview.dart';
+export 'package:flutter_application_unipass/screen/employeeboss/homeScreenEmployee.dart';
+export 'package:flutter_application_unipass/screen/employeeboss/index/home_employee.dart';
+export 'package:flutter_application_unipass/screen/employeeboss/index/menu_employee.dart';
+export 'package:flutter_application_unipass/screen/preceptor/file_of_documents.dart';
+export 'package:flutter_application_unipass/screen/preceptor/permissions/history_permission_preceptor.dart';
+export 'package:flutter_application_unipass/screen/preceptor/index/menu_preceptor.dart';
+export 'package:flutter_application_unipass/screen/preceptor/permissions/info_permission.dart';
+export 'package:flutter_application_unipass/screen/employeeboss/history_permission_employee.dart';
+
 //Cloudinary
 export 'package:cloudinary_flutter/cloudinary_context.dart';
 export 'package:cloudinary_flutter/image/cld_image.dart';

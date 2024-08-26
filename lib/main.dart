@@ -1,5 +1,3 @@
-import 'package:flutter_application_unipass/screen/preceptor/history_permission.dart';
-import 'package:flutter_application_unipass/screen/preceptor/index/menu_preceptor.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 void main() async {
@@ -81,6 +79,14 @@ class MyApp extends StatelessWidget {
         HistoryPermissionAuthorization.routeName: (context) =>
             const HistoryPermissionAuthorization(),
         MenuPreceptorScreen.routeName: (context) => const MenuPreceptorScreen(),
+        HomeScreenEmployee.routeName: (context) => const HomeScreenEmployee(),
+        HomeEmployeeScreen.routeName: (context) => const HomeEmployeeScreen(),
+        MenuEmployeeScreen.routeName: (context) => const MenuEmployeeScreen(),
+        FileOfDocuments.routeName: (context) => const FileOfDocuments(),
+        InfoPermissionDetail.routeName: (context) =>
+            const InfoPermissionDetail(),
+        PermissionAuthorizationEmployee.routeName: (context) =>
+            const PermissionAuthorizationEmployee(),
       },
     );
   }

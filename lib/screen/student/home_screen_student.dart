@@ -28,6 +28,7 @@ class _HomeScreenStudentState extends State<HomeScreenStudent> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
+        backgroundColor: Colors.white,
         onTap: (value) {
           setState(() {
             selectedIndex = value;

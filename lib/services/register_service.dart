@@ -44,12 +44,13 @@ class RegisterService {
 
     if (respuesta.statusCode == 200) {
       final data = json.decode(respuesta.body);
-      if (data != null && data.toString().isNotEmpty && data == idEmpleado) {
+      if (data['EmpMatricula'] != null && data['EmpMatricula'] == idEmpleado) {
         return true;
       } else {
         return false;
       }
     }
+    return null;
   }
 
   //Inserccion de datos de a la BD UniPass

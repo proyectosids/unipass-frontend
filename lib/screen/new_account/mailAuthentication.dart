@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/NewAccount/date_preview.dart';
+import 'package:flutter_application_unipass/screen/new_account/date_preview.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_application_unipass/screen/widgets/input_authentication.dart';
 import 'package:flutter_svg/flutter_svg.dart';

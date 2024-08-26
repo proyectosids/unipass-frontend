@@ -1,22 +1,25 @@
+import 'package:flutter_application_unipass/screen/employeeboss/index/home_employee.dart';
+import 'package:flutter_application_unipass/screen/employeeboss/index/menu_employee.dart';
 import 'package:flutter_application_unipass/screen/preceptor/index/menu_preceptor.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
-class HomeScreenPreceptor extends StatefulWidget {
-  static const routeName = '/homePreceptorMenu';
+class HomeScreenEmployee extends StatefulWidget {
+  static const routeName = '/homeEmployeeMenu';
 
-  const HomeScreenPreceptor({Key? key}) : super(key: key);
+  const HomeScreenEmployee({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenPreceptorState createState() => _HomeScreenPreceptorState();
+  _HomeScreenEmployeeState createState() => _HomeScreenEmployeeState();
 }
 
-class _HomeScreenPreceptorState extends State<HomeScreenPreceptor> {
+class _HomeScreenEmployeeState extends State<HomeScreenEmployee> {
   int selectedIndex = 0;
 
   final List<Widget> screens = [
-    const HomePreceptorScreen(),
-    const MenuPreceptorScreen(),
-    ProfileScreen(userType: 'preceptor'), // Pasa el tipo de usuario
+    const HomeEmployeeScreen(),
+    const MenuEmployeeScreen(),
+    const ProfileScreen(
+        userType: 'jefe de departamento'), // Pasa el tipo de usuario
   ];
 
   @override

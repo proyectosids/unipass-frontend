@@ -76,6 +76,12 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
               '/homePreceptorMenu', // Ruta para preceptores
               (route) => false,
             );
+          } else if (tipoUser == 'EMPLEADO') {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/homeEmployeeMenu', // Ruta para preceptores
+              (route) => false,
+            );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Tipo de usuario no reconocido')),

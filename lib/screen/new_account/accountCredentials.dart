@@ -17,12 +17,26 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  String? nivelAcademico;
+  String? sexo;
 
   @override
   void dispose() {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    nivelAcademico = prefs.getString('nivelAcademico');
+    sexo = prefs.getString('sexo');
+    if (nivelAcademico == null || sexo == null) {
+      print('Nivel académico o sexo no encontrado en SharedPreferences');
+    } else {
+      print('Nivel académico: $nivelAcademico, Sexo: $sexo');
+    }
   }
 
   void _showSuccessDialog() {
@@ -95,9 +109,14 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
     if (_formKey.currentState?.validate() == true) {
       try {
         final registerService = RegisterService();
-
         List<int> dormitorios = [315, 316, 317, 318];
         String? tipoUsuario;
+        //int? situacionDormitorio;
+        //if (widget.userData['type'] == 'EMPLEADO') {
+        //  situacionDormitorio = 0;
+        //} else if (widget.userData['type'] == 'ALUMNO') {
+        //  situacionDormitorio = determinarDormitorio(nivelAcademico!, sexo!);
+        //}
 
         for (var i = 0; i < 4; i++) {
           int? preceMatricula =
@@ -108,6 +127,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
           }
         }
         tipoUsuario ??= widget.userData['type'];
+
         final userData = {
           'Matricula': widget.userData['matricula'].toString(),
           'Contraseña': _passwordController.text,
@@ -118,6 +138,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
           'Sexo': widget.userData['sexo'],
           'FechaNacimiento': widget.userData['fechaNacimiento'],
           'Celular': widget.userData['celular'],
+          //'IdDormitorio': situacionDormitorio
         };
         await registerService.registerUser(userData);
         _showSuccessDialog();
@@ -369,15 +390,15 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
   }
 }
 
-// int DeterminarDormitorio(String empMatricula) {
-//   if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'M') {
-//     return 1;
-//   } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'M') {
-//     return 2;
-//   } else if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'F') {
-//     return 3;
-//   } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'F') {
-//     return 4;
-//   }
-//   throw Exception('Nivel Academico no identificados');
-// }
+//int determinarDormitorio(String nivelAcademico, String sexo) {
+//  if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'M') {
+//    return 1;
+//  } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'M') {
+//    return 2;
+//  } else if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'F') {
+//    return 3;
+//  } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'F') {
+//    return 4;
+//  }
+//  throw Exception('Nivel Academico no identificados');
+//}

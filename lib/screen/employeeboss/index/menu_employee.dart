@@ -1,9 +1,9 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
 
-class MenuPreceptorScreen extends StatelessWidget {
-  static const routeName = '/menupreceptor';
+class MenuEmployeeScreen extends StatelessWidget {
+  static const routeName = '/menuEmployee';
 
-  const MenuPreceptorScreen({Key? key}) : super(key: key);
+  const MenuEmployeeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class MenuPreceptorScreen extends StatelessWidget {
                     context,
                     'Salidas',
                     'assets/image/salidas.svg',
-                    '/AuthorizationPreceptor',
+                    '/AuthorizationEmployee',
                     Colors.blue,
                   ),
                   _buildMenuItem(
@@ -42,13 +42,6 @@ class MenuPreceptorScreen extends StatelessWidget {
                     'assets/image/HelpApp.svg',
                     '/helpUser',
                     const Color.fromARGB(255, 101, 181, 104),
-                  ),
-                  _buildMenuItem(
-                    context,
-                    'Documentos',
-                    'assets/image/documents.svg',
-                    '/fileDocuments',
-                    Colors.orange,
                   ),
                 ],
               ),
@@ -75,7 +68,7 @@ class MenuPreceptorScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
