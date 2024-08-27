@@ -60,6 +60,41 @@ class DocumentService {
     }
   }
 
+  Future<void> uploadProfile(File file, int idDocumento, int idUser) async {
+    final uri = Uri.parse('$baseUrl/doctosMul/updateProfile');
+    final request = http.MultipartRequest('PUT', uri);
+
+    // Agregar campos
+    request.fields['IdDocumento'] = idDocumento.toString();
+    request.fields['IdLogin'] = idUser.toString();
+
+    // Obtener el tipo MIME del archivo
+    String? mimeType = lookupMimeType(file.path);
+    final mediaType = mimeType != null
+        ? MediaType.parse(mimeType)
+        : MediaType('application', 'octet-stream');
+
+    // Agregar el archivo a la solicitud
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'Archivo',
+        file.path,
+        contentType: mediaType,
+      ),
+    );
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('Document uploaded successfully');
+      final responseData = await response.stream.bytesToString();
+      print(responseData);
+    } else {
+      print('Failed to upload document. Status code: ${response.statusCode}');
+      print(await response.stream.bytesToString());
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getDocuments() async {
     final response = await http.get(Uri.parse('$baseUrl/doctos'));
 

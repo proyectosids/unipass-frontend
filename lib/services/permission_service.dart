@@ -159,4 +159,20 @@ class PermissionService {
       throw Exception('Fallo en la carga de permisos para autorizacion');
     }
   }
+
+  Future<void> terminarPermission(int idPermiso, String valorar) async {
+    final response =
+        await http.put(Uri.parse('$baseUrl/permissionValorado/$idPermiso'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode(
+              {
+                "StatusPermission": valorar,
+              },
+            ));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Error valorar el permiso');
+    }
+  }
 }

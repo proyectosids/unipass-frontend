@@ -133,27 +133,32 @@ class _PermissionAuthorizationEmployeeState
     DateTime endDate =
         currentDate.add(const Duration(days: 60)); // 60 días adelante
 
-    return Container(
-      padding: EdgeInsets.all(padding),
-      child: dp.DayPicker.single(
-        selectedDate: _selectedDate,
-        onChanged: (date) {
-          setState(() {
-            _selectedDate = date;
-            _filterPermissionsByDate(
-                _selectedDate); // Filtrar permisos según la fecha seleccionada
-          });
-        },
-        firstDate: startDate,
-        lastDate: endDate,
-        datePickerStyles: dp.DatePickerRangeStyles(
-          selectedDateStyle: const TextStyle(color: Colors.white),
-          selectedSingleDateDecoration: const BoxDecoration(
-            color: Colors.purple,
-            shape: BoxShape.circle,
-          ),
-          dayHeaderStyle: const dp.DayHeaderStyle(
-            textStyle: TextStyle(color: Colors.black),
+    return Center(
+      // Asegúrate de que el widget está centrado
+      child: Container(
+        padding: EdgeInsets.all(padding),
+        width: responsive.wp(
+            80), // Ajusta esto según necesites para que el calendario tenga un ancho apropiado
+        child: dp.DayPicker.single(
+          selectedDate: _selectedDate,
+          onChanged: (date) {
+            setState(() {
+              _selectedDate = date;
+              _filterPermissionsByDate(
+                  _selectedDate); // Filtrar permisos según la fecha seleccionada
+            });
+          },
+          firstDate: startDate,
+          lastDate: endDate,
+          datePickerStyles: dp.DatePickerRangeStyles(
+            selectedDateStyle: const TextStyle(color: Colors.white),
+            selectedSingleDateDecoration: const BoxDecoration(
+              color: Colors.purple,
+              shape: BoxShape.circle,
+            ),
+            dayHeaderStyle: const dp.DayHeaderStyle(
+              textStyle: TextStyle(color: Colors.black),
+            ),
           ),
         ),
       ),

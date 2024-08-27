@@ -47,6 +47,9 @@ export 'package:flutter_application_unipass/screen/preceptor/permissions/history
 export 'package:flutter_application_unipass/screen/preceptor/index/menu_preceptor.dart';
 export 'package:flutter_application_unipass/screen/preceptor/permissions/info_permission.dart';
 export 'package:flutter_application_unipass/screen/employeeboss/history_permission_employee.dart';
+export 'package:flutter_localizations/flutter_localizations.dart';
+// ignore: duplicate_export
+export 'package:shared_preferences/shared_preferences.dart';
 
 //Cloudinary
 export 'package:cloudinary_flutter/cloudinary_context.dart';

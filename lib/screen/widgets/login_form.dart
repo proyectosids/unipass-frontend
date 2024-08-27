@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/models/users.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart'; // Importar el servicio de registro
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Importar SharedPreferences
@@ -55,6 +56,9 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
         if (result['success']) {
           String tipoUser = result['user']['TipoUser'];
           String userId = result['user']['Matricula'];
+
+          // Guardar tipoUser en SharedPreferences
+          await AuthUtils.saveTipoUser(tipoUser);
 
           // Llamar al servicio con la matrícula del usuario
           final registerService = RegisterService();

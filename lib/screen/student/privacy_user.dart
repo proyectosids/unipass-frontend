@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final Uri _url = Uri.parse('https://ulv.edu.mx/privacidad');
@@ -14,6 +15,8 @@ class PrivacyUserScreen extends StatefulWidget {
 class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(5);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Políticas de Privacidad'),
@@ -33,7 +36,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                   Container(
                     color: Colors.white,
                     width: double.infinity,
-                    padding: const EdgeInsets.all(25.0),
+                    padding: EdgeInsets.all(padding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -43,10 +46,10 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                           scale: 5,
                         ),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           'Políticas de Privacidad',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: responsive.hp(2.4),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -66,22 +69,22 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
             child: Container(
               width: double.infinity,
               color: Colors.purple,
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(padding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: EdgeInsets.symmetric(horizontal: padding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
+                      children: [
                         SizedBox(
                           height: 20,
                         ),
                         Text(
                           'Revisión 2023   -   05 de mayo del 2023.',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: responsive.hp(1.8),
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -90,7 +93,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                         Text(
                           'La Universidad Linda Vista, A. C., como responsable del uso de datos personales tiene a bien a poner a su disposición de conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, el siguiente ',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: responsive.hp(2),
                             color: Colors.white,
                           ),
                         ),
@@ -112,9 +115,10 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Mas informacion',
-                        style: TextStyle(color: Colors.black, fontSize: 16),
+                        style: TextStyle(
+                            color: Colors.black, fontSize: responsive.hp(1.8)),
                       ),
                     ),
                   ),

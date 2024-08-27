@@ -39,14 +39,14 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                   Text(
                     '¿Hay algo que podemos hacer para mejorar tu experiencia?',
                     style: TextStyle(
-                      fontSize: responsive.dp(2.4),
+                      fontSize: responsive.dp(2.2),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: responsive.hp(2)),
                   Text(
                     'Bienvenido al soporte de nuestra aplicación de control de salidas y entradas. Aquí encontrarás nuestros contactos de ayuda para interpretar reportes y resolver cualquier duda. Nuestro equipo está listo para asistirte y asegurar una experiencia óptima. Consulta nuestras guías, FAQs y opciones de contacto.',
-                    style: TextStyle(fontSize: responsive.dp(2)),
+                    style: TextStyle(fontSize: responsive.dp(1.8)),
                   ),
                 ],
               ),

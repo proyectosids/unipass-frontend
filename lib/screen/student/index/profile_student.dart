@@ -45,8 +45,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    int? idDocumento = 8;
+    int? idDocumento =
+        8; // Asegúrate de que este ID es correcto para tu caso de uso
     int? id = await AuthUtils.getUserId();
+
     if (id == null) {
       print('User ID not found');
       return;
@@ -57,7 +59,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
 
     if (imageFile != null) {
-      await _documentService.uploadDocument(imageFile!, idDocumento, id);
+      // Determinar si cargar una nueva imagen o actualizar una existente
+      if (profileImageUrl == null) {
+        // Si no hay imagen de perfil, cargar una nueva
+        await _documentService.uploadDocument(imageFile!, idDocumento, id);
+      } else {
+        // Si ya existe una imagen de perfil, actualizarla
+        await _documentService.uploadProfile(imageFile!, idDocumento, id);
+      }
       _loadProfileImage();
     }
   }
