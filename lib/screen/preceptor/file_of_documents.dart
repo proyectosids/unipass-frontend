@@ -40,10 +40,11 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
         ),
         backgroundColor: Colors.purple,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop(); // Acción para volver atrás
-          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Column(

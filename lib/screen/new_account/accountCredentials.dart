@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:flutter_application_unipass/services/bedroom_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 
@@ -19,6 +22,8 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
       TextEditingController();
   String? nivelAcademico;
   String? sexo;
+  int dormitorio = 0;
+  final BedroomService _bedroomService = BedroomService();
 
   @override
   void dispose() {
@@ -30,8 +35,9 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
 
   Future<void> _loadUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    nivelAcademico = prefs.getString('nivelAcademico');
-    sexo = prefs.getString('sexo');
+    String? nivelAcademico = prefs.getString('nivelAcademico');
+    String? sexo = prefs.getString('sexo');
+
     if (nivelAcademico == null || sexo == null) {
       print('Nivel académico o sexo no encontrado en SharedPreferences');
     } else {
@@ -111,12 +117,6 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         final registerService = RegisterService();
         List<int> dormitorios = [315, 316, 317, 318];
         String? tipoUsuario;
-        //int? situacionDormitorio;
-        //if (widget.userData['type'] == 'EMPLEADO') {
-        //  situacionDormitorio = 0;
-        //} else if (widget.userData['type'] == 'ALUMNO') {
-        //  situacionDormitorio = determinarDormitorio(nivelAcademico!, sexo!);
-        //}
 
         for (var i = 0; i < 4; i++) {
           int? preceMatricula =
@@ -126,7 +126,26 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
             break; // Si ya encontraste el tipo de usuario, puedes salir del bucle
           }
         }
+
+        bool? isjefeVigilancia = await registerService
+            .getJefeVigilancia(widget.userData['matricula'].toString());
+        if (isjefeVigilancia == true) {
+          tipoUsuario = 'VIGILANCIA';
+        }
+
         tipoUsuario ??= widget.userData['type'];
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? nivelAcademico = prefs.getString('nivelAcademico');
+        String? sexo = prefs.getString('sexo');
+        if (tipoUsuario == 'Empleado' &&
+            tipoUsuario == 'Preceptor' &&
+            tipoUsuario == 'Vigilancia') {
+          int? dormitorio =
+              await _bedroomService.obtenerDormitorio(nivelAcademico, sexo);
+          dormitorio ??= 0;
+          setState(() {});
+        }
 
         final userData = {
           'Matricula': widget.userData['matricula'].toString(),
@@ -138,7 +157,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
           'Sexo': widget.userData['sexo'],
           'FechaNacimiento': widget.userData['fechaNacimiento'],
           'Celular': widget.userData['celular'],
-          //'IdDormitorio': situacionDormitorio
+          'Dormitorio': dormitorio,
         };
         await registerService.registerUser(userData);
         _showSuccessDialog();
@@ -389,16 +408,3 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
     );
   }
 }
-
-//int determinarDormitorio(String nivelAcademico, String sexo) {
-//  if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'M') {
-//    return 1;
-//  } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'M') {
-//    return 2;
-//  } else if (nivelAcademico == 'NIVEL MEDIO' && sexo == 'F') {
-//    return 3;
-//  } else if (nivelAcademico == 'UNIVERSITARIO' && sexo == 'F') {
-//    return 4;
-//  }
-//  throw Exception('Nivel Academico no identificados');
-//}

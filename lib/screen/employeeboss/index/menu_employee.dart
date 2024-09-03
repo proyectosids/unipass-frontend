@@ -1,9 +1,22 @@
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
-class MenuEmployeeScreen extends StatelessWidget {
+class MenuEmployeeScreen extends StatefulWidget {
   static const routeName = '/menuEmployee';
+  const MenuEmployeeScreen({super.key});
 
-  const MenuEmployeeScreen({Key? key}) : super(key: key);
+  @override
+  State<MenuEmployeeScreen> createState() => _MenuEmployeeScreenState();
+}
+
+class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
+  String? typeUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _getTypeUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +56,14 @@ class MenuEmployeeScreen extends StatelessWidget {
                     '/helpUser',
                     const Color.fromARGB(255, 101, 181, 104),
                   ),
+                  //Condiconar si el usuario es vigilancia para crear usuario de checks
+                  if (typeUser == 'VIGILANCIA')
+                    _buildMenuItem(
+                        context,
+                        'Checks',
+                        'assets/image/checks.svg',
+                        '/NewProfileChecks',
+                        const Color.fromARGB(255, 80, 85, 221)),
                 ],
               ),
             ),
@@ -77,5 +98,13 @@ class MenuEmployeeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _getTypeUser() async {
+    String? user = await AuthUtils.getTipoUser();
+
+    setState(() {
+      typeUser = user;
+    });
   }
 }

@@ -53,6 +53,21 @@ class RegisterService {
     return null;
   }
 
+  Future<bool?> getJefeVigilancia(String idEmpleado) async {
+    final uri = Uri.parse('$endpointUrl/api/datos/vigilancia/$idEmpleado');
+    final respuesta = await http.get(uri);
+
+    if (respuesta.statusCode == 200) {
+      final data = json.decode(respuesta.body);
+      if (data != null && data['EmpMatricula'] == idEmpleado) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return null;
+  }
+
   //Inserccion de datos de a la BD UniPass
   Future<void> registerUser(Map<String, dynamic> userData) async {
     final response = await http.post(

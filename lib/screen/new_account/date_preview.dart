@@ -62,7 +62,7 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
               'fechaNacimiento': user.fechaNacimiento.toIso8601String(),
               'celular': user.celular,
               'type': userData.type,
-              //'nivelAcademico': userData.students![0].nivelAcademico ? Null : ,
+              'nivelAcademico': isAlumno ? user.nivelAcademico : 'NA',
             };
 
             return Column(

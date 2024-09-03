@@ -17,6 +17,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   bool isFinalized = false;
   String nombreCompleto = '';
   String nombreCompletoTutor = '';
+  String valorar = '';
   String? statusPermiso;
   final AuthorizeService _authorizeService = AuthorizeService();
   final PermissionService _permissionService =
@@ -55,10 +56,14 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     }
 
     statusPermiso = await _authorizeService.obtenerStatus(matricula, idPermiso);
-    setState(() {});
+
+    // Verifica si el widget sigue montado antes de llamar a setState()
+    if (mounted) {
+      setState(() {});
+    }
   }
 
-  Future<void> _asignarAutorizacion(String autorizo) async {
+  Future<void> _asignarAutorizacion(String autorizo, String motivo) async {
     try {
       final idPermiso = exitDetails['IdPermission'] as int;
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -67,23 +72,33 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
 
       await _authorizeService.valorarAuthorize(idPermiso, matricula!, autorizo);
       if (autorizo == 'Rechazada') {
-        _terminarPermiso(autorizo);
+        _terminarPermiso(autorizo, motivo);
       }
 
-      if (autorizo == 'Aprobada' || tipoUser == 'PRECEPTOR') {
-        _terminarPermiso(autorizo);
+      if (autorizo == 'Aprobada' && tipoUser == 'PRECEPTOR') {
+        _terminarPermiso(autorizo, motivo);
       }
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context);
+
+      if (mounted && tipoUser == 'PRECEPTOR') {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/AuthorizationPreceptors',
+          (Route<dynamic> route) => false,
+        );
+      }
+      if (mounted && tipoUser == 'EMPLEADO') {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/AuthorizationEmployee',
+          (Route<dynamic> route) => false,
+        );
+      }
     } catch (e) {
-      // ignore: avoid_print
       print('Failed to authotize permission: $e');
     }
   }
 
-  Future<void> _terminarPermiso(String validacion) async {
+  Future<void> _terminarPermiso(String validacion, String razon) async {
     final idPermiso = exitDetails['IdPermission'] as int;
-    await _permissionService.terminarPermission(idPermiso, validacion);
+    await _permissionService.terminarPermission(idPermiso, validacion, razon);
   }
 
   @override
@@ -97,6 +112,13 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF6D55F4),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -124,8 +146,8 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                   'Fecha y hora de salida', exitDetails['FechaSalida'] ?? ''),
               _buildDetailItem(
                   'Fecha y hora de retorno', exitDetails['FechaRegreso'] ?? ''),
-              _buildDetailItem(
-                  'Observaciones', exitDetails['Observaciones'] ?? ''),
+              //_buildDetailItem(
+              //    'Observaciones', exitDetails['Observaciones'] ?? ''),
               _buildDetailItem(
                   'Contacto Personal', exitDetails['Contacto'] ?? ''),
               _buildDetailItem('Trabajo', exitDetails['Trabajo'] ?? ''),
@@ -140,8 +162,9 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     onPressed: () {
-                      String valorar = "Aprobada";
-                      _asignarAutorizacion(valorar);
+                      valorar = "Aprobada";
+                      selectedValue = 'Ninguna';
+                      _asignarAutorizacion(valorar, selectedValue);
                     },
                     child: const Text(
                       'Aceptar',
@@ -229,8 +252,13 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                               SizedBox(height: responsive.hp(5)),
                               ElevatedButton(
                                 onPressed: () {
-                                  // Lógica para manejar el rechazo del permiso.
-                                  Navigator.of(context).pop(true);
+                                  valorar = 'Rechazada';
+                                  _asignarAutorizacion(valorar, selectedValue);
+
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/AuthorizationEmployee',
+                                    (Route<dynamic> route) => false,
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(double.infinity,

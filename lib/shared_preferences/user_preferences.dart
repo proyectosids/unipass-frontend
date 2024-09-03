@@ -42,6 +42,9 @@ class AuthUtils {
       await prefs.setString('nivelAcademico', student.nivelAcademico);
       await prefs.setString('sexo', student.sexo);
       await prefs.setString('matricula', student.matricula);
+      await prefs.setString('nombre', student.nombre);
+      await prefs.setString('apellidos', student.apellidos);
+      await prefs.setString('correo', student.correoInstitucional);
     }
     if (userData.works != null && userData.works!.isNotEmpty) {
       Work work = userData.works!.first;
@@ -49,6 +52,16 @@ class AuthUtils {
       await prefs.setString('nombreDepartamento', work.nombreDepartamento);
       await prefs.setInt('idJefe', work.idJefe);
       await prefs.setString('trabajo', work.jefeDepartamento);
+    }
+    if (userData.employees != null && userData.employees!.isNotEmpty) {
+      // Guardar información de empleados si no hay datos de estudiantes
+      Employee employee = userData.employees!.first;
+      await prefs.setString('sexo', employee.sexo);
+      await prefs.setString('matricula', employee.matricula.toString());
+      await prefs.setString('nombreDepartamento', employee.departamento);
+      await prefs.setString('nombre', employee.nombres);
+      await prefs.setString('apellidos', employee.apellidos);
+      await prefs.setString('correo', employee.emailInstitucional);
     }
   }
 
@@ -66,5 +79,7 @@ class AuthUtils {
     await prefs.remove('nombreDepartamento');
     await prefs.remove('idJefe');
     await prefs.remove('trabajo');
+    await prefs.remove('nombre');
+    await prefs.remove('apellidos');
   }
 }

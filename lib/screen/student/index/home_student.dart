@@ -11,13 +11,40 @@ class HomeStudentScreen extends StatefulWidget {
 
 class _HomeStudentScreenState extends State<HomeStudentScreen> {
   bool isAvisosSelected = true;
+  String? nombre;
+  String? apellidos;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('es_MX', null);
+    _getNombreUser();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Hola Alumno'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Bienvenido ${nombre ?? 'Empleado'}',
+              style: TextStyle(fontSize: responsive.dp(2.2)),
+            ),
+            if (apellidos != null)
+              Text(
+                apellidos!,
+                style: TextStyle(
+                    fontSize: responsive.dp(1.8),
+                    color: const Color.fromARGB(255, 138, 138, 138)),
+              ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
@@ -29,23 +56,24 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('¿Qué haremos hoy?', style: TextStyle(fontSize: 24)),
-            const SizedBox(height: 16),
+            Text('¿Qué haremos hoy?',
+                style: TextStyle(fontSize: responsive.dp(2.4))),
+            SizedBox(height: responsive.hp(1.8)),
             Row(
               children: [
                 _buildStatusButton('Avisos', isAvisosSelected),
-                const SizedBox(width: 8),
+                SizedBox(width: responsive.wp(3)),
                 _buildStatusButton('En proceso', !isAvisosSelected),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: responsive.hp(1.5)),
             _buildCards(),
-            const SizedBox(height: 16),
-            const Text('Actividad', style: TextStyle(fontSize: 24)),
+            SizedBox(height: responsive.hp(1.5)),
+            Text('Actividad', style: TextStyle(fontSize: responsive.dp(2.2))),
             _buildActivityList(),
           ],
         ),
@@ -53,6 +81,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
     );
   }
 
+//Responsives pendientes hacia abajo
   Widget _buildStatusButton(String title, bool isSelected) {
     return Expanded(
       child: ElevatedButton(
@@ -182,5 +211,16 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
         subtitle: Text(subtitle),
       ),
     );
+  }
+
+  Future<void> _getNombreUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? nombreUsuario = prefs.getString('nombre');
+    String? apellidosUsuario = prefs.getString('apellidos');
+
+    setState(() {
+      nombre = nombreUsuario;
+      apellidos = apellidosUsuario;
+    });
   }
 }

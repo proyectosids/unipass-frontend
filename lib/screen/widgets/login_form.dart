@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/models/users.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart'; // Importar el servicio de registro
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
-import 'package:flutter_application_unipass/utils/responsive.dart';
-import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Importar SharedPreferences
+// Importar SharedPreferences
+import 'package:flutter_application_unipass/utils/imports.dart';
 // Importar dart:convert para usar jsonEncode
 
 class LoginTextFields extends StatefulWidget {
@@ -30,6 +28,9 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
       await prefs.setString('nivelAcademico', student.nivelAcademico);
       await prefs.setString('sexo', student.sexo);
       await prefs.setString('matricula', student.matricula.toString());
+      await prefs.setString('nombre', student.nombre);
+      await prefs.setString('apellidos', student.apellidos);
+      await prefs.setString('correo', student.correoInstitucional);
 
       if (userData.works != null && userData.works!.isNotEmpty) {
         Work work = userData.works!.first;
@@ -44,6 +45,9 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
       await prefs.setString('sexo', employee.sexo);
       await prefs.setString('matricula', employee.matricula.toString());
       await prefs.setString('nombreDepartamento', employee.departamento);
+      await prefs.setString('nombre', employee.nombres);
+      await prefs.setString('apellidos', employee.apellidos);
+      await prefs.setString('correo', employee.emailInstitucional);
     }
   }
 
@@ -56,39 +60,54 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
         if (result['success']) {
           String tipoUser = result['user']['TipoUser'];
           String userId = result['user']['Matricula'];
+          String newUserId = userId.replaceFirst('MTR', '');
 
           // Guardar tipoUser en SharedPreferences
           await AuthUtils.saveTipoUser(tipoUser);
 
           // Llamar al servicio con la matrícula del usuario
           final registerService = RegisterService();
-          final userData = await registerService.getDatosUser(userId);
+          final userData = await registerService.getDatosUser(newUserId);
 
-          // Guardar la información del usuario en SharedPreferences
-          await saveUserInfo(userData);
+          // Verificar si el usuario está activo
+          if (result['user']['StatusActividad'] == 1) {
+            // Guardar la información del usuario en SharedPreferences
+            await saveUserInfo(userData);
 
-          // Redirigir según el tipo de usuario
-          if (tipoUser == 'ALUMNO') {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/homeStudentMenu', // Ruta para alumnos
-              (route) => false,
-            );
-          } else if (tipoUser == 'PRECEPTOR') {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/homePreceptorMenu', // Ruta para preceptores
-              (route) => false,
-            );
-          } else if (tipoUser == 'EMPLEADO') {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/homeEmployeeMenu', // Ruta para preceptores
-              (route) => false,
-            );
+            // Redirigir según el tipo de usuario
+            if (tipoUser == 'ALUMNO') {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/homeStudentMenu', // Ruta para alumnos
+                (route) => false,
+              );
+            } else if (tipoUser == 'PRECEPTOR') {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/homePreceptorMenu', // Ruta para preceptores
+                (route) => false,
+              );
+            } else if (tipoUser == 'DEPARTAMENTO') {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/homeDepartamentMenu', // Ruta para preceptores
+                (route) => false,
+              );
+            } else if (tipoUser == 'EMPLEADO' || tipoUser == 'VIGILANCIA') {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/homeEmployeeMenu', // Ruta para empleados o vigilancia
+                (route) => false,
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Tipo de usuario no reconocido')),
+              );
+            }
           } else {
+            // Si el usuario no está activo
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Tipo de usuario no reconocido')),
+              const SnackBar(content: Text('Usuario no activo')),
             );
           }
         } else {

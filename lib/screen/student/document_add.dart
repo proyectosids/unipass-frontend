@@ -240,6 +240,8 @@ int determineIdDocumento(
     return 6;
   } else if (documentName == 'Convenio de salidas') {
     return 7;
+  } else if (documentName == 'INE del Tutor') {
+    return 9;
   }
   throw Exception('No matching idDocumento found');
 }

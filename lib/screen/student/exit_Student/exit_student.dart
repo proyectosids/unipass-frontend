@@ -261,10 +261,10 @@ class _ExitStudentState extends State<ExitStudent> {
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'Aprobado':
+      case 'Aprobada':
         return Colors.green;
       case 'Cancelado':
-      case 'Rechazado':
+      case 'Rechazada':
         return Colors.red;
       default:
         return Colors.orange; // Pendiente or other statuses

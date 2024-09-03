@@ -160,13 +160,15 @@ class PermissionService {
     }
   }
 
-  Future<void> terminarPermission(int idPermiso, String valorar) async {
+  Future<void> terminarPermission(
+      int idPermiso, String valorar, String motivo) async {
     final response =
         await http.put(Uri.parse('$baseUrl/permissionValorado/$idPermiso'),
             headers: {'Content-Type': 'application/json'},
             body: json.encode(
               {
                 "StatusPermission": valorar,
+                "Observaciones": motivo,
               },
             ));
     if (response.statusCode == 200) {

@@ -48,6 +48,9 @@ export 'package:flutter_application_unipass/screen/preceptor/index/menu_precepto
 export 'package:flutter_application_unipass/screen/preceptor/permissions/info_permission.dart';
 export 'package:flutter_application_unipass/screen/employeeboss/history_permission_employee.dart';
 export 'package:flutter_localizations/flutter_localizations.dart';
+export 'package:flutter_application_unipass/screen/checkspoint/create_profile_checks.dart';
+export 'package:flutter_application_unipass/screen/departament/home_screen_departament.dart';
+export 'package:flutter_application_unipass/screen/departament/index/home_departament.dart';
 // ignore: duplicate_export
 export 'package:shared_preferences/shared_preferences.dart';
 

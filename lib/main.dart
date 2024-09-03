@@ -87,6 +87,10 @@ class MyApp extends StatelessWidget {
             const InfoPermissionDetail(),
         PermissionAuthorizationEmployee.routeName: (context) =>
             const PermissionAuthorizationEmployee(),
+        CreateProfileChecks.RouteName: (context) => const CreateProfileChecks(),
+        HomeScreenDepartament.routeName: (context) =>
+            const HomeScreenDepartament(),
+        HomeDepartament.routeName: (context) => const HomeDepartament(),
       },
     );
   }

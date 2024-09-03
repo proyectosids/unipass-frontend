@@ -14,23 +14,20 @@ class DocumentStudent extends StatefulWidget {
 
 class _DocumentStudentState extends State<DocumentStudent> {
   Map<String, bool> documents = {
-    'Reglamento ULV': false,
+    'INE del Tutor': false,
     'Reglamento dormitorio': false,
-    'Acuerdo de consentimiento': false,
     'Convenio de salidas': false,
   };
 
   Map<String, String?> documentFiles = {
-    'Reglamento ULV': null,
+    'INE del Tutor': null,
     'Reglamento dormitorio': null,
-    'Acuerdo de consentimiento': null,
     'Convenio de salidas': null,
   };
 
   Map<String, int?> documentIds = {
-    'Reglamento ULV': null,
+    'INE del Tutor': null,
     'Reglamento dormitorio': null,
-    'Acuerdo de consentimiento': null,
     'Convenio de salidas': null,
   };
 
@@ -84,6 +81,8 @@ class _DocumentStudentState extends State<DocumentStudent> {
         return 'Acuerdo de consentimiento';
       case 7:
         return 'Convenio de salidas';
+      case 9:
+        return 'INE del Tutor';
       default:
         return 'Documento desconocido';
     }

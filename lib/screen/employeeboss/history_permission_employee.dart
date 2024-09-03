@@ -134,11 +134,9 @@ class _PermissionAuthorizationEmployeeState
         currentDate.add(const Duration(days: 60)); // 60 días adelante
 
     return Center(
-      // Asegúrate de que el widget está centrado
       child: Container(
         padding: EdgeInsets.all(padding),
-        width: responsive.wp(
-            80), // Ajusta esto según necesites para que el calendario tenga un ancho apropiado
+        width: responsive.wp(100),
         child: dp.DayPicker.single(
           selectedDate: _selectedDate,
           onChanged: (date) {
@@ -151,13 +149,15 @@ class _PermissionAuthorizationEmployeeState
           firstDate: startDate,
           lastDate: endDate,
           datePickerStyles: dp.DatePickerRangeStyles(
-            selectedDateStyle: const TextStyle(color: Colors.white),
+            selectedDateStyle:
+                TextStyle(color: Colors.white, fontSize: responsive.hp(2)),
             selectedSingleDateDecoration: const BoxDecoration(
-              color: Colors.purple,
+              color: Colors.blue,
               shape: BoxShape.circle,
             ),
-            dayHeaderStyle: const dp.DayHeaderStyle(
-              textStyle: TextStyle(color: Colors.black),
+            dayHeaderStyle: dp.DayHeaderStyle(
+              textStyle:
+                  TextStyle(color: Colors.red, fontSize: responsive.hp(2)),
             ),
           ),
         ),
@@ -200,10 +200,10 @@ class _PermissionAuthorizationEmployeeState
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'Aprobado':
+      case 'Aprobada':
         return Colors.green;
       case 'Cancelado':
-      case 'Rechazado':
+      case 'Rechazada':
         return Colors.red;
       default:
         return Colors.orange; // Pendiente o cualquier otro estado

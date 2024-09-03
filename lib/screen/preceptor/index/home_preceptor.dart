@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 
 class HomePreceptorScreen extends StatefulWidget {
   static const routeName = '/homePreceptor';
@@ -11,6 +11,8 @@ class HomePreceptorScreen extends StatefulWidget {
 
 class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
   bool isAvisosSelected = true;
+  String? nombre;
+  String? apellidos;
   List<Map<String, String>> _notices = [
     {
       'directedTo': 'Departamento de trabajo',
@@ -25,11 +27,35 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('es_MX', null);
+    _getNombreUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Hola Preceptor'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Bienvenido ${nombre ?? 'Empleado'}',
+              style: TextStyle(fontSize: responsive.dp(2.2)),
+            ),
+            if (apellidos != null)
+              Text(
+                apellidos!,
+                style: TextStyle(
+                    fontSize: responsive.dp(1.8),
+                    color: const Color.fromARGB(255, 138, 138, 138)),
+              ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
@@ -41,7 +67,7 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -229,5 +255,16 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
         subtitle: Text(subtitle),
       ),
     );
+  }
+
+  Future<void> _getNombreUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? nombreUsuario = prefs.getString('nombre');
+    String? apellidosUsuario = prefs.getString('apellidos');
+
+    setState(() {
+      nombre = nombreUsuario;
+      apellidos = apellidosUsuario;
+    });
   }
 }

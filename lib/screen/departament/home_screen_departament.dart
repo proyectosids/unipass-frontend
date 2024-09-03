@@ -1,23 +1,21 @@
-import 'package:flutter_application_unipass/screen/employeeboss/index/home_employee.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
-class HomeScreenEmployee extends StatefulWidget {
-  static const routeName = '/homeEmployeeMenu';
+class HomeScreenDepartament extends StatefulWidget {
+  static const routeName = '/homeDepartamentMenu';
 
-  const HomeScreenEmployee({Key? key}) : super(key: key);
+  const HomeScreenDepartament({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenEmployeeState createState() => _HomeScreenEmployeeState();
+  _HomeScreenDepartamentState createState() => _HomeScreenDepartamentState();
 }
 
-class _HomeScreenEmployeeState extends State<HomeScreenEmployee> {
+class _HomeScreenDepartamentState extends State<HomeScreenDepartament> {
   int selectedIndex = 0;
 
   final List<Widget> screens = [
-    const HomeEmployeeScreen(),
-    const MenuEmployeeScreen(),
-    const ProfileScreen(
-        userType: 'jefe de departamento'), // Pasa el tipo de usuario
+    const HomeDepartament(),
+    const HelpFAQUser(),
+    const ProfileScreen(userType: 'departamento'), // Pasa el tipo de usuario
   ];
 
   @override
@@ -43,9 +41,9 @@ class _HomeScreenEmployeeState extends State<HomeScreenEmployee> {
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu),
-            activeIcon: Icon(Icons.menu_book),
-            label: 'Menu',
+            icon: Icon(Icons.help),
+            activeIcon: Icon(Icons.help),
+            label: 'Ayuda',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

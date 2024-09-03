@@ -53,7 +53,7 @@ class _HistoryPermissionAuthorizationState
             _selectedDate); // Filtrar inicialmente por la fecha actual
       });
     } catch (e) {
-      print('Failed to load permissions: $e');
+      print('Falla al cargar permisos: $e');
     }
   }
 
@@ -134,27 +134,32 @@ class _HistoryPermissionAuthorizationState
     DateTime endDate =
         currentDate.add(const Duration(days: 60)); // 60 días adelante
 
-    return Container(
-      padding: EdgeInsets.all(padding),
-      child: dp.DayPicker.single(
-        selectedDate: _selectedDate,
-        onChanged: (date) {
-          setState(() {
-            _selectedDate = date;
-            _filterPermissionsByDate(
-                _selectedDate); // Filtrar permisos según la fecha seleccionada
-          });
-        },
-        firstDate: startDate,
-        lastDate: endDate,
-        datePickerStyles: dp.DatePickerRangeStyles(
-          selectedDateStyle: const TextStyle(color: Colors.white),
-          selectedSingleDateDecoration: const BoxDecoration(
-            color: Colors.purple,
-            shape: BoxShape.circle,
-          ),
-          dayHeaderStyle: const dp.DayHeaderStyle(
-            textStyle: TextStyle(color: Colors.black),
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(padding),
+        width: responsive.wp(100),
+        child: dp.DayPicker.single(
+          selectedDate: _selectedDate,
+          onChanged: (date) {
+            setState(() {
+              _selectedDate = date;
+              _filterPermissionsByDate(
+                  _selectedDate); // Filtrar permisos según la fecha seleccionada
+            });
+          },
+          firstDate: startDate,
+          lastDate: endDate,
+          datePickerStyles: dp.DatePickerRangeStyles(
+            selectedDateStyle:
+                TextStyle(color: Colors.white, fontSize: responsive.hp(2)),
+            selectedSingleDateDecoration: const BoxDecoration(
+              color: Colors.blue,
+              shape: BoxShape.circle,
+            ),
+            dayHeaderStyle: dp.DayHeaderStyle(
+              textStyle:
+                  TextStyle(color: Colors.red, fontSize: responsive.hp(2)),
+            ),
           ),
         ),
       ),
@@ -196,10 +201,10 @@ class _HistoryPermissionAuthorizationState
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'Aprobado':
+      case 'Aprobada':
         return Colors.green;
       case 'Cancelado':
-      case 'Rechazado':
+      case 'Rechazada':
         return Colors.red;
       default:
         return Colors.orange; // Pendiente o cualquier otro estado
