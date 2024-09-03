@@ -1,5 +1,4 @@
 import 'package:flutter_application_unipass/models/permission.dart';
-import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';

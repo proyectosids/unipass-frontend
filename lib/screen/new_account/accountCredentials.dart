@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter_application_unipass/services/bedroom_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
