@@ -4,6 +4,7 @@ import 'package:flutter_application_unipass/models/users.dart';
 class AuthUtils {
   static const String _userIdKey = 'userId';
   static const String _tipoUserKey = 'tipoUser';
+  static const String _idDormitoriokey = 'idDormitorio';
 
   static Future<void> saveTipoUser(String tipoUser) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -18,6 +19,21 @@ class AuthUtils {
   static Future<void> clearTipoUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tipoUserKey);
+  }
+
+  static Future<void> saveIdDormitorio(int idDormitorio) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_idDormitoriokey, idDormitorio);
+  }
+
+  static Future<int?> getIdDormitorio() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_idDormitoriokey);
+  }
+
+  static Future<void> clearIdDormitorio() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_idDormitoriokey);
   }
 
   static Future<void> saveUserId(int userId) async {

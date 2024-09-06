@@ -136,8 +136,8 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? nivelAcademico = prefs.getString('nivelAcademico');
         String? sexo = prefs.getString('sexo');
-        if (tipoUsuario == 'Empleado' &&
-            tipoUsuario == 'Preceptor' &&
+        if (tipoUsuario == 'Empleado' ||
+            tipoUsuario == 'Preceptor' ||
             tipoUsuario == 'Vigilancia') {
           int? dormitorio =
               await _bedroomService.obtenerDormitorio(nivelAcademico, sexo);

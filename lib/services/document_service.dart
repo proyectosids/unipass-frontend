@@ -55,7 +55,8 @@ class DocumentService {
       final data = json.decode(response.body);
       return data['Archivo']; // Ajustar según la respuesta de tu API
     } else {
-      print('Failed to get profile image. Status code: ${response.statusCode}');
+      print(
+          'Could not get profile picture or no picture available. Status code: ${response.statusCode}');
       return null;
     }
   }

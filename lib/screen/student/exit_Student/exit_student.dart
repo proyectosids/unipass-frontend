@@ -307,13 +307,15 @@ class _ExitStudentState extends State<ExitStudent> {
         );
       },
       child: Card(
+        color: Colors.white70,
+        shadowColor: Colors.black,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
-          leading: SizedBox(
-            width: responsive.wp(5),
-            height: responsive.hp(20),
-            child: const Icon(Icons.event),
-          ),
+          //leading: SizedBox(
+          //  width: responsive.wp(5),
+          //  height: responsive.hp(10),
+          //  child: const Icon(Icons.event),
+          //),
           title: Text(
             title,
             style: TextStyle(fontSize: responsive.dp(1.5)),
@@ -322,7 +324,7 @@ class _ExitStudentState extends State<ExitStudent> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(formattedDateE),
-              const SizedBox(height: 4),
+              SizedBox(height: responsive.hp(0.3)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -332,8 +334,8 @@ class _ExitStudentState extends State<ExitStudent> {
                       color: _getStatusColor(status),
                     ),
                   ),
-                  const SizedBox(
-                    width: 25,
+                  SizedBox(
+                    width: responsive.wp(0.5),
                   ),
                   Text(formattedDate)
                 ],

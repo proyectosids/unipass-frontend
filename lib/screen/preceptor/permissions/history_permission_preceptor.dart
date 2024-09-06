@@ -1,5 +1,4 @@
 import 'package:flutter_application_unipass/models/permission.dart';
-import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:intl/intl.dart';
@@ -223,8 +222,8 @@ class _HistoryPermissionAuthorizationState
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDateE);
 
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
+      onTap: () async {
+        final result = await Navigator.pushNamed(
           context,
           '/infoPermission',
           arguments: {
@@ -242,8 +241,15 @@ class _HistoryPermissionAuthorizationState
             'NombreTutor': permission.nombretutor,
             'ApellidosTutor': permission.apellidotutor,
             'ContactoTutor': permission.moviltutor,
+            'IdSalida': permission.idsalida,
           },
         );
+
+        // Verifica el resultado
+        if (result == true) {
+          // Si el resultado es true, recarga la lista de permisos
+          _loadPermissions(); // Recarga o refresca los datos
+        }
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

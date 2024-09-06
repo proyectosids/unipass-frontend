@@ -62,6 +62,11 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
           String userId = result['user']['Matricula'];
           String newUserId = userId.replaceFirst('MTR', '');
 
+          // Guardar idDormitorio en SharedPreferences
+          if (tipoUser == 'DEPARTAMENTO') {
+            await AuthUtils.saveIdDormitorio(result['user']['Dormitorio']);
+          }
+
           // Guardar tipoUser en SharedPreferences
           await AuthUtils.saveTipoUser(tipoUser);
 

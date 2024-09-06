@@ -241,17 +241,18 @@ class _PermissionAuthorizationEmployeeState
             'NombreTutor': permission.nombretutor,
             'ApellidosTutor': permission.apellidotutor,
             'ContactoTutor': permission.moviltutor,
+            'IdSalida': permission.idsalida,
           },
         );
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
-          leading: SizedBox(
-            width: responsive.wp(5),
-            height: responsive.hp(20),
-            child: const Icon(Icons.event),
-          ),
+          //leading: SizedBox(
+          //  width: responsive.wp(5),
+          //  height: responsive.hp(20),
+          //  child: const Icon(Icons.event),
+          //),
           title: Text(
             title,
             style: TextStyle(fontSize: responsive.dp(1.5)),

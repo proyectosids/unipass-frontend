@@ -1,7 +1,8 @@
 import 'package:flutter_application_unipass/services/authorize_service.dart';
+import 'package:flutter_application_unipass/services/checks_service.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
+import 'package:flutter_application_unipass/services/point_check_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
-import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 class InfoPermissionDetail extends StatefulWidget {
@@ -22,6 +23,8 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   final AuthorizeService _authorizeService = AuthorizeService();
   final PermissionService _permissionService =
       PermissionService(RegisterService(), AuthorizeService());
+  final PointCheckService _pointCheckService = PointCheckService();
+  final ChecksService _checksService = ChecksService();
   String selectedValue = 'Foto no identificable';
 
   @override
@@ -66,6 +69,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   Future<void> _asignarAutorizacion(String autorizo, String motivo) async {
     try {
       final idPermiso = exitDetails['IdPermission'] as int;
+      final idSalida = exitDetails['IdSalida'] as int;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? matricula = prefs.getString('matricula');
       String? tipoUser = prefs.getString('tipoUser');
@@ -76,20 +80,41 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
       }
 
       if (autorizo == 'Aprobada' && tipoUser == 'PRECEPTOR') {
+        List<dynamic> points = await _pointCheckService.getPoints(idSalida);
+        if (points.isNotEmpty) {
+          // Asumimos que tomamos el primer punto de la lista
+          int pointId1 = points[0]['IdPoint'];
+          int pointId2 = points[1]['IdPoint'];
+          // Registrar la acción en ChecksService
+          await _checksService.solicitarCreacionChecks(
+              idPermiso, 'SALIDA', pointId1);
+          await _checksService.solicitarCreacionChecks(
+              idPermiso, 'SALIDA', pointId2);
+          await _checksService.solicitarCreacionChecks(
+              idPermiso, 'RETORNO', pointId2);
+          await _checksService.solicitarCreacionChecks(
+              idPermiso, 'RETORNO', pointId1);
+        } else {
+          print('No se encontraron puntos de salida para este permiso.');
+        }
         _terminarPermiso(autorizo, motivo);
       }
 
       if (mounted && tipoUser == 'PRECEPTOR') {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/AuthorizationPreceptors',
-          (Route<dynamic> route) => false,
-        );
+        Navigator.pop(context,
+            true); // Devuelve 'true' indicando que se necesita refrescar.
+        //Navigator.of(context).pushNamedAndRemoveUntil(
+        //  '/AuthorizationPreceptor',
+        //  (Route<dynamic> route) => false,
+        //);
       }
-      if (mounted && tipoUser == 'EMPLEADO') {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/AuthorizationEmployee',
-          (Route<dynamic> route) => false,
-        );
+      if (mounted && tipoUser == 'EMPLEADO' ||
+          mounted && tipoUser == 'VIGILANCIA') {
+        Navigator.of(context).pop();
+        //Navigator.of(context).pushNamedAndRemoveUntil(
+        //  '/AuthorizationEmployee',
+        //  (Route<dynamic> route) => false,
+        //);
       }
     } catch (e) {
       print('Failed to authotize permission: $e');
