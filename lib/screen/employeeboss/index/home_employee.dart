@@ -51,7 +51,7 @@ class _HomeEmployeeScreenState extends State<HomeEmployeeScreen> {
               Text(
                 apellidos!,
                 style: TextStyle(
-                    fontSize: responsive.dp(1.8),
+                    fontSize: responsive.dp(1.4),
                     color: const Color.fromARGB(255, 138, 138, 138)),
               ),
           ],

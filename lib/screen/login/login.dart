@@ -38,7 +38,7 @@ class _LoginAppState extends State<LoginApp> {
                   ),
                   SizedBox(height: responsive.hp(5)),
                   Text(
-                    '¿Estás seguro de que quieres salir de la aplicación?',
+                    '¿Estás seguro de que deseas salir de la aplicación?',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: responsive.dp(1.8),
@@ -145,7 +145,7 @@ class _LoginAppState extends State<LoginApp> {
                     SizedBox(
                         height: responsive.hp(2)), // Space between sections
                     Text(
-                      'Sé bienvenido a tu app para apoyo institucional',
+                      'Bienvenido a tu app de apoyo institucional',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: responsive.dp(2),
@@ -158,7 +158,7 @@ class _LoginAppState extends State<LoginApp> {
 
                     SizedBox(height: responsive.hp(2)),
                     Text(
-                      'Olvidaste tu contraseña',
+                      '¿Olvidaste tu contraseña?',
                       style: TextStyle(
                         fontSize: responsive.dp(1.5),
                         color: Colors.black,
@@ -192,7 +192,7 @@ class _LoginAppState extends State<LoginApp> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Eres nuevo?',
+                          '¿Eres nuevo?',
                           style: TextStyle(
                             fontSize: responsive.dp(1.5),
                             color: Colors.black,

@@ -43,7 +43,7 @@ class _HomeScreenStudentState extends State<HomeScreenStudent> {
           BottomNavigationBarItem(
             icon: Icon(Icons.menu),
             activeIcon: Icon(Icons.menu_book),
-            label: 'Menu',
+            label: 'Menú',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

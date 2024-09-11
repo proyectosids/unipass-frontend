@@ -1,9 +1,22 @@
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
-class MenuPreceptorScreen extends StatelessWidget {
+class MenuPreceptorScreen extends StatefulWidget {
   static const routeName = '/menupreceptor';
+  const MenuPreceptorScreen({super.key});
 
-  const MenuPreceptorScreen({Key? key}) : super(key: key);
+  @override
+  State<MenuPreceptorScreen> createState() => _MenuPreceptorScreenState();
+}
+
+class _MenuPreceptorScreenState extends State<MenuPreceptorScreen> {
+  String? typeUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _getTypeUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +63,12 @@ class MenuPreceptorScreen extends StatelessWidget {
                     '/fileDocuments',
                     Colors.orange,
                   ),
+                  _buildMenuItem(
+                      context,
+                      'Checks',
+                      'assets/image/checks.svg',
+                      '/NewProfileChecks',
+                      const Color.fromARGB(255, 80, 85, 221)),
                 ],
               ),
             ),
@@ -84,5 +103,13 @@ class MenuPreceptorScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _getTypeUser() async {
+    String? user = await AuthUtils.getTipoUser();
+
+    setState(() {
+      typeUser = user;
+    });
   }
 }

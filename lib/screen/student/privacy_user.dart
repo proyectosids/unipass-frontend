@@ -82,7 +82,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                           height: 20,
                         ),
                         Text(
-                          'Revisión 2023   -   05 de mayo del 2023.',
+                          'Revisión 2023 - 5 de mayo de 2023.',
                           style: TextStyle(
                             fontSize: responsive.hp(1.8),
                             fontWeight: FontWeight.bold,
@@ -91,7 +91,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                         ),
                         SizedBox(height: 20),
                         Text(
-                          'La Universidad Linda Vista, A. C., como responsable del uso de datos personales tiene a bien a poner a su disposición de conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, el siguiente ',
+                          'La Universidad Linda Vista, A. C., como responsable del uso de datos personales, pone a su disposición, de conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, el siguiente',
                           style: TextStyle(
                             fontSize: responsive.hp(2),
                             color: Colors.white,
@@ -116,7 +116,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                         ),
                       ),
                       child: Text(
-                        'Mas informacion',
+                        'Más información',
                         style: TextStyle(
                             color: Colors.black, fontSize: responsive.hp(1.8)),
                       ),

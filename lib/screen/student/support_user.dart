@@ -37,7 +37,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                 children: [
                   SizedBox(height: responsive.hp(2)),
                   Text(
-                    '¿Hay algo que podemos hacer para mejorar tu experiencia?',
+                    '¿Hay algo que podamos hacer para mejorar tu experiencia?',
                     style: TextStyle(
                       fontSize: responsive.dp(2.2),
                       fontWeight: FontWeight.bold,
@@ -45,7 +45,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                   ),
                   SizedBox(height: responsive.hp(2)),
                   Text(
-                    'Bienvenido al soporte de nuestra aplicación de control de salidas y entradas. Aquí encontrarás nuestros contactos de ayuda para interpretar reportes y resolver cualquier duda. Nuestro equipo está listo para asistirte y asegurar una experiencia óptima. Consulta nuestras guías, FAQs y opciones de contacto.',
+                    'Bienvenido al soporte de nuestra aplicación de control de salidas y entradas. Aquí encontrarás nuestros contactos de ayuda para interpretar reportes y resolver cualquier duda. Nuestro equipo está listo para asistirte y asegurarte una experiencia óptima. Consulta nuestras guías, preguntas frecuentes (FAQs) y opciones de contacto.',
                     style: TextStyle(fontSize: responsive.dp(1.8)),
                   ),
                 ],
@@ -94,7 +94,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                     ),
                     SizedBox(height: responsive.hp(1)),
                     Text(
-                      'Ex-Finca Santa Cruz Nº 1, CP. 29750, Pueblo Nuevo Solistahuacán, Chiapas; México. En las oficinas de Vicerrectoría Estudiantil',
+                      'Ex-Finca Santa Cruz Nº 1, CP 29750, Pueblo Nuevo Solistahuacán, Chiapas, México. En las oficinas de Vicerrectoría Estudiantil',
                       style: TextStyle(
                         fontSize: responsive.dp(2),
                         color: Colors.white,

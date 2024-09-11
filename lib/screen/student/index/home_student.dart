@@ -33,14 +33,14 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Bienvenido ${nombre ?? 'Empleado'}',
+              'Bienvenido, ${nombre ?? 'Empleado'}',
               style: TextStyle(fontSize: responsive.dp(2.2)),
             ),
             if (apellidos != null)
               Text(
                 apellidos!,
                 style: TextStyle(
-                    fontSize: responsive.dp(1.8),
+                    fontSize: responsive.dp(1.4),
                     color: const Color.fromARGB(255, 138, 138, 138)),
               ),
           ],
@@ -121,7 +121,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
             ),
             _buildCard(
               'Jefe de área',
-              'Alumnos pendientes con horas',
+              'Alumnos pendientes de horas',
               '22 Mayo, 2024',
               Colors.blue,
               Icons.announcement,

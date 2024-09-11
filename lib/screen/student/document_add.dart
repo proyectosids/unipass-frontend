@@ -144,7 +144,7 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
             ),
             const SizedBox(height: 8),
             Text(
-              isFileAttached ? 'Pendiente' : 'No Adjunto',
+              isFileAttached ? 'Pendiente' : 'No adjunto',
               style: TextStyle(
                 fontSize: 16,
                 color: isFileAttached ? Colors.orange : Colors.red,

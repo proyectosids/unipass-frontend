@@ -39,16 +39,30 @@ class RegisterService {
   }
 
   Future<bool?> getValidarJefe(String idEmpleado) async {
-    final uri = Uri.parse('$endpointUrl/api/datos/getjefe/$idEmpleado');
-    final respuesta = await http.get(uri);
+    try {
+      final uri = Uri.parse('$endpointUrl/api/datos/getjefe/$idEmpleado');
+      final respuesta = await http.get(uri);
 
-    if (respuesta.statusCode == 200) {
-      final data = json.decode(respuesta.body);
-      if (data['EmpMatricula'] != null && data['EmpMatricula'] == idEmpleado) {
-        return true;
+      if (respuesta.statusCode == 200) {
+        if (respuesta.body.isNotEmpty) {
+          final data = json.decode(respuesta.body);
+          // Verificar si el JSON tiene la clave 'EmpMatricula' y si coincide con idEmpleado
+          if (data != null && data['EmpMatricula'] != null) {
+            if (data['EmpMatricula'] == idEmpleado) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        } else {
+          print('La respuesta del servidor está vacía.');
+          return null;
+        }
       } else {
-        return false;
+        print('Error en la respuesta del servidor: ${respuesta.statusCode}');
       }
+    } catch (e) {
+      print('Error al intentar obtener o procesar la respuesta: $e');
     }
     return null;
   }

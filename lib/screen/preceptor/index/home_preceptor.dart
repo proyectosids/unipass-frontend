@@ -16,7 +16,7 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
   List<Map<String, String>> _notices = [
     {
       'directedTo': 'Departamento de trabajo',
-      'title': 'No deber horas para prácticas',
+      'title': 'No deber horas para salir a prácticas',
       'date': '25 Mayo, 2024',
     },
     {
@@ -51,7 +51,7 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
               Text(
                 apellidos!,
                 style: TextStyle(
-                    fontSize: responsive.dp(1.8),
+                    fontSize: responsive.dp(1.4),
                     color: const Color.fromARGB(255, 138, 138, 138)),
               ),
           ],

@@ -75,17 +75,17 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
       String? tipoUser = prefs.getString('tipoUser');
 
       await _authorizeService.valorarAuthorize(idPermiso, matricula!, autorizo);
+
       if (autorizo == 'Rechazada') {
-        _terminarPermiso(autorizo, motivo);
+        await _terminarPermiso(autorizo, motivo);
       }
 
       if (autorizo == 'Aprobada' && tipoUser == 'PRECEPTOR') {
         List<dynamic> points = await _pointCheckService.getPoints(idSalida);
         if (points.isNotEmpty) {
-          // Asumimos que tomamos el primer punto de la lista
           int pointId1 = points[0]['IdPoint'];
           int pointId2 = points[1]['IdPoint'];
-          // Registrar la acción en ChecksService
+
           await _checksService.solicitarCreacionChecks(
               idPermiso, 'SALIDA', pointId1);
           await _checksService.solicitarCreacionChecks(
@@ -97,27 +97,27 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
         } else {
           print('No se encontraron puntos de salida para este permiso.');
         }
-        _terminarPermiso(autorizo, motivo);
+
+        await _terminarPermiso(autorizo, motivo);
       }
 
-      if (mounted && tipoUser == 'PRECEPTOR') {
-        Navigator.pop(context,
-            true); // Devuelve 'true' indicando que se necesita refrescar.
-        //Navigator.of(context).pushNamedAndRemoveUntil(
-        //  '/AuthorizationPreceptor',
-        //  (Route<dynamic> route) => false,
-        //);
-      }
-      if (mounted && tipoUser == 'EMPLEADO' ||
-          mounted && tipoUser == 'VIGILANCIA') {
-        Navigator.of(context).pop();
-        //Navigator.of(context).pushNamedAndRemoveUntil(
-        //  '/AuthorizationEmployee',
-        //  (Route<dynamic> route) => false,
-        //);
+      // Manejando la navegación según el tipo de usuario
+      if (mounted) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context, true); // Refrescará la pantalla anterior
+        } else {
+          // Si no se puede retroceder, puedes redirigir a una pantalla específica
+          if (tipoUser == 'PRECEPTOR') {
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/AuthorizationPreceptor', (route) => false);
+          } else if (tipoUser == 'EMPLEADO' || tipoUser == 'VIGILANCIA') {
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/AuthorizationEmployee', (route) => false);
+          }
+        }
       }
     } catch (e) {
-      print('Failed to authotize permission: $e');
+      print('Failed to authorize permission: $e');
     }
   }
 

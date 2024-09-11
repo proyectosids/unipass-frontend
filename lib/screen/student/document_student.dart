@@ -172,7 +172,7 @@ class _DocumentStudentState extends State<DocumentStudent> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Para poder solicitar una salida es necesario tener estos documentos adjuntos en tu aplicación',
+                        'Para solicitar una salida, es necesario tener estos documentos adjuntos en tu aplicación.',
                         style: TextStyle(fontSize: 16),
                       ),
                     ],

@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/models/permission.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
@@ -213,8 +214,10 @@ class _HistoryPermissionAuthorizationState
   Widget _buildPermissionItem(BuildContext context, String title, String date,
       String dateE, String status, Permission permission) {
     final Responsive responsive = Responsive.of(context);
-    DateTime parsedDate = DateTime.parse(date);
-    DateTime parsedDateE = DateTime.parse(dateE);
+    DateTime parsedDate = DateTime.parse(date)
+        .subtract(const Duration(hours: 6)); // Restar 6 horas
+    DateTime parsedDateE = DateTime.parse(dateE)
+        .subtract(const Duration(hours: 6)); // Restar 6 horas
 
     String formattedDate =
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
@@ -245,10 +248,8 @@ class _HistoryPermissionAuthorizationState
           },
         );
 
-        // Verifica el resultado
         if (result == true) {
-          // Si el resultado es true, recarga la lista de permisos
-          _loadPermissions(); // Recarga o refresca los datos
+          _loadPermissions();
         }
       },
       child: Card(
@@ -262,21 +263,37 @@ class _HistoryPermissionAuthorizationState
           title: Text(
             title,
             style: TextStyle(fontSize: responsive.dp(1.5)),
+            overflow: TextOverflow.ellipsis, // Agrega los puntos suspensivos
+            maxLines: 1, // Limitar a 1 línea
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(formattedDateE),
+              Text(
+                formattedDateE,
+                overflow: TextOverflow.ellipsis, // Puntos suspensivos si excede
+                maxLines: 1, // Limitar a 1 línea
+              ),
               const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    status,
-                    style: TextStyle(color: _getStatusColor(status)),
+                  Flexible(
+                    child: Text(
+                      status,
+                      style: TextStyle(color: _getStatusColor(status)),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ),
                   const SizedBox(width: 25),
-                  Text(formattedDate),
+                  Flexible(
+                    child: Text(
+                      formattedDate,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
                 ],
               ),
             ],

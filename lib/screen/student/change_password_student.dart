@@ -50,7 +50,7 @@ class _ChangepasswordStudentState extends State<ChangepasswordStudent> {
                   ),
                   SizedBox(height: responsive.hp(2)),
                   Text(
-                    'Si has ingresado tu cuenta en algún otro dispositivo y crees que puede ser vulnerada tu cuenta te recomendamos cambiar la contraseña',
+                    'Si has ingresado tu cuenta en otro dispositivo y crees que puede estar comprometida, te recomendamos cambiar la contraseña',
                     style: TextStyle(fontSize: responsive.dp(2)),
                   ),
                 ],
@@ -72,7 +72,7 @@ class _ChangepasswordStudentState extends State<ChangepasswordStudent> {
                     SizedBox(height: responsive.hp(5)),
                     TextFieldWidget(
                       controller: _currentPasswordController,
-                      label: 'Actual contraseña',
+                      label: 'Contraseña actual',
                       obscureText: true,
                     ),
                     SizedBox(height: responsive.hp(5)),

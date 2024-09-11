@@ -1,10 +1,15 @@
+import 'package:date_picker_timeline/date_picker_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/screen/student/exit_Student/create_exit.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/models/permission.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
-import 'package:flutter_application_unipass/utils/imports.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExitStudent extends StatefulWidget {
   static const routeName = '/ExitStudent';
@@ -12,7 +17,6 @@ class ExitStudent extends StatefulWidget {
   const ExitStudent({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _ExitStudentState createState() => _ExitStudentState();
 }
 
@@ -78,6 +82,13 @@ class _ExitStudentState extends State<ExitStudent> {
     setState(() {
       _permissions.insert(0, newPermission);
     });
+  }
+
+  // Función para verificar si la fecha seleccionada está dentro de los próximos 7 días
+  bool _isDateWithin7Days() {
+    final now = DateTime.now();
+    final difference = _selectedDate.difference(now).inDays;
+    return difference <= 7;
   }
 
   @override
@@ -174,23 +185,28 @@ class _ExitStudentState extends State<ExitStudent> {
           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         ElevatedButton(
-          onPressed: () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CreateExitScreen(
-                  initialDate: _selectedDate,
-                ),
-              ),
-            );
+          onPressed: _isDateWithin7Days()
+              ? () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateExitScreen(
+                        initialDate:
+                            _selectedDate, // Pasar la fecha seleccionada
+                      ),
+                    ),
+                  );
 
-            if (result != null && result is Permission) {
-              _addNewPermission(result);
-              _loadPermissions(); // Recargar las salidas cuando regresas de la otra pantalla
-            }
-          },
+                  if (result != null && result is Permission) {
+                    _addNewPermission(result);
+                    _loadPermissions(); // Recargar las salidas cuando regresas de la otra pantalla
+                  }
+                }
+              : null, // Deshabilita el botón si la fecha no es válida
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
+            backgroundColor: _isDateWithin7Days()
+                ? Colors.purple
+                : Colors.grey, // Cambia el color si está deshabilitado
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -276,8 +292,10 @@ class _ExitStudentState extends State<ExitStudent> {
     DateTime parsedDate;
     DateTime parsedDateE;
     try {
-      parsedDate = DateTime.parse(date);
-      parsedDateE = DateTime.parse(dateE);
+      parsedDate = DateTime.parse(date)
+          .subtract(const Duration(hours: 6)); // Restar 6 horas
+      parsedDateE = DateTime.parse(dateE)
+          .subtract(const Duration(hours: 6)); // Restar 6 horas
     } catch (e) {
       return const Text('Fecha inválida');
     }
@@ -311,33 +329,54 @@ class _ExitStudentState extends State<ExitStudent> {
         shadowColor: Colors.black,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
-          //leading: SizedBox(
-          //  width: responsive.wp(5),
-          //  height: responsive.hp(10),
-          //  child: const Icon(Icons.event),
-          //),
+          leading: SizedBox(
+            width: responsive.wp(5),
+            height: responsive.hp(10),
+            child: const Icon(Icons.event),
+          ),
           title: Text(
             title,
             style: TextStyle(fontSize: responsive.dp(1.5)),
+            overflow: TextOverflow
+                .ellipsis, // Añadir truncamiento con puntos suspensivos
+            maxLines: 1, // Limitar a 1 línea
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(formattedDateE),
+              Text(
+                formattedDateE,
+                overflow: TextOverflow.ellipsis, // Puntos suspensivos si excede
+                maxLines: 1, // Limitar a 1 línea
+              ),
               SizedBox(height: responsive.hp(0.3)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    status,
-                    style: TextStyle(
-                      color: _getStatusColor(status),
+                  Flexible(
+                    // Evita que el texto se desborde en la fila
+                    child: Text(
+                      status,
+                      style: TextStyle(
+                        color: _getStatusColor(status),
+                      ),
+                      overflow: TextOverflow
+                          .ellipsis, // Añadir truncamiento con puntos suspensivos
+                      maxLines: 1, // Limitar a 1 línea
                     ),
                   ),
                   SizedBox(
                     width: responsive.wp(0.5),
                   ),
-                  Text(formattedDate)
+                  Flexible(
+                    // Evita que el texto se desborde en la fila
+                    child: Text(
+                      formattedDate,
+                      overflow: TextOverflow
+                          .ellipsis, // Añadir truncamiento con puntos suspensivos
+                      maxLines: 1, // Limitar a 1 línea
+                    ),
+                  ),
                 ],
               ),
             ],

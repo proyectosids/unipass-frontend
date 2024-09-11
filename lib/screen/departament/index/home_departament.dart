@@ -22,33 +22,30 @@ class _HomeDepartamentState extends State<HomeDepartament> {
   List<Map<String, dynamic>> _salidaChecks = [];
   List<Map<String, dynamic>> _retornoChecks = [];
   bool isLoading = true;
-  bool isUserDataLoading =
-      true; // Controla si los datos de usuario están cargados
+  bool isUserDataLoading = true;
   final ChecksService _checksService = ChecksService();
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('es_MX', null);
-    _loadUserDataAndFetchChecks(); // Cargamos los datos del usuario antes de hacer el fetch
+    _loadUserDataAndFetchChecks();
   }
 
-  // Cargar los datos del usuario y luego obtener los checks
   Future<void> _loadUserDataAndFetchChecks() async {
-    await _getNombreUser(); // Esperamos a que los datos del usuario se carguen
+    await _getNombreUser();
     if (idDormitorio != null) {
-      await _fetchChecks(); // Solo llamamos a fetchChecks después de obtener el idDormitorio
+      await _fetchChecks();
     } else {
       setState(() {
-        isLoading = false; // Detenemos la carga si no hay idDormitorio
+        isLoading = false;
       });
     }
   }
 
-  // Obtener los checks
   Future<void> _fetchChecks() async {
     setState(() {
-      isLoading = true; // Indicamos que los checks se están cargando
+      isLoading = true;
     });
     try {
       List<dynamic> checks;
@@ -58,25 +55,31 @@ class _HomeDepartamentState extends State<HomeDepartament> {
         checks = await _checksService.obtenerChecksVigilancia();
       }
 
-      // Asegúrate de imprimir los checks para verificar si llegan correctamente
-      print('Checks obtenidos: $checks');
-
       setState(() {
         _salidaChecks = checks
             .where((check) => check['Accion'] == 'SALIDA')
             .map((check) => {
+                  'idCheck': check['IdCheck'],
                   'name': check['Nombre'],
-                  'approved': check['StatusCheck'] == 'Aprobada',
+                  'Estatus': check['Estatus'],
                 })
             .toList();
         _retornoChecks = checks
             .where((check) => check['Accion'] == 'RETORNO')
             .map((check) => {
-                  'name': check[
-                      'Nombre'], // Asegúrate de que este campo sea correcto
-                  'approved': check['StatusCheck'] == 'Aprobada',
+                  'idCheck': check['IdCheck'],
+                  'name': check['Nombre'],
+                  'Estatus': check['Estatus'],
+                  'linkedSalida': _salidaChecks.firstWhere(
+                      (salidaCheck) => salidaCheck['name'] == check['Nombre'],
+                      orElse: () => {
+                            'idCheck': null,
+                            'name': check['Nombre'],
+                            'Estatus': 'No Confirmada',
+                          }) // Proporciona un valor por defecto si no encuentra una salida
                 })
             .toList();
+
         isLoading = false;
       });
     } catch (e) {
@@ -95,7 +98,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: isUserDataLoading
-            ? CircularProgressIndicator() // Mostrar un indicador de carga mientras se obtienen los datos del usuario
+            ? CircularProgressIndicator()
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -107,7 +110,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                     Text(
                       apellidos!,
                       style: TextStyle(
-                          fontSize: responsive.dp(1.8),
+                          fontSize: responsive.dp(1.4),
                           color: const Color.fromARGB(255, 138, 138, 138)),
                     ),
                 ],
@@ -157,18 +160,53 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                           ? _salidaChecks[index]
                           : _retornoChecks[index];
 
-                      return CheckboxListTile(
-                        title: Text(
-                            '${_selectedIndex == 0 ? 'Salida' : 'Retorno'} de ${check['name']}'),
-                        subtitle: Text(
-                            check['approved'] ? 'Aprobada' : 'No Aprobada'),
-                        value: check['approved'],
-                        onChanged: (bool? value) {
-                          // Debería ser solo visual, así que este onChanged puede quedar vacío.
+                      // Determinar si el checkbox está marcado o no
+                      bool isApproved = check['Estatus'] == "Confirmada";
+                      bool isSalidaConfirmed = _selectedIndex == 1
+                          ? (check['linkedSalida'] != null &&
+                              check['linkedSalida']['Estatus'] == 'Confirmada')
+                          : true;
+                      // Verifica si la salida está confirmada para permitir el retorno
+
+                      return Dismissible(
+                        key: Key(check['idCheck'].toString()),
+                        direction: DismissDirection.startToEnd,
+                        background: Container(
+                          color: Colors.red,
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          alignment: Alignment.centerLeft,
+                          child: Icon(Icons.cancel, color: Colors.white),
+                        ),
+                        onDismissed: (direction) async {
+                          await _checksService.actualizarEstadoCheck(
+                              check['idCheck'], "No Confirmada");
+                          setState(() {
+                            check['Estatus'] = "No Confirmada";
+                          });
                         },
-                        secondary: Icon(
-                          check['approved'] ? Icons.check : Icons.close,
-                          color: check['approved'] ? Colors.green : Colors.red,
+                        child: CheckboxListTile(
+                          title: Text(
+                              '${_selectedIndex == 0 ? 'Salida' : 'Retorno'} de ${check['name']}'),
+                          subtitle:
+                              Text(isApproved ? 'Confirmada' : 'No Confirmada'),
+                          value: isApproved,
+                          onChanged: isSalidaConfirmed
+                              ? (bool? value) async {
+                                  if (value != null) {
+                                    String estado =
+                                        value ? "Confirmada" : "No Confirmada";
+                                    await _checksService.actualizarEstadoCheck(
+                                        check['idCheck'], estado);
+                                    setState(() {
+                                      check['Estatus'] = estado;
+                                    });
+                                  }
+                                }
+                              : null, // Deshabilitar si la salida no está confirmada
+                          secondary: Icon(
+                            isApproved ? Icons.check : Icons.close,
+                            color: isApproved ? Colors.green : Colors.red,
+                          ),
                         ),
                       );
                     },
@@ -179,7 +217,6 @@ class _HomeDepartamentState extends State<HomeDepartament> {
     );
   }
 
-  // Obtener datos del usuario
   Future<void> _getNombreUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? nombreUsuario = prefs.getString('nombre');
@@ -190,12 +227,10 @@ class _HomeDepartamentState extends State<HomeDepartament> {
       nombre = nombreUsuario;
       apellidos = apellidosUsuario;
       idDormitorio = dormitorioId;
-      isUserDataLoading =
-          false; // Indicamos que la carga de datos de usuario ha terminado
+      isUserDataLoading = false;
     });
   }
 
-  // Método para cambiar de pestaña en el toggle button
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

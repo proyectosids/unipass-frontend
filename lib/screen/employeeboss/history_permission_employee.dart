@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/models/permission.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
@@ -213,8 +214,10 @@ class _PermissionAuthorizationEmployeeState
   Widget _buildPermissionItem(BuildContext context, String title, String date,
       String dateE, String status, Permission permission) {
     final Responsive responsive = Responsive.of(context);
-    DateTime parsedDate = DateTime.parse(date);
-    DateTime parsedDateE = DateTime.parse(dateE);
+    DateTime parsedDate = DateTime.parse(date)
+        .subtract(const Duration(hours: 6)); // Restar 6 horas
+    DateTime parsedDateE = DateTime.parse(dateE)
+        .subtract(const Duration(hours: 6)); // Restar 6 horas
 
     String formattedDate =
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
@@ -248,29 +251,47 @@ class _PermissionAuthorizationEmployeeState
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
-          //leading: SizedBox(
-          //  width: responsive.wp(5),
-          //  height: responsive.hp(20),
-          //  child: const Icon(Icons.event),
-          //),
+          leading: SizedBox(
+            width: responsive.wp(5),
+            height: responsive.hp(20),
+            child: const Icon(Icons.event),
+          ),
           title: Text(
             title,
             style: TextStyle(fontSize: responsive.dp(1.5)),
+            overflow: TextOverflow
+                .ellipsis, // Truncar el texto con puntos suspensivos
+            maxLines: 1, // Limitar a 1 línea
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(formattedDateE),
+              Text(
+                formattedDateE,
+                overflow: TextOverflow
+                    .ellipsis, // Truncar el texto con puntos suspensivos
+                maxLines: 1, // Limitar a 1 línea
+              ),
               const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    status,
-                    style: TextStyle(color: _getStatusColor(status)),
+                  Flexible(
+                    child: Text(
+                      status,
+                      style: TextStyle(color: _getStatusColor(status)),
+                      overflow: TextOverflow.ellipsis, // Truncar el texto
+                      maxLines: 1, // Limitar a 1 línea
+                    ),
                   ),
                   const SizedBox(width: 25),
-                  Text(formattedDate),
+                  Flexible(
+                    child: Text(
+                      formattedDate,
+                      overflow: TextOverflow.ellipsis, // Truncar el texto
+                      maxLines: 1, // Limitar a 1 línea
+                    ),
+                  ),
                 ],
               ),
             ],

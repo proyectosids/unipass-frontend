@@ -1,12 +1,12 @@
-import 'package:flutter_application_unipass/services/authorize_service.dart';
-import 'package:flutter_application_unipass/utils/imports.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter_application_unipass/services/permission_service.dart';
-import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_application_unipass/services/authorize_service.dart';
+import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/models/permission.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 
 class CreateExitScreen extends StatefulWidget {
   static const routeName = '/createExit';
@@ -16,7 +16,6 @@ class CreateExitScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _CreateExitScreenState createState() => _CreateExitScreenState();
 }
 
@@ -47,12 +46,10 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   }
 
   Future<void> _selectDateTime(BuildContext context, bool isStart) async {
-    if (_selectedType == 'Pueblo' && !isStart) {
-      // No hacer nada si el tipo es 'Pueblo' y no es la hora de salida
-      return;
-    }
-
-    if (_selectedType == 'Pueblo') {
+    if (_selectedType == 'Pueblo' ||
+        _selectedType == 'Especial' ||
+        _selectedType == 'A casa') {
+      // Solo selecciona la hora si es salida de tipo Pueblo
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: isStart ? _selectedStartTime : _selectedEndTime,
@@ -72,6 +69,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         });
       }
     } else {
+      // Para otros tipos de salida, selecciona fecha y hora
       final DateTime? pickedDate = await showDatePicker(
         context: context,
         initialDate: isStart ? _selectedStartDate : _selectedEndDate,
@@ -105,9 +103,13 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     }
   }
 
+  // No convertimos la hora, solo tomamos la hora local del dispositivo
+  DateTime _combineDateAndTime(DateTime date, TimeOfDay time) {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
   String _formatDateTime(DateTime date, TimeOfDay time) {
-    final DateTime dateTime =
-        DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    final DateTime dateTime = _combineDateAndTime(date, time);
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
     final DateFormat timeFormat = DateFormat('hh:mm a'); // Formato de 12 horas
     return '${dateFormat.format(dateTime)} ${timeFormat.format(dateTime)}';
@@ -126,19 +128,24 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       return;
     }
 
-    String userSex = userInfo['Sexo'] ?? ''; // Manejo de posibles valores null
-    // Validar el día según el sexo, solo si el tipo de salida es 'Pueblo'
+    String userSex = userInfo['Sexo'] ?? '';
     if (_selectedType == 'Pueblo' &&
         !_isValidDayForSex(userSex, _selectedStartDate)) {
       _showInvalidDayAlert(context, userSex);
       return;
     }
 
+    // Registrar la fecha y hora seleccionada del dispositivo
+    final DateTime fechaSalida =
+        _combineDateAndTime(_selectedStartDate, _selectedStartTime);
+    final DateTime fechaRegreso =
+        _combineDateAndTime(_selectedEndDate, _selectedEndTime);
+
     final newExit = {
       'FechaSolicitada': DateTime.now().toIso8601String(),
       'StatusPermission': 'Pendiente',
-      'FechaSalida': _selectedStartDate.toIso8601String(),
-      'FechaRegreso': _selectedEndDate.toIso8601String(),
+      'FechaSalida': fechaSalida.toIso8601String(),
+      'FechaRegreso': fechaRegreso.toIso8601String(),
       'Motivo': _selectedReason,
       'Tipo': _selectedType,
       'IdUser': userId,
@@ -148,7 +155,6 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     try {
       final result = await _permissionService.createPermission(newExit);
 
-      // Crear instancia de Permission
       Permission newPermission = Permission(
         id: result['IdPermission'] as int? ?? 0,
         fechasolicitud: DateTime.parse(newExit['FechaSolicitada'] as String),
@@ -158,7 +164,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         motivo: newExit['Motivo'] as String? ?? '',
         idlogin: newExit['IdUser'] as int? ?? 0,
         idsalida: newExit['IdTipoSalida'] as int? ?? 0,
-        observaciones: '', // Agrega cualquier campo adicional requerido
+        observaciones: '',
         descripcion: newExit['Tipo'] as String? ?? '',
         nombre: userInfo['Nombre'] as String? ?? '',
         apellidos: userInfo['Apellidos'] as String? ?? '',
@@ -166,10 +172,10 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         idTrabajo: userInfo['ID DEPTO'] as int? ?? 0,
         trabajo: userInfo['DEPARTAMENTO'] as String? ?? '',
         idJefeTrabajo: userInfo['ID JEFE'] as int? ?? 0,
-        jefetrabajo: '', // Agrega cualquier campo adicional requerido
-        nombretutor: '', // Agrega cualquier campo adicional requerido
-        apellidotutor: '', // Agrega cualquier campo adicional requerido
-        moviltutor: '', // Agrega cualquier campo adicional requerido
+        jefetrabajo: '',
+        nombretutor: '',
+        apellidotutor: '',
+        moviltutor: '',
         matricula: userInfo['MATRICULA'] as String? ?? '',
         correo: userInfo['Correo'] as String? ?? '',
         tipoUser: userInfo['TipoUser'] as String? ?? '',
@@ -179,17 +185,14 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         celular: userInfo['Celular'] as String? ?? '',
       );
 
-      // ignore: use_build_context_synchronously
       Navigator.pop(context, newPermission);
     } catch (e) {
-      // ignore: avoid_print
       print('Failed to create exit: $e');
     }
   }
 
   bool _isValidDayForSex(String sex, DateTime date) {
-    final int dayOfWeek =
-        date.weekday; // 1 = Lunes, 2 = Martes, ..., 7 = Domingo
+    final int dayOfWeek = date.weekday;
     if (sex == 'F' && (dayOfWeek == 1 || dayOfWeek == 3)) {
       return true;
     } else if (sex == 'M' && (dayOfWeek == 2 || dayOfWeek == 4)) {
@@ -199,20 +202,62 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   }
 
   void _showInvalidDayAlert(BuildContext context, String sex) {
+    final Responsive responsive = Responsive.of(context);
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Día no permitido'),
-          content: Text(sex == 'F'
-              ? 'Las mujeres solo pueden crear salidas los lunes y miércoles.'
-              : 'Los hombres solo pueden crear salidas los martes y jueves.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(responsive.wp(10)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(responsive.wp(8)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Día no permitido',
+                  style: TextStyle(
+                    fontSize: responsive.dp(2.8),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: responsive.hp(4)),
+                Text(
+                  sex == 'F'
+                      ? 'Las salidas para señoritas estarán disponibles únicamente los días lunes y miércoles.'
+                      : 'Las salidas para varones estarán disponibles únicamente los días martes y jueves.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: responsive.dp(1.8),
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(height: responsive.hp(4)),
+                SizedBox(
+                  width: responsive.wp(50),
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      padding: EdgeInsets.symmetric(vertical: responsive.hp(2)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(responsive.wp(30)),
+                      ),
+                    ),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                        fontSize: responsive.dp(2),
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -227,6 +272,13 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF6D55F4),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -248,17 +300,17 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            _buildDateTimePicker('Fecha y hora de salida', _selectedStartDate,
-                _selectedStartTime, true),
+            _buildDateTimePickerSalida('Fecha y hora de salida',
+                _selectedStartDate, _selectedStartTime, true),
             const SizedBox(height: 20),
-            _buildDateTimePicker('Fecha y hora de retorno', _selectedEndDate,
-                _selectedEndTime, false,
+            _buildDateTimePickerRetorno('Fecha y hora de retorno',
+                _selectedEndDate, _selectedEndTime, false,
                 enabled: _selectedType != 'Pueblo'),
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: _selectedReason,
               decoration: const InputDecoration(labelText: 'Motivo'),
-              items: <String>['Compras', 'Trabajo', 'Ocio', 'Otros']
+              items: <String>['Compras', 'Trabajo', 'Salud', 'Otros']
                   .map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -308,7 +360,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     );
   }
 
-  Widget _buildDateTimePicker(
+  Widget _buildDateTimePickerSalida(
       String label, DateTime date, TimeOfDay time, bool isStart,
       {bool enabled = true}) {
     return Column(
@@ -331,11 +383,67 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _formatDateTime(date, time),
+                  _selectedType == 'Pueblo' && isStart ||
+                          _selectedType == 'Especial' && isStart ||
+                          _selectedType == 'A casa' && isStart
+                      ? time.format(context)
+                      : _formatDateTime(date, time),
                   style: TextStyle(color: enabled ? Colors.black : Colors.grey),
                 ),
-                Icon(Icons.calendar_today,
-                    color: enabled ? Colors.black : Colors.grey),
+                Icon(
+                  _selectedType == 'Pueblo' && isStart ||
+                          _selectedType == 'Especial' && isStart ||
+                          _selectedType == 'A casa' && isStart
+                      ? Icons.access_time
+                      : Icons.calendar_today,
+                  color: enabled ? Colors.black : Colors.grey,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateTimePickerRetorno(
+      String label, DateTime date, TimeOfDay time, bool isStart,
+      {bool enabled = true}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        InkWell(
+          onTap: enabled ? () => _selectDateTime(context, isStart) : null,
+          child: InputDecorator(
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.all(10),
+              enabled: enabled,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _selectedType == 'Pueblo' && isStart ||
+                          _selectedType == 'Especial' && isStart ||
+                          _selectedType == 'A casa' && isStart
+                      ? time.format(context)
+                      : _formatDateTime(date, time),
+                  style: TextStyle(color: enabled ? Colors.black : Colors.grey),
+                ),
+                Icon(
+                  _selectedType == 'Pueblo' && isStart ||
+                          _selectedType == 'Especial' && isStart ||
+                          _selectedType == 'A casa' && isStart
+                      ? Icons.access_time
+                      : Icons.calendar_today,
+                  color: enabled ? Colors.black : Colors.grey,
+                ),
               ],
             ),
           ),
