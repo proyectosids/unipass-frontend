@@ -125,7 +125,7 @@ class _LoginAppState extends State<LoginApp> {
                     Column(
                       children: [
                         Text(
-                          'UniPass ULV',
+                          'UniPass',
                           style: TextStyle(
                             fontSize: responsive.dp(3),
                             fontWeight: FontWeight.bold,
@@ -134,9 +134,9 @@ class _LoginAppState extends State<LoginApp> {
                         ),
                         SizedBox(height: responsive.hp(2)),
                         Opacity(
-                          opacity: 0.2,
+                          opacity: 0.8,
                           child: Image.asset(
-                            'assets/image/Logo_ULV.png',
+                            'assets/image/U Linda Vista LOGO-01.png',
                             height: imageHeight,
                           ),
                         ),

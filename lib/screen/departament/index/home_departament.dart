@@ -162,15 +162,14 @@ class _HomeDepartamentState extends State<HomeDepartament> {
 
                       // Determinar si el checkbox está marcado o no
                       bool isApproved = check['Estatus'] == "Confirmada";
-                      bool isSalidaConfirmed = _selectedIndex == 1
-                          ? (check['linkedSalida'] != null &&
-                              check['linkedSalida']['Estatus'] == 'Confirmada')
-                          : true;
+                      bool isSalidaConfirmed = check['linkedSalida'] != null &&
+                          check['linkedSalida']['Estatus'] == 'Confirmada';
+
                       // Verifica si la salida está confirmada para permitir el retorno
 
                       return Dismissible(
                         key: Key(check['idCheck'].toString()),
-                        direction: DismissDirection.startToEnd,
+                        direction: DismissDirection.endToStart,
                         background: Container(
                           color: Colors.red,
                           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -179,9 +178,10 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                         ),
                         onDismissed: (direction) async {
                           await _checksService.actualizarEstadoCheck(
-                              check['idCheck'], "No Confirmada");
+                              check['idCheck'], "No Confirmada", "Ninguna");
                           setState(() {
                             check['Estatus'] = "No Confirmada";
+                            //_salidaChecks.removeAt(index);
                           });
                         },
                         child: CheckboxListTile(
@@ -190,19 +190,24 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                           subtitle:
                               Text(isApproved ? 'Confirmada' : 'No Confirmada'),
                           value: isApproved,
-                          onChanged: isSalidaConfirmed
-                              ? (bool? value) async {
-                                  if (value != null) {
-                                    String estado =
-                                        value ? "Confirmada" : "No Confirmada";
-                                    await _checksService.actualizarEstadoCheck(
-                                        check['idCheck'], estado);
-                                    setState(() {
-                                      check['Estatus'] = estado;
-                                    });
-                                  }
+                          onChanged: (bool? value) async {
+                            if (value != null) {
+                              String estado =
+                                  value ? "Confirmada" : "No Confirmada";
+                              await _checksService.actualizarEstadoCheck(
+                                  check['idCheck'], estado, "Ninguna");
+
+                              setState(() {
+                                check['Estatus'] = estado;
+
+                                if (_selectedIndex == 0 && value) {
+                                  _salidaChecks.removeAt(index);
+                                } else if (_selectedIndex == 1 && value) {
+                                  _retornoChecks.removeAt(index);
                                 }
-                              : null, // Deshabilitar si la salida no está confirmada
+                              });
+                            }
+                          },
                           secondary: Icon(
                             isApproved ? Icons.check : Icons.close,
                             color: isApproved ? Colors.green : Colors.red,

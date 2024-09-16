@@ -45,17 +45,19 @@ class ChecksService {
   }
 
   // Servicio para actualizar el estado del Check
-  Future<void> actualizarEstadoCheck(int idCheck, String estado) async {
+  Future<void> actualizarEstadoCheck(
+      int idCheck, String estado, String observacion) async {
     // Ajuste a la zona horaria de México (UTC -6)
     DateTime now = DateTime.now();
-    DateTime mexicoTime = now.toUtc().subtract(Duration(hours: 6));
+    DateTime mexicoTime = now.toUtc().subtract(const Duration(hours: 6));
 
     final response = await http.put(
       Uri.parse('$baseUrl/checks/$idCheck'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'Estatus': estado,
-        'FechaCheck': mexicoTime.toIso8601String(), // Fecha ajustada a México
+        'FechaCheck': mexicoTime.toIso8601String(),
+        'Observaciones': observacion // Fecha ajustada a México
       }),
     );
 

@@ -4,6 +4,7 @@ import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/point_check_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class InfoPermissionDetail extends StatefulWidget {
   const InfoPermissionDetail({super.key});
@@ -126,6 +127,22 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     await _permissionService.terminarPermission(idPermiso, validacion, razon);
   }
 
+  Future<void> _marcaTelefono(Uri phoneNumber) async {
+    if (await canLaunchUrl(phoneNumber)) {
+      await launchUrl(phoneNumber);
+    } else {
+      print('No se puede realizar la llamada');
+    }
+  }
+
+  Future<void> _contactoWhatsApp(Uri whatsApp) async {
+    if (await canLaunchUrl(whatsApp)) {
+      await launchUrl(whatsApp);
+    } else {
+      print('No se puede abrir WhatsApp');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
@@ -177,8 +194,10 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                   'Contacto Personal', exitDetails['Contacto'] ?? ''),
               _buildDetailItem('Trabajo', exitDetails['Trabajo'] ?? ''),
               _buildDetailItem('Nombre del tutor', nombreCompletoTutor),
-              _buildDetailItem(
-                  'Contacto del tutor', exitDetails['ContactoTutor'] ?? 'N/A'),
+              _buildContactSection(exitDetails['ContactoTutor'] ?? 'N/A'),
+
+              //_buildDetailItem(
+              //'Contacto del tutor', exitDetails['ContactoTutor'] ?? 'N/A'),
               const SizedBox(height: 20),
               if (statusPermiso == 'Pendiente')
                 ElevatedButton(
@@ -396,6 +415,25 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
           const Divider(color: Colors.orange, thickness: 1),
         ],
       ),
+    );
+  }
+
+  Widget _buildContactSection(String phoneNumber) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildDetailItem('Contacto del tutor', phoneNumber),
+        ),
+        IconButton(
+          icon: const Icon(Icons.phone, color: Colors.green),
+          onPressed: () => _marcaTelefono(Uri.parse('tel:$phoneNumber')),
+        ),
+        IconButton(
+          icon: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green),
+          onPressed: () =>
+              _contactoWhatsApp(Uri.parse('https://wa.me/$phoneNumber')),
+        ),
+      ],
     );
   }
 }

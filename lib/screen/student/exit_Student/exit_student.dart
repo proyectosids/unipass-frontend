@@ -1,4 +1,3 @@
-import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/screen/student/exit_Student/create_exit.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_application_unipass/shared_preferences/user_preferences.
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:date_picker_timeline/date_picker_widget.dart';
 
 class ExitStudent extends StatefulWidget {
   static const routeName = '/ExitStudent';
@@ -51,12 +51,6 @@ class _ExitStudentState extends State<ExitStudent> {
     try {
       List<Permission> permissions =
           await _permissionService.getPermissions(id, matricula!);
-
-      // Imprimir los permisos para depuración
-      permissions.forEach((permission) {
-        print(
-            'Permission: ${permission.descripcion}, ${permission.fechasolicitud}');
-      });
 
       // Ordenar los permisos por fecha, asegurándose de que el más reciente esté primero
       permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
@@ -111,22 +105,28 @@ class _ExitStudentState extends State<ExitStudent> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 16),
-            _buildDatePicker(),
-            const SizedBox(height: 16),
-            const Text(
-              'Salidas',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
+      body: SingleChildScrollView(
+        // Agregar scroll
+        child: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 16),
+              _buildDatePicker(),
+              const SizedBox(height: 16),
+              const Text(
+                'Salidas',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              // Aquí está el ListView.builder
+              ListView.builder(
+                shrinkWrap:
+                    true, // Permite que el ListView se ajuste al contenido
+                physics:
+                    const NeverScrollableScrollPhysics(), // Desactiva el scroll interno
                 itemCount: _permissions.length,
                 itemBuilder: (context, index) {
                   final permission = _permissions[index];
@@ -166,8 +166,8 @@ class _ExitStudentState extends State<ExitStudent> {
                         );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

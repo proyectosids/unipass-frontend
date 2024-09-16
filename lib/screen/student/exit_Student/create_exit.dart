@@ -46,10 +46,8 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   }
 
   Future<void> _selectDateTime(BuildContext context, bool isStart) async {
-    if (_selectedType == 'Pueblo' ||
-        _selectedType == 'Especial' ||
-        _selectedType == 'A casa') {
-      // Solo selecciona la hora si es salida de tipo Pueblo
+    if (isStart) {
+      // Para el campo de salida, solo permitir la selección de la hora
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: isStart ? _selectedStartTime : _selectedEndTime,
@@ -57,19 +55,15 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
 
       if (pickedTime != null) {
         setState(() {
-          if (isStart) {
-            _selectedStartTime = pickedTime;
-            _selectedEndTime = TimeOfDay(
-              hour: (pickedTime.hour + 4) % 24,
-              minute: pickedTime.minute,
-            );
-          } else {
-            _selectedEndTime = pickedTime;
-          }
+          _selectedStartTime = pickedTime;
+          _selectedEndTime = TimeOfDay(
+            hour: (pickedTime.hour + 4) % 24,
+            minute: pickedTime.minute,
+          );
         });
       }
     } else {
-      // Para otros tipos de salida, selecciona fecha y hora
+      // Para el campo de retorno, permitir selección de fecha y hora
       final DateTime? pickedDate = await showDatePicker(
         context: context,
         initialDate: isStart ? _selectedStartDate : _selectedEndDate,
@@ -85,18 +79,8 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
 
         if (pickedTime != null) {
           setState(() {
-            if (isStart) {
-              _selectedStartDate = pickedDate;
-              _selectedStartTime = pickedTime;
-              _selectedEndDate = pickedDate;
-              _selectedEndTime = TimeOfDay(
-                hour: (pickedTime.hour + 4) % 24,
-                minute: pickedTime.minute,
-              );
-            } else {
-              _selectedEndDate = pickedDate;
-              _selectedEndTime = pickedTime;
-            }
+            _selectedEndDate = pickedDate;
+            _selectedEndTime = pickedTime;
           });
         }
       }
@@ -283,65 +267,67 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Tipo de salida',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildChoiceChip('Pueblo'),
-                _buildChoiceChip('Especial'),
-                _buildChoiceChip('A casa'),
-              ],
-            ),
-            const SizedBox(height: 20),
-            _buildDateTimePickerSalida('Fecha y hora de salida',
-                _selectedStartDate, _selectedStartTime, true),
-            const SizedBox(height: 20),
-            _buildDateTimePickerRetorno('Fecha y hora de retorno',
-                _selectedEndDate, _selectedEndTime, false,
-                enabled: _selectedType != 'Pueblo'),
-            const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              value: _selectedReason,
-              decoration: const InputDecoration(labelText: 'Motivo'),
-              items: <String>['Compras', 'Trabajo', 'Salud', 'Otros']
-                  .map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedReason = newValue!;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFA726),
-                minimumSize: const Size(double.infinity, 50),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Tipo de salida',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              onPressed: () {
-                _createExit(context);
-              },
-              child: const Text(
-                'Crear salida',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildChoiceChip('Pueblo'),
+                  _buildChoiceChip('Especial'),
+                  _buildChoiceChip('A casa'),
+                ],
+              ),
+              const SizedBox(height: 20),
+              _buildDateTimePickerSalida('Fecha y hora de salida',
+                  _selectedStartDate, _selectedStartTime, true),
+              const SizedBox(height: 20),
+              _buildDateTimePickerRetorno('Fecha y hora de retorno',
+                  _selectedEndDate, _selectedEndTime, false,
+                  enabled: _selectedType != 'Pueblo'),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: _selectedReason,
+                decoration: const InputDecoration(labelText: 'Motivo'),
+                items: <String>['Compras', 'Trabajo', 'Salud', 'Otros']
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedReason = newValue!;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFA726),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                onPressed: () {
+                  _createExit(context);
+                },
+                child: const Text(
+                  'Crear salida',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -383,21 +369,11 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _selectedType == 'Pueblo' && isStart ||
-                          _selectedType == 'Especial' && isStart ||
-                          _selectedType == 'A casa' && isStart
-                      ? time.format(context)
-                      : _formatDateTime(date, time),
+                  time.format(context),
                   style: TextStyle(color: enabled ? Colors.black : Colors.grey),
                 ),
-                Icon(
-                  _selectedType == 'Pueblo' && isStart ||
-                          _selectedType == 'Especial' && isStart ||
-                          _selectedType == 'A casa' && isStart
-                      ? Icons.access_time
-                      : Icons.calendar_today,
-                  color: enabled ? Colors.black : Colors.grey,
-                ),
+                Icon(Icons.access_time,
+                    color: enabled ? Colors.black : Colors.grey),
               ],
             ),
           ),
@@ -429,21 +405,11 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _selectedType == 'Pueblo' && isStart ||
-                          _selectedType == 'Especial' && isStart ||
-                          _selectedType == 'A casa' && isStart
-                      ? time.format(context)
-                      : _formatDateTime(date, time),
+                  _formatDateTime(date, time),
                   style: TextStyle(color: enabled ? Colors.black : Colors.grey),
                 ),
-                Icon(
-                  _selectedType == 'Pueblo' && isStart ||
-                          _selectedType == 'Especial' && isStart ||
-                          _selectedType == 'A casa' && isStart
-                      ? Icons.access_time
-                      : Icons.calendar_today,
-                  color: enabled ? Colors.black : Colors.grey,
-                ),
+                Icon(Icons.calendar_today,
+                    color: enabled ? Colors.black : Colors.grey),
               ],
             ),
           ),
