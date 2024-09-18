@@ -136,14 +136,26 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? nivelAcademico = prefs.getString('nivelAcademico');
         String? sexo = prefs.getString('sexo');
-        if (tipoUsuario == 'Empleado' ||
-            tipoUsuario == 'Preceptor' ||
-            tipoUsuario == 'Vigilancia') {
-          int? dormitorio =
+
+        int? dormitorio;
+
+        if (tipoUsuario == 'ALUMNO') {
+          // Si es 'Alumno', obtenemos el dormitorio usando la función.
+          dormitorio =
               await _bedroomService.obtenerDormitorio(nivelAcademico, sexo);
-          dormitorio ??= 0;
-          setState(() {});
+        } else if (tipoUsuario == 'EMPLEADO' ||
+            tipoUsuario == 'PRECEPTOR' ||
+            tipoUsuario == 'VIGILANCIA') {
+          // Si es 'Empleado', 'Preceptor' o 'Vigilancia', asignamos 0 como dormitorio.
+          dormitorio = 0;
         }
+
+// En caso de que el dormitorio sea nulo, lo asignamos a 0
+        dormitorio ??= 0;
+
+        setState(() {
+          // Aquí puedes actualizar el estado si necesitas usar el valor de dormitorio.
+        });
 
         final userData = {
           'Matricula': widget.userData['matricula'].toString(),

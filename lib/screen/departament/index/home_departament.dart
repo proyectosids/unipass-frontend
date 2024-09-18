@@ -1,5 +1,5 @@
-import 'package:flutter_application_unipass/services/checks_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/services/checks_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -162,11 +162,8 @@ class _HomeDepartamentState extends State<HomeDepartament> {
 
                       // Determinar si el checkbox está marcado o no
                       bool isApproved = check['Estatus'] == "Confirmada";
-                      bool isSalidaConfirmed = check['linkedSalida'] != null &&
-                          check['linkedSalida']['Estatus'] == 'Confirmada';
 
                       // Verifica si la salida está confirmada para permitir el retorno
-
                       return Dismissible(
                         key: Key(check['idCheck'].toString()),
                         direction: DismissDirection.endToStart,
@@ -191,21 +188,52 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                               Text(isApproved ? 'Confirmada' : 'No Confirmada'),
                           value: isApproved,
                           onChanged: (bool? value) async {
-                            if (value != null) {
-                              String estado =
-                                  value ? "Confirmada" : "No Confirmada";
-                              await _checksService.actualizarEstadoCheck(
-                                  check['idCheck'], estado, "Ninguna");
-
-                              setState(() {
-                                check['Estatus'] = estado;
-
-                                if (_selectedIndex == 0 && value) {
-                                  _salidaChecks.removeAt(index);
-                                } else if (_selectedIndex == 1 && value) {
-                                  _retornoChecks.removeAt(index);
+                            if (_selectedIndex == 1) {
+                              var salidaCheck = _salidaChecks.firstWhere(
+                                  (s) =>
+                                      s['name'] == check['name'] &&
+                                      s['Estatus'] == "Confirmada",
+                                  orElse: () => {
+                                        'Estatus': 'No Confirmada'
+                                      } // Corregido para devolver un mapa por defecto
+                                  );
+                              if (salidaCheck['Estatus'] == "Confirmada") {
+                                if (value != null) {
+                                  String estado =
+                                      value ? "Confirmada" : "No Confirmada";
+                                  await _checksService.actualizarEstadoCheck(
+                                      check['idCheck'], estado, "Ninguna");
+                                  setState(() {
+                                    check['Estatus'] = estado;
+                                  });
                                 }
-                              });
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                          title: Text("Acción no permitida"),
+                                          content: Text(
+                                              "No se puede confirmar el regreso sin una salida confirmada."),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text("Cerrar"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            )
+                                          ],
+                                        ));
+                              }
+                            } else {
+                              if (value != null) {
+                                String estado =
+                                    value ? "Confirmada" : "No Confirmada";
+                                await _checksService.actualizarEstadoCheck(
+                                    check['idCheck'], estado, "Ninguna");
+                                setState(() {
+                                  check['Estatus'] = estado;
+                                });
+                              }
                             }
                           },
                           secondary: Icon(
