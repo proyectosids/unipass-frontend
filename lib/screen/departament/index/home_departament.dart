@@ -206,6 +206,16 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                   setState(() {
                                     check['Estatus'] = estado;
                                   });
+
+                                  if (value) {
+                                    // Eliminar el ítem después de 3 segundos
+                                    Future.delayed(const Duration(seconds: 3),
+                                        () {
+                                      setState(() {
+                                        _retornoChecks.removeAt(index);
+                                      });
+                                    });
+                                  }
                                 }
                               } else {
                                 showDialog(
@@ -233,6 +243,16 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                 setState(() {
                                   check['Estatus'] = estado;
                                 });
+
+                                if (value) {
+                                  // Eliminar el ítem después de 2 segundos
+                                  Future.delayed(const Duration(seconds: 2),
+                                      () {
+                                    setState(() {
+                                      _salidaChecks.removeAt(index);
+                                    });
+                                  });
+                                }
                               }
                             }
                           },
