@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateProfileChecks extends StatefulWidget {
@@ -115,6 +116,8 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -122,11 +125,26 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Asignar Usuario'),
-          backgroundColor: Colors.white,
+          centerTitle: true,
+          title: Text(
+            'Asignar Usuario',
+            style: TextStyle(
+                color: const Color.fromRGBO(250, 198, 0, 1),
+                fontSize: responsive.dp(2.2)),
+          ),
+          backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Color.fromRGBO(250, 198, 0, 1),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(padding),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -135,7 +153,10 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                   child: Column(
                     children: [
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Nombre'),
+                        decoration: InputDecoration(
+                            labelText: 'Nombre',
+                            labelStyle:
+                                TextStyle(fontSize: responsive.dp(1.8))),
                         onSaved: (value) {
                           name = value;
                         },
@@ -147,7 +168,10 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                         },
                       ),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Apellido'),
+                        decoration: InputDecoration(
+                            labelText: 'Apellido',
+                            labelStyle:
+                                TextStyle(fontSize: responsive.dp(1.8))),
                         onSaved: (value) {
                           surname = value;
                         },
@@ -159,7 +183,10 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                         },
                       ),
                       DropdownButtonFormField<String>(
-                        decoration: InputDecoration(labelText: 'Género'),
+                        decoration: InputDecoration(
+                            labelText: 'Género',
+                            labelStyle:
+                                TextStyle(fontSize: responsive.dp(1.8))),
                         items: _genders.map((String gender) {
                           return DropdownMenuItem<String>(
                             value: gender,
@@ -177,7 +204,10 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                         },
                       ),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Celular'),
+                        decoration: InputDecoration(
+                            labelText: 'Celular',
+                            labelStyle:
+                                TextStyle(fontSize: responsive.dp(1.8))),
                         keyboardType: TextInputType.phone,
                         onSaved: (value) {
                           phoneNumber = value;
@@ -190,8 +220,10 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                         },
                       ),
                       DropdownButtonFormField<String>(
-                        decoration:
-                            InputDecoration(labelText: 'Lugar de control'),
+                        decoration: InputDecoration(
+                            labelText: 'Lugar de control',
+                            labelStyle:
+                                TextStyle(fontSize: responsive.dp(1.8))),
                         items: _dormitories.map((String dormitory) {
                           return DropdownMenuItem<String>(
                             value: dormitory,
@@ -210,7 +242,9 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                       ),
                       TextFormField(
                         decoration: InputDecoration(
-                            labelText: 'Matricula del personal ha asignar'),
+                            labelText: 'Matricula del personal ha asignar',
+                            labelStyle:
+                                TextStyle(fontSize: responsive.dp(1.8))),
                         onSaved: (value) {
                           matricula = value;
                         },
@@ -222,7 +256,10 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                         },
                       ),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Contraseña'),
+                        decoration: InputDecoration(
+                            labelText: 'Contraseña',
+                            labelStyle:
+                                TextStyle(fontSize: responsive.dp(1.8))),
                         obscureText: true,
                         onSaved: (value) {
                           password = value;
@@ -234,15 +271,18 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                           return null;
                         },
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: responsive.hp(3)),
                       ElevatedButton(
                         onPressed: _addUser,
-                        child: Text('Crear usuario'),
+                        child: Text(
+                          'Crear usuario',
+                          style: TextStyle(fontSize: responsive.dp(1.8)),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: responsive.hp(1.4)),
                 SizedBox(
                   height: 300, // Especifica una altura que consideres adecuada
                   child: ListView.builder(

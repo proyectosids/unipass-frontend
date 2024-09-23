@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class FileOfDocuments extends StatefulWidget {
   const FileOfDocuments({super.key});
@@ -32,17 +33,22 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        centerTitle: true,
+        title: Text(
           "Documentos",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+              color: Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
         ),
-        backgroundColor: Colors.purple,
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: Color.fromRGBO(250, 198, 0, 1),
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -50,7 +56,7 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(padding),
             child: TextField(
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search),

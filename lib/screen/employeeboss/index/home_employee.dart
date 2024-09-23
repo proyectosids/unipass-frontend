@@ -40,8 +40,9 @@ class _HomeEmployeeScreenState extends State<HomeEmployeeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true,
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Bienvenido ${nombre ?? 'Estudiante'}',

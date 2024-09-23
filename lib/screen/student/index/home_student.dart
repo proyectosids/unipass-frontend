@@ -29,8 +29,10 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true, // Centra el título del AppBar
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize
+              .min, // Esto asegura que la columna ocupe solo el espacio necesario
           children: [
             Text(
               'Bienvenido, ${nombre ?? 'Empleado'}',

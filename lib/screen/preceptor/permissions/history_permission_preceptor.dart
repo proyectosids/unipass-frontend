@@ -74,13 +74,17 @@ class _HistoryPermissionAuthorizationState
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        centerTitle: true,
         title: Text(
           'Solicitudes de Salidas',
-          style: TextStyle(fontSize: responsive.dp(2.5)),
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back,
+              color: Color.fromRGBO(250, 198, 0, 1)),
           onPressed: () {
             Navigator.pop(context);
           },

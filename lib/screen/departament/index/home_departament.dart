@@ -160,44 +160,69 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                           ? _salidaChecks[index]
                           : _retornoChecks[index];
 
-                      // Determinar si el checkbox está marcado o no
                       bool isApproved = check['Estatus'] == "Confirmada";
 
-                      // Verifica si la salida está confirmada para permitir el retorno
-                      return Dismissible(
-                        key: Key(check['idCheck'].toString()),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          color: Colors.red,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          alignment: Alignment.centerLeft,
-                          child: Icon(Icons.cancel, color: Colors.white),
-                        ),
-                        onDismissed: (direction) async {
-                          await _checksService.actualizarEstadoCheck(
-                              check['idCheck'], "No Confirmada", "Ninguna");
-                          setState(() {
-                            check['Estatus'] = "No Confirmada";
-                            //_salidaChecks.removeAt(index);
-                          });
+                      return GestureDetector(
+                        onLongPress: () {
+                          _showObservationDialog(check, index);
                         },
-                        child: CheckboxListTile(
-                          title: Text(
-                              '${_selectedIndex == 0 ? 'Salida' : 'Retorno'} de ${check['name']}'),
-                          subtitle:
-                              Text(isApproved ? 'Confirmada' : 'No Confirmada'),
-                          value: isApproved,
-                          onChanged: (bool? value) async {
-                            if (_selectedIndex == 1) {
-                              var salidaCheck = _salidaChecks.firstWhere(
-                                  (s) =>
-                                      s['name'] == check['name'] &&
-                                      s['Estatus'] == "Confirmada",
-                                  orElse: () => {
-                                        'Estatus': 'No Confirmada'
-                                      } // Corregido para devolver un mapa por defecto
-                                  );
-                              if (salidaCheck['Estatus'] == "Confirmada") {
+                        child: Dismissible(
+                          key: Key(check['idCheck'].toString()),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            color: Colors.red,
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            alignment: Alignment.centerLeft,
+                            child: Icon(Icons.cancel, color: Colors.white),
+                          ),
+                          onDismissed: (direction) async {
+                            await _checksService.actualizarEstadoCheck(
+                                check['idCheck'], "No Confirmada", "Ninguna");
+                            setState(() {
+                              check['Estatus'] = "No Confirmada";
+                            });
+                          },
+                          child: CheckboxListTile(
+                            title: Text(
+                                '${_selectedIndex == 0 ? 'Salida' : 'Retorno'} de ${check['name']}'),
+                            subtitle: Text(
+                                isApproved ? 'Confirmada' : 'No Confirmada'),
+                            value: isApproved,
+                            onChanged: (bool? value) async {
+                              if (_selectedIndex == 1) {
+                                var salidaCheck = _salidaChecks.firstWhere(
+                                    (s) =>
+                                        s['name'] == check['name'] &&
+                                        s['Estatus'] == "Confirmada",
+                                    orElse: () => {'Estatus': 'No Confirmada'});
+                                if (salidaCheck['Estatus'] == "Confirmada") {
+                                  if (value != null) {
+                                    String estado =
+                                        value ? "Confirmada" : "No Confirmada";
+                                    await _checksService.actualizarEstadoCheck(
+                                        check['idCheck'], estado, "Ninguna");
+                                    setState(() {
+                                      check['Estatus'] = estado;
+                                    });
+
+                                    if (value) {
+                                      Future.delayed(const Duration(seconds: 3),
+                                          () {
+                                        setState(() {
+                                          if (index < _retornoChecks.length) {
+                                            _retornoChecks.removeAt(index);
+                                          }
+                                        });
+                                      });
+                                    }
+                                  }
+                                } else {
+                                  _showErrorDialog(
+                                      context,
+                                      "Acción no permitida",
+                                      "No se puede confirmar el regreso sin una salida confirmada.");
+                                }
+                              } else {
                                 if (value != null) {
                                   String estado =
                                       value ? "Confirmada" : "No Confirmada";
@@ -208,57 +233,22 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                   });
 
                                   if (value) {
-                                    // Eliminar el ítem después de 3 segundos
-                                    Future.delayed(const Duration(seconds: 3),
+                                    Future.delayed(const Duration(seconds: 2),
                                         () {
                                       setState(() {
-                                        _retornoChecks.removeAt(index);
+                                        if (index < _salidaChecks.length) {
+                                          _salidaChecks.removeAt(index);
+                                        }
                                       });
                                     });
                                   }
                                 }
-                              } else {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                          title: Text("Acción no permitida"),
-                                          content: Text(
-                                              "No se puede confirmar el regreso sin una salida confirmada."),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: Text("Cerrar"),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            )
-                                          ],
-                                        ));
                               }
-                            } else {
-                              if (value != null) {
-                                String estado =
-                                    value ? "Confirmada" : "No Confirmada";
-                                await _checksService.actualizarEstadoCheck(
-                                    check['idCheck'], estado, "Ninguna");
-                                setState(() {
-                                  check['Estatus'] = estado;
-                                });
-
-                                if (value) {
-                                  // Eliminar el ítem después de 2 segundos
-                                  Future.delayed(const Duration(seconds: 2),
-                                      () {
-                                    setState(() {
-                                      _salidaChecks.removeAt(index);
-                                    });
-                                  });
-                                }
-                              }
-                            }
-                          },
-                          secondary: Icon(
-                            isApproved ? Icons.check : Icons.close,
-                            color: isApproved ? Colors.green : Colors.red,
+                            },
+                            secondary: Icon(
+                              isApproved ? Icons.check : Icons.close,
+                              color: isApproved ? Colors.green : Colors.red,
+                            ),
                           ),
                         ),
                       );
@@ -267,6 +257,81 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                 ),
               ],
             ),
+    );
+  }
+
+  void _showObservationDialog(Map<String, dynamic> check, int index) {
+    TextEditingController _observationController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Agregar Observación"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _observationController,
+                decoration: InputDecoration(
+                  hintText: "Escribe tu observación",
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Confirmar"),
+              onPressed: () async {
+                String observacion = _observationController.text;
+                if (observacion.isNotEmpty) {
+                  await _checksService.actualizarEstadoCheck(
+                    check['idCheck'],
+                    "Confirmada",
+                    observacion,
+                  );
+                  setState(() {
+                    check['Estatus'] = "Confirmada";
+                    if (_selectedIndex == 0 && index < _salidaChecks.length) {
+                      _salidaChecks.removeAt(index);
+                    } else if (_selectedIndex == 1 &&
+                        index < _retornoChecks.length) {
+                      _retornoChecks.removeAt(index);
+                    }
+                  });
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text("Cerrar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

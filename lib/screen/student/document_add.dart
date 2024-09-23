@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:flutter_application_unipass/services/document_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DocumentAddStudent extends StatefulWidget {
@@ -118,52 +119,61 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(5);
+
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           widget.documentName,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: const Color.fromRGBO(250, 198, 0, 1),
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
+      backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Estado',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: responsive.dp(2), fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: responsive.hp(2)),
             Text(
               isFileAttached ? 'Pendiente' : 'No adjunto',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: responsive.dp(1.9),
                 color: isFileAttached ? Colors.orange : Colors.red,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            SizedBox(height: responsive.dp(3)),
+            Text(
               'Adjuntar',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: responsive.dp(2), fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: responsive.hp(1.5)),
             GestureDetector(
               onTap: _pickFile,
               child: Container(
                 width: double.infinity,
                 height: 150,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: Color.fromRGBO(189, 188, 188, 1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
@@ -172,16 +182,16 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
                     children: [
                       Icon(
                         Icons.attach_file,
-                        size: 40,
+                        size: responsive.dp(4.5),
                         color: Colors.grey[700],
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: responsive.hp(1.5)),
                       Text(
                         isFileAttached
                             ? 'Archivo adjunto: $fileName'
                             : 'Agregar un archivo aquí',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: responsive.dp(1.9),
                           color: Colors.grey[700],
                         ),
                         textAlign: TextAlign.center,
@@ -192,26 +202,30 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
               ),
             ),
             const Spacer(),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed:
-                    (isFileAttached && fileName != null) ? _onSave : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: (isFileAttached && fileName != null)
-                      ? Colors.orange
-                      : Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+            SizedBox(height: responsive.hp(2)),
+            Center(
+              child: SizedBox(
+                width: responsive.wp(60),
+                height: responsive.hp(7),
+                child: ElevatedButton(
+                  onPressed:
+                      (isFileAttached && fileName != null) ? _onSave : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: (isFileAttached && fileName != null)
+                        ? const Color.fromRGBO(250, 198, 0, 1)
+                        : Colors.grey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(responsive.wp(4)),
+                    ),
+                    textStyle: TextStyle(fontSize: responsive.dp(1.2)),
                   ),
-                  textStyle: const TextStyle(fontSize: 18),
-                ),
-                child: const Text(
-                  'Enviar documento',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  child: Text(
+                    'Enviar documento',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: responsive.dp(2.2)),
+                  ),
                 ),
               ),
             ),

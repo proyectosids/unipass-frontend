@@ -105,7 +105,6 @@ class _LoginAppState extends State<LoginApp> {
           ),
         );
 
-        // Devolver true para salir de la aplicación si el usuario confirmó, de lo contrario, false
         return exit;
       },
       child: Scaffold(
@@ -145,7 +144,7 @@ class _LoginAppState extends State<LoginApp> {
                     SizedBox(
                         height: responsive.hp(2)), // Space between sections
                     Text(
-                      'Bienvenido a tu app de apoyo institucional',
+                      'Bienvenido a tu aplicacion de salidas institucionales',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: responsive.dp(2),
@@ -153,7 +152,7 @@ class _LoginAppState extends State<LoginApp> {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: responsive.hp(3)),
+                    SizedBox(height: responsive.hp(2)),
                     const LoginTextFields(), // Login form
 
                     SizedBox(height: responsive.hp(2)),
@@ -165,7 +164,7 @@ class _LoginAppState extends State<LoginApp> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: responsive.hp(2)),
+                    SizedBox(height: responsive.hp(1.5)),
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/mailAuthentication');
@@ -179,7 +178,7 @@ class _LoginAppState extends State<LoginApp> {
                         ),
                       ),
                     ),
-                    SizedBox(height: responsive.hp(2)),
+                    SizedBox(height: responsive.hp(1.5)),
                     Divider(
                       color: Colors.black,
                       height: responsive.hp(1),
@@ -187,7 +186,7 @@ class _LoginAppState extends State<LoginApp> {
                       indent: responsive.wp(5),
                       endIndent: responsive.wp(5),
                     ),
-                    SizedBox(height: responsive.hp(2)),
+                    SizedBox(height: responsive.hp(1.5)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -215,7 +214,7 @@ class _LoginAppState extends State<LoginApp> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20), // Added spacing at the bottom
+                    SizedBox(height: responsive.hp(1.5)),
                   ],
                 ),
               ),

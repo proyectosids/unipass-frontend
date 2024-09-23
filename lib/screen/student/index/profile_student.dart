@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/services/document_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -80,6 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true,
         title: const Text('Perfil'),
         actions: [
           IconButton(
@@ -142,18 +144,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'Cambiar contraseña',
                     'assets/image/cambiar_contra.svg',
                     '/changeStudent',
-                    const Color.fromARGB(255, 107, 128, 246),
+                    Colors.white,
                   ),
-                  _buildProfileItem(context, 'Soporte',
-                      'assets/image/soporte.svg', '/supportUser', Colors.green),
                   _buildProfileItem(
-                      context,
-                      'Políticas de Privacidad',
-                      'assets/image/politicas.svg',
-                      '/privacyUser',
-                      const Color.fromARGB(255, 159, 60, 176)),
-                  _buildProfileItem(context, 'Cerrar sesión',
-                      'assets/image/cerrar_sesion.svg', '/login', Colors.red),
+                    context,
+                    'Soporte',
+                    'assets/image/soporte.svg',
+                    '/supportUser',
+                    Colors.white,
+                  ),
+                  _buildProfileItem(
+                    context,
+                    'Políticas de Privacidad',
+                    'assets/image/politicas.svg',
+                    '/privacyUser',
+                    Colors.white,
+                  ),
+                  _buildProfileItem(
+                    context,
+                    'Cerrar sesión',
+                    'assets/image/cerrar_sesion.svg',
+                    '/login',
+                    Colors.white,
+                  ),
                 ],
               ),
             ),
@@ -165,6 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildProfileItem(BuildContext context, String title, String assetPath,
       String routeName, Color color) {
+    final Responsive responsive = Responsive.of(context);
     return GestureDetector(
       onTap: () {
         if (routeName == '/login') {
@@ -179,17 +193,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       child: Card(
         color: color,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        elevation: 20, // Aquí añades la elevación
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(assetPath, width: 80, height: 80),
+            SvgPicture.asset(assetPath,
+                width: responsive.wp(12), height: responsive.hp(12)),
             const SizedBox(height: 8),
-            Text(title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                )),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: responsive.dp(1.6),
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
+            ),
           ],
         ),
       ),

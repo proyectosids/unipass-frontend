@@ -20,10 +20,19 @@ class _ChangepasswordStudentState extends State<ChangepasswordStudent> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text('Cambiar contraseña'),
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        centerTitle: true,
+        title: Text(
+          'Cambiar contraseña',
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromRGBO(250, 198, 0, 1),
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -64,7 +73,7 @@ class _ChangepasswordStudentState extends State<ChangepasswordStudent> {
               ),
               child: Container(
                 width: double.infinity,
-                color: Colors.purple,
+                color: const Color.fromRGBO(6, 66, 106, 1),
                 padding: EdgeInsets.all(padding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,7 +101,7 @@ class _ChangepasswordStudentState extends State<ChangepasswordStudent> {
                       child: ElevatedButton(
                         onPressed: _changePassword,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightGreen,
+                          backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                           padding: EdgeInsets.symmetric(
                             horizontal: responsive.wp(10),
                             vertical: responsive.hp(2),

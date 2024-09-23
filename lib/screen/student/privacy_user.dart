@@ -19,14 +19,23 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
     final double padding = responsive.wp(5);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Políticas de Privacidad'),
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        centerTitle: true,
+        title: Text(
+          'Políticas de Privacidad',
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back,
+              color: Color.fromRGBO(250, 198, 0, 1)),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Expanded(
@@ -68,7 +77,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
             ),
             child: Container(
               width: double.infinity,
-              color: Colors.purple,
+              color: const Color.fromRGBO(6, 66, 106, 1),
               padding: EdgeInsets.all(padding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,7 +117,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                     child: ElevatedButton(
                       onPressed: _launchUrl,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightGreen,
+                        backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40, vertical: 16),
                         shape: RoundedRectangleBorder(

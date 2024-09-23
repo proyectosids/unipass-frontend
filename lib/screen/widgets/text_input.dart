@@ -37,14 +37,14 @@ class TextFieldWidget extends StatelessWidget {
           inputFormatters, // Pasa los inputFormatters al TextFormField
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white, // Fondo blanco
+        fillColor: const Color.fromRGBO(189, 188, 188, 1), // Fondo blanco
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: BorderSide.none, // Sin borde para mejor apariencia
         ),
         labelText: label,
         labelStyle: TextStyle(
-          color: Colors.black,
+          color: const Color.fromARGB(255, 255, 255, 255),
           fontSize: responsive.dp(1.8),
           fontWeight: FontWeight.normal,
         ),

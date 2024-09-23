@@ -7,19 +7,26 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notificaciones'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close, color: Colors.purple),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+        title: Text(
+          'Notificaciones',
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
+        ),
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromRGBO(250, 198, 0, 1),
           ),
-        ],
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       backgroundColor: Colors.white,
       body: Padding(

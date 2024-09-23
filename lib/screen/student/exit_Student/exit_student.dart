@@ -92,13 +92,17 @@ class _ExitStudentState extends State<ExitStudent> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        centerTitle: true,
         title: Text(
           'Salidas',
-          style: TextStyle(fontSize: responsive.dp(2.5)),
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back,
+              color: Color.fromRGBO(250, 198, 0, 1)),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -176,13 +180,18 @@ class _ExitStudentState extends State<ExitStudent> {
   Widget _buildHeader() {
     String formattedDate = DateFormat.yMMMM('es_MX').format(_selectedDate);
     String capitalizedDate = capitalizeFirstLetter(formattedDate);
+    final Responsive responsive = Responsive.of(context);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           capitalizedDate,
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: responsive.dp(2.4), fontWeight: FontWeight.bold),
+          overflow: TextOverflow
+              .ellipsis, // Añadir truncamiento con puntos suspensivos
+          maxLines: 1,
         ),
         ElevatedButton(
           onPressed: _isDateWithin7Days()
@@ -205,7 +214,7 @@ class _ExitStudentState extends State<ExitStudent> {
               : null, // Deshabilita el botón si la fecha no es válida
           style: ElevatedButton.styleFrom(
             backgroundColor: _isDateWithin7Days()
-                ? Colors.purple
+                ? Color.fromRGBO(6, 66, 106, 1)
                 : Colors.grey, // Cambia el color si está deshabilitado
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
@@ -229,7 +238,7 @@ class _ExitStudentState extends State<ExitStudent> {
         height: 100,
         locale: 'es',
         initialSelectedDate: _selectedDate,
-        selectionColor: Colors.purple,
+        selectionColor: Color.fromRGBO(6, 66, 106, 1),
         selectedTextColor: Colors.white,
         dayTextStyle: const TextStyle(color: Colors.black),
         dateTextStyle:

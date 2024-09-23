@@ -23,6 +23,7 @@ class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true,
         title: const Text('Menu'),
         actions: [
           IconButton(
@@ -47,23 +48,19 @@ class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
                     'Salidas',
                     'assets/image/salidas.svg',
                     '/AuthorizationEmployee',
-                    Colors.blue,
+                    Colors.white,
                   ),
                   _buildMenuItem(
                     context,
                     'Ayuda',
                     'assets/image/HelpApp.svg',
                     '/helpUser',
-                    const Color.fromARGB(255, 101, 181, 104),
+                    Colors.white,
                   ),
                   //Condiconar si el usuario es vigilancia para crear usuario de checks
                   if (typeUser == 'VIGILANCIA')
-                    _buildMenuItem(
-                        context,
-                        'Checks',
-                        'assets/image/checks.svg',
-                        '/NewProfileChecks',
-                        const Color.fromARGB(255, 80, 85, 221)),
+                    _buildMenuItem(context, 'Checks', 'assets/image/checks.svg',
+                        '/NewProfileChecks', Colors.white),
                 ],
               ),
             ),
@@ -75,23 +72,29 @@ class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
 
   Widget _buildMenuItem(BuildContext context, String title, String assetPath,
       String routeName, Color color) {
+    final Responsive responsive = Responsive.of(context);
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, routeName);
       },
       child: Card(
         color: color,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        elevation: 20, // Aquí añades la elevación
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(assetPath, width: 80, height: 80),
+            SvgPicture.asset(assetPath,
+                width: responsive.wp(12), height: responsive.hp(12)),
             const SizedBox(height: 8),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
+                fontSize: responsive.dp(1.6),
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Color.fromARGB(255, 0, 0, 0),
               ),
             ),
           ],

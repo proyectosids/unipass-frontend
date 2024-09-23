@@ -1,16 +1,22 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:http/http.dart';
 
-class ExitDetailScreen extends StatelessWidget {
+class ExitDetailScreen extends StatefulWidget {
   static const routeName = '/exitDetail';
 
   const ExitDetailScreen({Key? key}) : super(key: key);
 
   @override
+  _ExitDetailScreenState createState() => _ExitDetailScreenState();
+}
+
+class _ExitDetailScreenState extends State<ExitDetailScreen> {
+  @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> exitDetails =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final Responsive responsive = Responsive.of(context);
-
+    final double padding = responsive.wp(5);
     bool isFinalized = exitDetails['StatusPermission'] == 'Finalizado';
 
     String nombreCompleto =
@@ -18,15 +24,27 @@ class ExitDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        centerTitle: true,
+        title: Text(
           'Detalle salida',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
         ),
-        backgroundColor: const Color(0xFF6D55F4),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromRGBO(250, 198, 0, 1),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +57,7 @@ class ExitDetailScreen extends StatelessWidget {
                     child: _buildDetailItem(
                         'Tipo de salida', exitDetails['TipoSalida'] ?? ''),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: responsive.wp(4)),
                   Expanded(
                     child:
                         _buildDetailItem('Motivo', exitDetails['Motivo'] ?? ''),
@@ -55,53 +73,58 @@ class ExitDetailScreen extends StatelessWidget {
               _buildDetailItem(
                   'Contacto Personal', exitDetails['Contacto'] ?? ''),
               _buildDetailItem('Trabajo', exitDetails['Trabajo'] ?? ''),
-              const SizedBox(height: 5),
-              const Text(
+              SizedBox(height: responsive.hp(1.4)),
+              Text(
                 'Estatus',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: responsive.dp(1.8), fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: responsive.hp(1.4)),
               Center(
                 child: Chip(
                   label: Text(exitDetails['StatusPermission'] ?? ''),
                   backgroundColor:
                       _getStatusColor(exitDetails['StatusPermission']),
-                  labelStyle: const TextStyle(color: Colors.white),
+                  labelStyle: TextStyle(
+                      color: Colors.white, fontSize: responsive.dp(1.6)),
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
+              SizedBox(height: responsive.hp(1.4)),
+              Text(
                 'Avance del proceso',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: responsive.dp(1.8), fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: responsive.hp(1.4)),
               _buildProgressBar(responsive, isFinalized),
-              const SizedBox(height: 10),
+              SizedBox(height: responsive.hp(1.4)),
               Center(
                 child: Text(
                   'A la espera para salir de la universidad',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: TextStyle(
+                      fontSize: responsive.dp(1.5), color: Colors.grey[600]),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: responsive.hp(1.4)),
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFA726),
-                    minimumSize: const Size(double.infinity, 50),
+                    backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
+                    minimumSize: Size(responsive.wp(60), responsive.hp(6)),
                   ),
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text(
+                  child: Text(
                     'Cerrar',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20),
+                        fontSize: responsive.dp(1.9)),
                   ),
                 ),
               ),
+              SizedBox(height: responsive.hp(1)),
             ],
           ),
         ),
@@ -117,7 +140,7 @@ class ExitDetailScreen extends StatelessWidget {
       case 'Rechazada':
         return Colors.red;
       default:
-        return Colors.orange; // Pendiente or other statuses
+        return Colors.orange; // Pendiente u otros estados
     }
   }
 
@@ -176,7 +199,7 @@ class ExitDetailScreen extends StatelessWidget {
     return Expanded(
       child: Container(
         height: 2,
-        color: isActive ? Color.fromRGBO(182, 217, 59, 1) : Colors.grey,
+        color: isActive ? const Color.fromRGBO(182, 217, 59, 1) : Colors.grey,
       ),
     );
   }

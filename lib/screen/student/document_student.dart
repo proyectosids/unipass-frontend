@@ -142,35 +142,44 @@ class _DocumentStudentState extends State<DocumentStudent> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(5);
     int completedDocuments = documents.values.where((e) => e).length;
     double progress = completedDocuments / documents.length;
     bool isComplete = progress == 1.0;
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        centerTitle: true,
+        title: Text(
+          'Documentos',
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromRGBO(250, 198, 0, 1),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
             Row(
               children: [
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Documentos',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8),
                       Text(
                         'Para solicitar una salida, es necesario tener estos documentos adjuntos en tu aplicación.',
                         style: TextStyle(fontSize: 16),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class HelpFAQUser extends StatefulWidget {
   static const routeName = '/helpUser';
@@ -9,7 +10,7 @@ class HelpFAQUser extends StatefulWidget {
 }
 
 class _HelpFAQUserState extends State<HelpFAQUser> {
-  List<Item> _faqItems = [
+  final List<Item> _faqItems = [
     Item(
       headerValue: '¿Porqué no puedo solicitar una salida?',
       expandedValue:
@@ -40,19 +41,31 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(5);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('FAQ'),
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        centerTitle: true,
+        title: Text(
+          'FAQ',
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromRGBO(250, 198, 0, 1),
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -78,19 +91,19 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
                   context,
                   icon: Icons.notifications,
                   label: 'Notificaciones',
-                  color: Colors.lightBlue[100]!,
+                  color: const Color.fromRGBO(182, 220, 225, 1),
                 ),
                 _buildSectionButton(
                   context,
                   icon: Icons.directions_walk,
                   label: 'Las salidas',
-                  color: Colors.green[100]!,
+                  color: const Color.fromRGBO(182, 220, 225, 1),
                 ),
                 _buildSectionButton(
                   context,
                   icon: Icons.assignment,
                   label: 'Autorizaciones',
-                  color: Colors.red[100]!,
+                  color: const Color.fromRGBO(182, 220, 225, 1),
                 ),
               ],
             ),
@@ -139,6 +152,7 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
 
   Widget _buildSectionButton(BuildContext context,
       {required IconData icon, required String label, required Color color}) {
+    final Responsive responsive = Responsive.of(context);
     return GestureDetector(
       onTap: () {
         // Lógica para navegar a otra sección
@@ -146,13 +160,13 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
       child: Container(
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(responsive.wp(4)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: Colors.black),
-            const SizedBox(height: 8),
+            SizedBox(height: responsive.hp(1)),
             Text(
               label,
               textAlign: TextAlign.center,

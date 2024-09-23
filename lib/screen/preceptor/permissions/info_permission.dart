@@ -146,25 +146,29 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        centerTitle: true,
+        title: Text(
           'Detalle del permiso',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
         ),
-        backgroundColor: const Color(0xFF6D55F4),
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: Color.fromRGBO(250, 198, 0, 1),
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,177 +199,182 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
               _buildDetailItem('Trabajo', exitDetails['Trabajo'] ?? ''),
               _buildDetailItem('Nombre del tutor', nombreCompletoTutor),
               _buildContactSection(exitDetails['ContactoTutor'] ?? 'N/A'),
-
-              //_buildDetailItem(
-              //'Contacto del tutor', exitDetails['ContactoTutor'] ?? 'N/A'),
-              const SizedBox(height: 20),
+              SizedBox(height: responsive.hp(1.4)),
               if (statusPermiso == 'Pendiente')
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 113, 196, 102),
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    onPressed: () {
-                      valorar = "Aprobada";
-                      selectedValue = 'Ninguna';
-                      _asignarAutorizacion(valorar, selectedValue);
-                    },
-                    child: const Text(
-                      'Aceptar',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20),
-                    )),
+                Center(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 113, 196, 102),
+                        minimumSize: Size(responsive.wp(60), responsive.hp(6)),
+                      ),
+                      onPressed: () {
+                        valorar = "Aprobada";
+                        selectedValue = 'Ninguna';
+                        _asignarAutorizacion(valorar, selectedValue);
+                      },
+                      child: const Text(
+                        'Aceptar',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 20),
+                      )),
+                ),
               const SizedBox(
                 height: 10,
               ),
               if (statusPermiso == 'Pendiente')
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 201, 55, 30),
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              responsive.wp(10)), // Bordes redondeados.
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(
-                              responsive.wp(5)), // Padding uniforme.
-                          child: Column(
-                            mainAxisSize: MainAxisSize
-                                .min, // La columna se ajusta al tamaño del contenido.
-                            children: [
-                              Text(
-                                'Rechazar Permiso',
-                                style: TextStyle(
-                                  fontSize: responsive
-                                      .dp(2.8), // Tamaño de fuente dinámico.
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(
-                                  height:
-                                      responsive.hp(5)), // Espacio vertical.
-                              Text(
-                                '¿Estás seguro de que quieres rechazar este permiso?',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: responsive.dp(1.8),
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                              SizedBox(height: responsive.hp(5)),
-                              DropdownButtonFormField<String>(
-                                decoration: InputDecoration(
-                                  labelText: 'Seleccione un motivo',
-                                  border: OutlineInputBorder(),
-                                ),
-                                value:
-                                    selectedValue, // Asegúrate de que este valor inicial esté en la lista de ítems.
-                                items: <String>[
-                                  'Foto no identificable',
-                                  'Horas pendientes',
-                                  'Indisciplinado',
-                                  'Faltas a culto',
-                                  'Falta de aseo',
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedValue = newValue!;
-                                  });
-                                },
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Debe seleccionar un motivo';
-                                  }
-                                  return null;
-                                },
-                              ),
-
-                              SizedBox(height: responsive.hp(5)),
-                              ElevatedButton(
-                                onPressed: () {
-                                  valorar = 'Rechazada';
-                                  _asignarAutorizacion(valorar, selectedValue);
-
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                    '/AuthorizationEmployee',
-                                    (Route<dynamic> route) => false,
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(double.infinity,
-                                      responsive.wp(8)), // Tamaño mínimo.
-                                  backgroundColor: Colors.red,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: responsive
-                                          .hp(1.6)), // Padding vertical.
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        responsive.wp(
-                                            30)), // Bordes redondeados del botón.
-                                  ),
-                                ),
-                                child: Text(
-                                  'Rechazar',
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 201, 55, 30),
+                      minimumSize: Size(responsive.wp(60), responsive.hp(6)),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                responsive.wp(10)), // Bordes redondeados.
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(
+                                responsive.wp(5)), // Padding uniforme.
+                            child: Column(
+                              mainAxisSize: MainAxisSize
+                                  .min, // La columna se ajusta al tamaño del contenido.
+                              children: [
+                                Text(
+                                  'Rechazar Permiso',
                                   style: TextStyle(
                                     fontSize: responsive
-                                        .dp(2), // Tamaño de fuente dinámico.
-                                    color: Colors.white,
+                                        .dp(2.8), // Tamaño de fuente dinámico.
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ),
-                              SizedBox(height: responsive.wp(3)),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(
-                                      false); // Cierra el diálogo sin realizar acción.
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey,
-                                  minimumSize: Size(double.infinity,
-                                      responsive.wp(8)), // Tamaño mínimo.
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: responsive
-                                          .hp(1.6)), // Padding vertical.
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        responsive.wp(
-                                            30)), // Bordes redondeados del botón.
-                                  ),
-                                ),
-                                child: Text(
-                                  'Cancelar',
+                                SizedBox(
+                                    height:
+                                        responsive.hp(5)), // Espacio vertical.
+                                Text(
+                                  '¿Estás seguro de que quieres rechazar este permiso?',
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: responsive
-                                        .dp(2), // Tamaño de fuente dinámico.
-                                    color: Colors.white,
+                                    fontSize: responsive.dp(1.8),
+                                    color: Colors.grey[600],
                                   ),
                                 ),
-                              ),
-                            ],
+                                SizedBox(height: responsive.hp(5)),
+                                DropdownButtonFormField<String>(
+                                  decoration: InputDecoration(
+                                    labelText: 'Seleccione un motivo',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  value:
+                                      selectedValue, // Asegúrate de que este valor inicial esté en la lista de ítems.
+                                  items: <String>[
+                                    'Foto no identificable',
+                                    'Horas pendientes',
+                                    'Indisciplinado',
+                                    'Faltas a culto',
+                                    'Falta de aseo',
+                                  ].map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedValue = newValue!;
+                                    });
+                                  },
+                                  validator: (String? value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Debe seleccionar un motivo';
+                                    }
+                                    return null;
+                                  },
+                                ),
+
+                                SizedBox(height: responsive.hp(5)),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    valorar = 'Rechazada';
+                                    _asignarAutorizacion(
+                                        valorar, selectedValue);
+
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                      '/AuthorizationEmployee',
+                                      (Route<dynamic> route) => false,
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(double.infinity,
+                                        responsive.wp(8)), // Tamaño mínimo.
+                                    backgroundColor: Colors.red,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: responsive
+                                            .hp(1.6)), // Padding vertical.
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          responsive.wp(
+                                              30)), // Bordes redondeados del botón.
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Rechazar',
+                                    style: TextStyle(
+                                      fontSize: responsive
+                                          .dp(2), // Tamaño de fuente dinámico.
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: responsive.wp(3)),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(
+                                        false); // Cierra el diálogo sin realizar acción.
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.grey,
+                                    minimumSize: Size(double.infinity,
+                                        responsive.wp(8)), // Tamaño mínimo.
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: responsive
+                                            .hp(1.6)), // Padding vertical.
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          responsive.wp(
+                                              30)), // Bordes redondeados del botón.
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Cancelar',
+                                    style: TextStyle(
+                                      fontSize: responsive
+                                          .dp(2), // Tamaño de fuente dinámico.
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Rechazar',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20),
+                      );
+                    },
+                    child: const Text(
+                      'Rechazar',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20),
+                    ),
                   ),
                 ),
               const SizedBox(
@@ -376,7 +385,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFFA726),
-                      minimumSize: const Size(double.infinity, 50),
+                      minimumSize: Size(responsive.wp(60), responsive.hp(6)),
                     ),
                     onPressed: () {
                       Navigator.pop(context);

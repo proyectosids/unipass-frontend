@@ -187,16 +187,18 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
 
   void _showInvalidDayAlert(BuildContext context, String sex) {
     final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(5);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(responsive.wp(10)),
           ),
           child: Padding(
-            padding: EdgeInsets.all(responsive.wp(8)),
+            padding: EdgeInsets.all(padding),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -249,33 +251,39 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(5);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        centerTitle: true,
+        title: Text(
           'Crear salida',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+              color: const Color.fromRGBO(250, 198, 0, 1),
+              fontSize: responsive.dp(2.2)),
         ),
-        backgroundColor: const Color(0xFF6D55F4),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: Color.fromRGBO(250, 198, 0, 1),
           ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Tipo de salida',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: responsive.dp(1.9)),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: responsive.hp(1.5)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -342,7 +350,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
           _selectedType = label;
         });
       },
-      selectedColor: const Color.fromRGBO(182, 217, 59, 1),
+      selectedColor: const Color.fromRGBO(182, 220, 225, 1),
     );
   }
 

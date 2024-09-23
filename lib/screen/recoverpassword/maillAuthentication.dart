@@ -38,7 +38,7 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
     final double imageHeight = responsive.hp(30);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromRGBO(244, 244, 244, 1),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();

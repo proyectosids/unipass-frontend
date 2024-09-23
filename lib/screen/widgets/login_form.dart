@@ -138,57 +138,69 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
       ),
       child: Form(
         key: _formKey,
-        child: Column(
-          children: [
-            TextFieldWidget(
-              label: 'Matricula o correo',
-              onChanged: (text) {
-                _usernameOrEmail =
-                    text; // Guardar el valor de la matrícula o correo
-              },
-              validator: (text) {
-                if (text == null || text.isEmpty) {
-                  return 'El campo no puede estar vacío';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: responsive.hp(1)),
-            TextFieldWidget(
-              label: "Contraseña",
-              obscureText: true,
-              onChanged: (text) {
-                _password = text; // Guardar el valor de la contraseña
-              },
-              validator: (text) {
-                if (text == null || text.isEmpty) {
-                  return 'El campo no puede estar vacío';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: responsive.hp(2)),
-            SizedBox(
-              width: responsive.wp(60),
-              child: ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(vertical: responsive.hp(1.6)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(responsive.wp(10)),
+        child: Card(
+          color: const Color.fromRGBO(6, 66, 106, 1),
+          elevation: 8.0, // Ajusta la sombra de la tarjeta
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          margin: EdgeInsets.symmetric(vertical: responsive.hp(2)),
+          child: Padding(
+            padding: EdgeInsets.all(responsive.wp(5)),
+            child: Column(
+              children: [
+                TextFieldWidget(
+                  label: 'Matrícula o correo',
+                  onChanged: (text) {
+                    _usernameOrEmail =
+                        text; // Guardar el valor de la matrícula o correo
+                  },
+                  validator: (text) {
+                    if (text == null || text.isEmpty) {
+                      return 'El campo no puede estar vacío';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: responsive.hp(1)),
+                TextFieldWidget(
+                  label: "Contraseña",
+                  obscureText: true,
+                  onChanged: (text) {
+                    _password = text; // Guardar el valor de la contraseña
+                  },
+                  validator: (text) {
+                    if (text == null || text.isEmpty) {
+                      return 'El campo no puede estar vacío';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: responsive.hp(2)),
+                SizedBox(
+                  width: responsive.wp(60),
+                  child: ElevatedButton(
+                    onPressed: _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      padding:
+                          EdgeInsets.symmetric(vertical: responsive.hp(1.6)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(responsive.wp(10)),
+                      ),
+                    ),
+                    child: Text(
+                      'Ingresar',
+                      style: TextStyle(
+                        fontSize: responsive.dp(2),
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
-                child: Text(
-                  'Ingresar',
-                  style: TextStyle(
-                    fontSize: responsive.dp(2),
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
