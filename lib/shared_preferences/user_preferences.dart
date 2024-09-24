@@ -5,7 +5,27 @@ class AuthUtils {
   static const String _userIdKey = 'userId';
   static const String _tipoUserKey = 'tipoUser';
   static const String _idDormitoriokey = 'idDormitorio';
+  static const String _authTokenKey = 'auth_token'; // Nueva clave para el token
 
+  // Función para guardar el token
+  static Future<void> saveAuthToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_authTokenKey, token);
+  }
+
+  // Función para obtener el token
+  static Future<String?> getAuthToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_authTokenKey);
+  }
+
+  // Función para eliminar el token
+  static Future<void> clearAuthToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_authTokenKey);
+  }
+
+  // Resto de las funciones ya existentes
   static Future<void> saveTipoUser(String tipoUser) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tipoUserKey, tipoUser);

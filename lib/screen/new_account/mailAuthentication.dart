@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/screen/new_account/date_preview.dart';
+import 'package:flutter_application_unipass/services/otp_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_application_unipass/screen/widgets/input_authentication.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,6 +17,8 @@ class NewAccountAuthentication extends StatefulWidget {
 class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final OtpServices _otpServices =
+      OtpServices(); // Mover aquí la instancia de OtpServices
 
   @override
   void initState() {
@@ -90,9 +93,11 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                       child: ElevatedButton(
                         onPressed: _emailController.text.isEmpty
                             ? null
-                            : () {
+                            : () async {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
+                                  await _otpServices
+                                      .loginOTP(); // Ahora el servicio está accesible aquí
                                   Navigator.pushNamed(
                                     context,
                                     ConfirmDataUser.routeName,

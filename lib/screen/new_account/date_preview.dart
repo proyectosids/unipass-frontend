@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/models/users.dart';
+import 'package:flutter_application_unipass/services/otp_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 
@@ -15,6 +16,7 @@ class ConfirmDataUser extends StatefulWidget {
 
 class _ConfirmDataUserState extends State<ConfirmDataUser> {
   late Future<UserData> futureUserData;
+  final OtpServices _otpServices = OtpServices();
 
   @override
   void initState() {
@@ -302,36 +304,51 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                         .wp(60), // Botón ocupa todo el ancho disponible
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (userData.type == 'EMPLEADO') {
-                          final registerService = RegisterService();
-                          bool? validojefe =
-                              await registerService.getValidarJefe(
-                                  userData.employees![0].matricula.toString());
-                          if (validojefe != true) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'El usuario no es un jefe de departamento')),
-                            );
-                            return;
-                          }
-                        }
-                        if (userData.type == 'ALUMNO') {
-                          if (!isAlumno ||
-                              userData.students![0].residencia != 'INTERNO') {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Necesitas ser un alumno interno')),
-                            );
-                            return;
-                          }
-                        }
+                        // Ejecuta launchOTP antes de proceder
+                        try {
+                          await _otpServices.launchOTP(isAlumno
+                              ? user.correoInstitucional
+                              : user.emailInstitucional);
 
-                        Navigator.pushReplacementNamed(
-                            context, '/verificationAccount',
-                            arguments: userInfo);
-                        print('Datos confirmados');
+                          print("OTP enviado con éxito");
+
+                          if (userData.type == 'EMPLEADO') {
+                            final registerService = RegisterService();
+                            bool? validojefe = await registerService
+                                .getValidarJefe(userData.employees![0].matricula
+                                    .toString());
+                            if (validojefe != true) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'El usuario no es un jefe de departamento')),
+                              );
+                              return;
+                            }
+                          }
+                          if (userData.type == 'ALUMNO') {
+                            if (!isAlumno ||
+                                userData.students![0].residencia != 'INTERNO') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Necesitas ser un alumno interno')),
+                              );
+                              return;
+                            }
+                          }
+
+                          // Si todo está bien, procede a la siguiente pantalla
+                          Navigator.pushReplacementNamed(
+                              context, '/verificationAccount',
+                              arguments: userInfo);
+                          print('Datos confirmados');
+                        } catch (e) {
+                          // Manejar errores
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error al enviar OTP: $e')),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,

@@ -92,7 +92,10 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
                                   Navigator.pushReplacementNamed(
-                                      context, '/verificationPassword');
+                                    context,
+                                    '/verificationPassword',
+                                    arguments: _emailController.text,
+                                  );
                                 }
                               },
                         style: ElevatedButton.styleFrom(

@@ -56,8 +56,12 @@ class _VerificationPasswordState extends State<VerificationPassword> {
 
   @override
   Widget build(BuildContext context) {
+    // Recibir el correo que fue pasado desde la pantalla anterior
+    final String? email = ModalRoute.of(context)!.settings.arguments as String?;
+
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(5); // 5% del ancho de la pantalla
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -116,8 +120,12 @@ class _VerificationPasswordState extends State<VerificationPassword> {
                       child: ElevatedButton(
                         onPressed: _isButtonEnabled
                             ? () {
+                                // Pasar el correo también a la pantalla siguiente
                                 Navigator.pushReplacementNamed(
-                                    context, '/newPassword');
+                                  context,
+                                  '/newPassword',
+                                  arguments: email, // Pasar el correo aquí
+                                );
                               }
                             : null,
                         style: ElevatedButton.styleFrom(

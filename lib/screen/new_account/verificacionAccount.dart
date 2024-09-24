@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/screen/widgets/verification_otp.dart';
+import 'package:flutter_application_unipass/services/otp_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class VerificationNewAccount extends StatefulWidget {
@@ -25,6 +26,8 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
         _controller3.text.isNotEmpty &&
         _controller4.text.isNotEmpty;
   }
+
+  OtpServices _otpServices = OtpServices(); // Instancia de OtpServices
 
   @override
   void initState() {
@@ -55,6 +58,38 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
   Future<bool> _onWillPop() async {
     Navigator.pushReplacementNamed(context, '/login');
     return false;
+  }
+
+  Future<void> _verifyOTP() async {
+    // Concatenar los números de los cuatro controladores para obtener el OTP
+    String otpCode = _controller1.text +
+        _controller2.text +
+        _controller3.text +
+        _controller4.text;
+
+    // Obtener el correo del usuario desde los datos proporcionados
+    String userEmail = widget.userData['correoInstitucional'] ?? '';
+
+    try {
+      // Llamar al servicio verificationOTP con el OTP y el correo
+      bool? isValid = await _otpServices.verificationOTP(otpCode, userEmail);
+
+      if (isValid == true) {
+        // Navegar a la siguiente pantalla si la verificación es exitosa
+        Navigator.pushReplacementNamed(context, '/accountCredentials',
+            arguments: widget.userData);
+      } else {
+        // Mostrar un error si la verificación falla
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error: OTP inválido')),
+        );
+      }
+    } catch (e) {
+      // Manejar errores y mostrar un mensaje en caso de excepción
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al verificar OTP: $e')),
+      );
+    }
   }
 
   @override
@@ -125,11 +160,7 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                       width: responsive.wp(60),
                       child: ElevatedButton(
                         onPressed: _isButtonEnabled
-                            ? () {
-                                Navigator.pushReplacementNamed(
-                                    context, '/accountCredentials',
-                                    arguments: userData);
-                              }
+                            ? _verifyOTP // Llama a la función _verifyOTP al presionar el botón
                             : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,

@@ -5,3 +5,5 @@ const String baseUrl = 'http://10.20.0.50:3000';
 
 // Ruta de API para consumir informacion de la institucion
 const String endpointUrl = 'http://10.20.0.50:3002';
+
+const String otpUrl = 'https://api-otp.app.syswork.online';
