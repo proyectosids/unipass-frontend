@@ -101,7 +101,7 @@ class OtpServices {
     }
   }
 
-  Future<void> resetPassword(
+  Future<bool> resetPassword(
       String correo, String otp, String newpassword) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token =
@@ -122,9 +122,11 @@ class OtpServices {
             .encode({'email': correo, 'otp': otp, 'newPassword': newpassword}));
     if (response.statusCode == 200) {
       print('OTP para cambio de contraseña valido');
+      return true;
       //Regresar el password reset en el return de esta funcion para su porterio almacenamiento cuando la base datos unipasss este encryptada la contraseña.
     } else {
-      throw Exception('Token invalido');
+      print('Codigo OTP invalido');
+      return false;
     }
   }
 }

@@ -46,6 +46,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     String? matricula = prefs.getString('matricula');
 
     if (matricula == null) {
+      // ignore: avoid_print
       print('Matricula not found');
       return;
     }
@@ -55,6 +56,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
         : null;
 
     if (idPermiso == null) {
+      // ignore: avoid_print
       print('El idPermiso es null. No se puede obtener el estado del permiso.');
       return;
     }
@@ -96,6 +98,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
           await _checksService.solicitarCreacionChecks(
               idPermiso, 'RETORNO', pointId1);
         } else {
+          // ignore: avoid_print
           print('No se encontraron puntos de salida para este permiso.');
         }
 
@@ -118,6 +121,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
         }
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Failed to authorize permission: $e');
     }
   }
@@ -131,6 +135,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     if (await canLaunchUrl(phoneNumber)) {
       await launchUrl(phoneNumber);
     } else {
+      // ignore: avoid_print
       print('No se puede realizar la llamada');
     }
   }
@@ -139,6 +144,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     if (await canLaunchUrl(whatsApp)) {
       await launchUrl(whatsApp);
     } else {
+      // ignore: avoid_print
       print('No se puede abrir WhatsApp');
     }
   }
@@ -154,8 +160,9 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
         title: Text(
           'Detalle del permiso',
           style: TextStyle(
-              color: const Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
         leading: IconButton(
@@ -267,7 +274,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                                 ),
                                 SizedBox(height: responsive.hp(5)),
                                 DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     labelText: 'Seleccione un motivo',
                                     border: OutlineInputBorder(),
                                   ),
@@ -384,7 +391,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFA726),
+                      backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                       minimumSize: Size(responsive.wp(60), responsive.hp(6)),
                     ),
                     onPressed: () {

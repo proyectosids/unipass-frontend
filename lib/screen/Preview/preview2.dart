@@ -27,7 +27,7 @@ class Preview2 extends StatelessWidget {
               Column(
                 children: [
                   Text(
-                    'UniPass ULV',
+                    'UniPass',
                     style: TextStyle(
                       fontSize: responsive.dp(3),
                       fontWeight: FontWeight.bold,
@@ -36,7 +36,7 @@ class Preview2 extends StatelessWidget {
                   ),
                   SizedBox(height: responsive.hp(5)),
                   SvgPicture.asset(
-                    'assets/image/presentation-2.svg',
+                    'assets/image/presentacion-2.svg',
                     height: imageHeight,
                   ),
                 ],
@@ -47,6 +47,7 @@ class Preview2 extends StatelessWidget {
                   Text(
                     '¿Cómo lo haremos?',
                     style: TextStyle(
+                      fontFamily: 'Montserrat',
                       fontSize: responsive.dp(3),
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -57,6 +58,7 @@ class Preview2 extends StatelessWidget {
                     'Mediante una herramienta que la gran mayoría tenemos que es un dispositivo móvil o la web',
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: 'Roboto',
                       fontSize: responsive.dp(2.4),
                       color: Colors.grey[600],
                     ),
@@ -65,6 +67,7 @@ class Preview2 extends StatelessWidget {
                   Text(
                     '¿Estás listo para esto?',
                     style: TextStyle(
+                      fontFamily: 'Montserrat',
                       fontSize: responsive.dp(2.6),
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -79,20 +82,21 @@ class Preview2 extends StatelessWidget {
                   onPressed: () async {
                     await _setFirstTimeFlag();
                     Navigator.pushNamedAndRemoveUntil(
+                      // ignore: use_build_context_synchronously
                       context,
                       LoginApp.routeName, // Ajusta esto a la ruta correcta
                       (Route<dynamic> route) => false,
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                     padding: EdgeInsets.symmetric(vertical: responsive.hp(2)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(responsive.wp(10)),
                     ),
                   ),
                   child: Text(
-                    'CONTINUAR',
+                    'Continuar',
                     style: TextStyle(
                       fontSize: responsive.dp(2),
                       color: Colors.white,

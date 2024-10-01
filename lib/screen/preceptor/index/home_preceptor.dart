@@ -40,18 +40,23 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true,
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Bienvenido ${nombre ?? 'Empleado'}',
-              style: TextStyle(fontSize: responsive.dp(2.2)),
+              style: TextStyle(
+                fontSize: responsive.dp(2.2),
+                fontFamily: 'Roboto',
+              ),
             ),
             if (apellidos != null)
               Text(
                 apellidos!,
                 style: TextStyle(
                     fontSize: responsive.dp(1.4),
+                    fontFamily: 'Roboto',
                     color: const Color.fromARGB(255, 138, 138, 138)),
               ),
           ],

@@ -24,8 +24,9 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
         title: Text(
           'Políticas de Privacidad',
           style: TextStyle(
-              color: const Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,
@@ -77,7 +78,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
             ),
             child: Container(
               width: double.infinity,
-              color: const Color.fromRGBO(6, 66, 106, 1),
+              color: const Color.fromRGBO(189, 188, 188, 1),
               padding: EdgeInsets.all(padding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -88,22 +89,22 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: 20,
+                          height: responsive.hp(2),
                         ),
                         Text(
                           'Revisión 2023 - 5 de mayo de 2023.',
                           style: TextStyle(
                             fontSize: responsive.hp(1.8),
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: responsive.hp(2)),
                         Text(
                           'La Universidad Linda Vista, A. C., como responsable del uso de datos personales, pone a su disposición, de conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, el siguiente',
                           style: TextStyle(
                             fontSize: responsive.hp(2),
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                         ),
                         SizedBox(height: 16),

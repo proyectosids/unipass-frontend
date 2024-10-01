@@ -21,8 +21,9 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
         title: Text(
           'Soporte',
           style: TextStyle(
-              color: const Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,
@@ -42,7 +43,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: responsive.hp(2)),
+                  SizedBox(height: responsive.hp(1)),
                   Text(
                     '¿Hay algo que podamos hacer para mejorar tu experiencia?',
                     style: TextStyle(
@@ -50,7 +51,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: responsive.hp(2)),
+                  SizedBox(height: responsive.hp(1)),
                   Text(
                     'Bienvenido al soporte de nuestra aplicación de control de salidas y entradas. Aquí encontrarás nuestros contactos de ayuda para interpretar reportes y resolver cualquier duda. Nuestro equipo está listo para asistirte y asegurarte una experiencia óptima. Consulta nuestras guías, preguntas frecuentes (FAQs) y opciones de contacto.',
                     style: TextStyle(fontSize: responsive.dp(1.8)),
@@ -58,7 +59,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                 ],
               ),
             ),
-            SizedBox(height: responsive.hp(2)),
+            SizedBox(height: responsive.hp(1.5)),
             ClipRRect(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(responsive.dp(4)),
@@ -66,7 +67,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
               ),
               child: Container(
                 width: double.infinity,
-                color: const Color.fromRGBO(6, 66, 106, 1),
+                color: const Color.fromRGBO(189, 188, 188, 1),
                 padding: EdgeInsets.all(padding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -76,7 +77,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                       style: TextStyle(
                         fontSize: responsive.dp(2.5),
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -85,7 +86,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                       'UniPass.Soporte@ulv.edu.mx',
                       style: TextStyle(
                         fontSize: responsive.dp(2),
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -95,7 +96,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                       style: TextStyle(
                         fontSize: responsive.dp(2.5),
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -104,7 +105,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                       'Ex-Finca Santa Cruz Nº 1, CP 29750, Pueblo Nuevo Solistahuacán, Chiapas, México. En las oficinas de Vicerrectoría Estudiantil',
                       style: TextStyle(
                         fontSize: responsive.dp(2),
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -114,7 +115,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                       style: TextStyle(
                         fontSize: responsive.dp(2.5),
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -123,7 +124,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                       '+52 919 685 2100',
                       style: TextStyle(
                         fontSize: responsive.dp(2),
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -153,7 +154,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: responsive.hp(4)),
+                    //SizedBox(height: responsive.hp(4)),
                   ],
                 ),
               ),

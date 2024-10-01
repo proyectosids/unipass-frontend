@@ -251,7 +251,8 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
+                              backgroundColor:
+                                  const Color.fromRGBO(250, 198, 0, 1),
                               padding: EdgeInsets.symmetric(
                                   vertical: responsive.hp(1.6)),
                               shape: RoundedRectangleBorder(
@@ -308,10 +309,11 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                         height:
                             responsive.hp(5)), // Añadimos espacio al principio
                     Text(
-                      'UniPass ULV',
+                      'UniPass',
                       style: TextStyle(
                         fontSize: responsive.dp(3),
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat',
                         color: Colors.black,
                       ),
                     ),
@@ -320,7 +322,8 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                       'Crear cuenta',
                       style: TextStyle(
                         fontSize: responsive.dp(2.6),
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Roboto',
                         color: Colors.black,
                       ),
                     ),
@@ -330,6 +333,8 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: responsive.dp(2.2),
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Montserrat',
                         color: Colors.grey[600],
                       ),
                     ),
@@ -338,6 +343,8 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                       'Usuario: ${userData['matricula']}',
                       style: TextStyle(
                           fontSize: responsive.dp(2.2),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Montserrat',
                           color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 20),
@@ -389,7 +396,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                       child: ElevatedButton(
                         onPressed: _registerUser,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                           padding: EdgeInsets.symmetric(
                               vertical: responsive.hp(1.6)),
                           shape: RoundedRectangleBorder(
@@ -401,6 +408,8 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                           'Guardar contraseña',
                           style: TextStyle(
                             fontSize: responsive.hp(2),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
                         ),

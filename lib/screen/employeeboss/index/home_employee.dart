@@ -46,13 +46,17 @@ class _HomeEmployeeScreenState extends State<HomeEmployeeScreen> {
           children: [
             Text(
               'Bienvenido ${nombre ?? 'Estudiante'}',
-              style: TextStyle(fontSize: responsive.dp(2.2)),
+              style: TextStyle(
+                fontSize: responsive.dp(2.2),
+                fontFamily: 'Roboto',
+              ),
             ),
             if (apellidos != null)
               Text(
                 apellidos!,
                 style: TextStyle(
                     fontSize: responsive.dp(1.4),
+                    fontFamily: 'Roboto',
                     color: const Color.fromARGB(255, 138, 138, 138)),
               ),
           ],

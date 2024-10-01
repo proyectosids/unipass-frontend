@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/widgets/input_authentication.dart';
+import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
+import 'package:flutter_application_unipass/services/otp_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -14,6 +15,8 @@ class AuthenticationPassword extends StatefulWidget {
 class _AuthenticationPasswordState extends State<AuthenticationPassword> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final OtpServices _otpServices = OtpServices();
+  late String correo;
 
   @override
   void initState() {
@@ -56,10 +59,11 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                     Column(
                       children: [
                         Text(
-                          'UniPass ULV',
+                          'UniPass',
                           style: TextStyle(
                               fontSize: responsive.dp(3),
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Montserrat',
                               color: Colors.black),
                         ),
                         SizedBox(height: responsive.dp(3)),
@@ -67,7 +71,8 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                           'Recuperar Contraseña',
                           style: TextStyle(
                             fontSize: responsive.dp(2.4),
-                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),
@@ -77,9 +82,26 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                           height: imageHeight,
                         ),
                         SizedBox(height: responsive.hp(3)),
-                        InputAuthentication(
-                            responsive: responsive,
-                            emailController: _emailController),
+                        TextFieldWidget(
+                          label:
+                              'Correo Electrónico', // O cualquier etiqueta que desees
+                          keyboardType: TextInputType
+                              .emailAddress, // Configura el tipo de teclado para correos
+                          controller:
+                              _emailController, // Usa el controlador que ya tienes definido
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingresa tu correo electrónico';
+                            }
+                            // Valida que el formato sea de correo electrónico
+                            final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                            if (!emailRegex.hasMatch(value)) {
+                              return 'Ingresa un correo electrónico válido';
+                            }
+                            correo = value;
+                            return null;
+                          },
+                        ),
                       ],
                     ),
                     SizedBox(height: responsive.hp(3)),
@@ -88,18 +110,29 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                       child: ElevatedButton(
                         onPressed: _emailController.text.isEmpty
                             ? null
-                            : () {
+                            : () async {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
-                                  Navigator.pushReplacementNamed(
+                                  // Usa el correo ingresado manualmente
+                                  correo = _emailController.text;
+
+                                  // Realiza la autenticación de OTP
+                                  await _otpServices.loginOTP();
+
+                                  // Envía el OTP al correo ingresado
+                                  await _otpServices.forgotOTP(correo);
+
+                                  // Navega a la pantalla de verificación de contraseña
+                                  await Navigator.pushReplacementNamed(
                                     context,
                                     '/verificationPassword',
-                                    arguments: _emailController.text,
+                                    arguments:
+                                        correo, // Pasa el correo como argumento
                                   );
                                 }
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                           padding: EdgeInsets.symmetric(
                               vertical: responsive.hp(1.6)),
                           shape: RoundedRectangleBorder(
@@ -108,9 +141,11 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                           ),
                         ),
                         child: Text(
-                          'CONTINUAR',
+                          'Continuar',
                           style: TextStyle(
                             fontSize: responsive.dp(2),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
                         ),
@@ -121,6 +156,7 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                       'Si recuerdo mi contraseña',
                       style: TextStyle(
                         fontSize: responsive.dp(1.8),
+                        fontFamily: 'Montserrat',
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
@@ -135,6 +171,7 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                         'Regresar',
                         style: TextStyle(
                           color: Colors.blue,
+                          fontFamily: 'Roboto',
                           fontSize: responsive.dp(1.8),
                           decoration: TextDecoration.underline,
                         ),

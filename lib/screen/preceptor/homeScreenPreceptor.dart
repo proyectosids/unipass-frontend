@@ -16,7 +16,7 @@ class _HomeScreenPreceptorState extends State<HomeScreenPreceptor> {
   final List<Widget> screens = [
     const HomePreceptorScreen(),
     const MenuPreceptorScreen(),
-    ProfileScreen(userType: 'preceptor'), // Pasa el tipo de usuario
+    const ProfileScreen(userType: 'preceptor'), // Pasa el tipo de usuario
   ];
 
   @override
@@ -30,6 +30,7 @@ class _HomeScreenPreceptorState extends State<HomeScreenPreceptor> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         backgroundColor: Colors.white,
+        selectedItemColor: const Color.fromRGBO(6, 66, 106, 1),
         onTap: (value) {
           setState(() {
             selectedIndex = value;

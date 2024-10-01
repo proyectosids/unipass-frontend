@@ -139,7 +139,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
       child: Form(
         key: _formKey,
         child: Card(
-          color: const Color.fromRGBO(6, 66, 106, 1),
+          color: const Color.fromRGBO(189, 188, 188, 1),
           elevation: 8.0, // Ajusta la sombra de la tarjeta
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
@@ -182,7 +182,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
                   child: ElevatedButton(
                     onPressed: _submit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
+                      backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                       padding:
                           EdgeInsets.symmetric(vertical: responsive.hp(1.6)),
                       shape: RoundedRectangleBorder(
@@ -192,7 +192,9 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
                     child: Text(
                       'Ingresar',
                       style: TextStyle(
+                        fontFamily: 'Montserrat',
                         fontSize: responsive.dp(2),
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
                     ),

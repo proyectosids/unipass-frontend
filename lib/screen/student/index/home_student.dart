@@ -36,7 +36,10 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
           children: [
             Text(
               'Bienvenido, ${nombre ?? 'Empleado'}',
-              style: TextStyle(fontSize: responsive.dp(2.2)),
+              style: TextStyle(
+                fontSize: responsive.dp(2.2),
+                fontFamily: 'Roboto',
+              ),
             ),
             if (apellidos != null)
               Text(

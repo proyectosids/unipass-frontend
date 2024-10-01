@@ -79,8 +79,9 @@ class _HistoryPermissionAuthorizationState
         title: Text(
           'Solicitudes de Salidas',
           style: TextStyle(
-              color: const Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,
@@ -257,6 +258,8 @@ class _HistoryPermissionAuthorizationState
         }
       },
       child: Card(
+        color: Colors.white70,
+        shadowColor: Colors.black,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
           leading: SizedBox(

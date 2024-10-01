@@ -97,8 +97,9 @@ class _ExitStudentState extends State<ExitStudent> {
         title: Text(
           'Salidas',
           style: TextStyle(
-              color: const Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,

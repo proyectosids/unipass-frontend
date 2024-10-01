@@ -37,6 +37,7 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true,
         title: const Text('Confirmacion de informacion'),
         automaticallyImplyLeading: false,
       ),
@@ -76,6 +77,8 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                       Text(
                         'TIPO DE USUARIO:',
                         style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w500,
                           fontSize: responsive.dp(1.6),
                         ),
                       ),
@@ -83,6 +86,7 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                         checkEmpty(userData.type),
                         style: TextStyle(
                             fontSize: responsive.dp(1.8),
+                            fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold),
                       ),
                       if (isAlumno &&
@@ -92,84 +96,105 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                           'ESTUDIANTE:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           '${checkEmpty(userData.students![0].nombre)} ${checkEmpty(userData.students![0].apellidos)}',
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'CELULAR:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.students![0].celular),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'MATRICULA:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.students![0].matricula),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'CORREO INSTITUCIONAL:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.students![0].correoInstitucional),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'NIVEL EDUCATIVO:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.students![0].nivelAcademico),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'RESIDENCIA:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.students![0].residencia),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'ESCUELA:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.students![0].nombreEscuela),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -180,24 +205,30 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                           'TUTOR:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           '${checkEmpty(userData.tutors![0].nombre)} ${checkEmpty(userData.tutors![0].apellidos)}',
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'CELULAR TUTOR:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.tutors![0].celular),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -208,24 +239,30 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                           'DEPARTAMENTO:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.works![0].nombreDepartamento),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'JEFE DEPARTAMENTO:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.works![0].jefeDepartamento),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -236,30 +273,38 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                           'EMPLEADO:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           '${checkEmpty(userData.employees![0].nombres)} ${checkEmpty(userData.employees![0].apellidos)}',
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'CELULAR:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.employees![0].celular),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'MATRICULA:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
@@ -267,30 +312,37 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                               userData.employees![0].matricula.toString()),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'CORREO INSTITUCIONAL:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.employees![0].emailInstitucional),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'DEPARTAMENTO:',
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           checkEmpty(userData.employees![0].departamento),
                           style: TextStyle(
                               fontSize: responsive.dp(1.8),
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -351,7 +403,7 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                         padding:
                             EdgeInsets.symmetric(vertical: responsive.hp(1.6)),
                         shape: RoundedRectangleBorder(
@@ -363,6 +415,8 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                         'CONTINUAR',
                         style: TextStyle(
                           fontSize: responsive.dp(1.8),
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),

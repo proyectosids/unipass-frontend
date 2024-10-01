@@ -117,10 +117,11 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                     Column(
                       children: [
                         Text(
-                          'UniPass ULV',
+                          'UniPass',
                           style: TextStyle(
                               fontSize: responsive.dp(3),
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Montserrat',
                               color: Colors.black),
                         ),
                         SizedBox(height: responsive.hp(2)),
@@ -128,7 +129,8 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                           'Se ha enviado un correo',
                           style: TextStyle(
                               fontSize: responsive.dp(2.6),
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w600,
                               color: Colors.black),
                         ),
                         SizedBox(height: responsive.hp(5)),
@@ -137,6 +139,8 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: responsive.dp(2.2),
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
                               color: const Color.fromARGB(255, 0, 0, 0)),
                         ),
                         SizedBox(height: responsive.hp(5)),
@@ -144,6 +148,8 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                           'Correo: ${userData['correoInstitucional']}',
                           style: TextStyle(
                               fontSize: responsive.dp(2.2),
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w400,
                               color: Colors.grey[600]),
                         ),
                       ],
@@ -163,7 +169,7 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                             ? _verifyOTP // Llama a la función _verifyOTP al presionar el botón
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                           padding: EdgeInsets.symmetric(
                               vertical: responsive.hp(1.6)),
                           shape: RoundedRectangleBorder(
@@ -174,7 +180,10 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                         child: Text(
                           'Verificar',
                           style: TextStyle(
-                              fontSize: responsive.dp(2), color: Colors.white),
+                              fontSize: responsive.dp(2),
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white),
                         ),
                       ),
                     ),

@@ -81,18 +81,29 @@ class _VerificationPasswordState extends State<VerificationPassword> {
                     Column(
                       children: [
                         Text(
-                          'UniPass ULV',
+                          'UniPass',
                           style: TextStyle(
                               fontSize: responsive.dp(3),
-                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
                         SizedBox(height: responsive.hp(2)),
                         Text(
-                          'Se ha enviado un correo',
+                          'Se ha enviado un correo a',
                           style: TextStyle(
                             fontSize: responsive.dp(2.6),
-                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          email!,
+                          style: TextStyle(
+                            fontSize: responsive.dp(2.6),
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),
@@ -102,6 +113,8 @@ class _VerificationPasswordState extends State<VerificationPassword> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: responsive.dp(2.2),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
                             color: Colors.grey[600],
                           ),
                         ),
@@ -120,16 +133,26 @@ class _VerificationPasswordState extends State<VerificationPassword> {
                       child: ElevatedButton(
                         onPressed: _isButtonEnabled
                             ? () {
-                                // Pasar el correo también a la pantalla siguiente
-                                Navigator.pushReplacementNamed(
+                                // Concatenar los dígitos del OTP
+                                final String otpCode = _controller1.text +
+                                    _controller2.text +
+                                    _controller3.text +
+                                    _controller4.text;
+                                print(email);
+                                print(otpCode);
+                                // Pasar el correo y el OTP concatenado a la pantalla siguiente
+                                Navigator.pushNamed(
                                   context,
                                   '/newPassword',
-                                  arguments: email, // Pasar el correo aquí
+                                  arguments: {
+                                    'email': email,
+                                    'otpCode': otpCode,
+                                  },
                                 );
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                           padding: EdgeInsets.symmetric(
                               vertical: responsive.hp(1.6)),
                           shape: RoundedRectangleBorder(
@@ -141,6 +164,8 @@ class _VerificationPasswordState extends State<VerificationPassword> {
                           'Verificar',
                           style: TextStyle(
                             fontSize: responsive.dp(2),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
                         ),

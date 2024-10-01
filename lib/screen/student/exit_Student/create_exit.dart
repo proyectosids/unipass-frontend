@@ -260,8 +260,9 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         title: Text(
           'Crear salida',
           style: TextStyle(
-              color: const Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
           icon: const Icon(

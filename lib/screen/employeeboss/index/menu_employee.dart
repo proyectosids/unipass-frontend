@@ -94,7 +94,7 @@ class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
               style: TextStyle(
                 fontSize: responsive.dp(1.6),
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 0, 0, 0),
+                color: const Color.fromRGBO(6, 66, 106, 1),
               ),
             ),
           ],

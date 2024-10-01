@@ -28,8 +28,9 @@ class _ExitDetailScreenState extends State<ExitDetailScreen> {
         title: Text(
           'Detalle salida',
           style: TextStyle(
-              color: const Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: const Color.fromRGBO(189, 188, 188, 1),
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
           icon: const Icon(

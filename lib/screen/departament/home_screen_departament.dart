@@ -29,6 +29,7 @@ class _HomeScreenDepartamentState extends State<HomeScreenDepartament> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         backgroundColor: Colors.white,
+        selectedItemColor: const Color.fromRGBO(6, 66, 106, 1),
         onTap: (value) {
           setState(() {
             selectedIndex = value;

@@ -25,8 +25,9 @@ class _ChangepasswordStudentState extends State<ChangepasswordStudent> {
         title: Text(
           'Cambiar contraseña',
           style: TextStyle(
-              color: const Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
           icon: const Icon(
@@ -73,7 +74,7 @@ class _ChangepasswordStudentState extends State<ChangepasswordStudent> {
               ),
               child: Container(
                 width: double.infinity,
-                color: const Color.fromRGBO(6, 66, 106, 1),
+                color: const Color.fromRGBO(189, 188, 188, 1),
                 padding: EdgeInsets.all(padding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,

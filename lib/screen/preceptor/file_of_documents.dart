@@ -41,8 +41,9 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
         title: Text(
           "Documentos",
           style: TextStyle(
-              color: Color.fromRGBO(250, 198, 0, 1),
-              fontSize: responsive.dp(2.2)),
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
         ),
         backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
         leading: IconButton(

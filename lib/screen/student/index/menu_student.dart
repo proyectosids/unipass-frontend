@@ -1,4 +1,5 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class MenuScreen extends StatelessWidget {
   static const routeName = '/menu';
@@ -7,10 +8,18 @@ class MenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Menu'),
+        title: Text(
+          'Menu',
+          style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -23,7 +32,7 @@ class MenuScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(padding),
         child: Column(
           children: [
             Expanded(
@@ -84,7 +93,7 @@ class MenuScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: responsive.dp(1.6),
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 0, 0, 0),
+                color: const Color.fromRGBO(6, 66, 106, 1),
               ),
             ),
           ],

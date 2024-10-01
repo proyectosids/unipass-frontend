@@ -22,16 +22,17 @@ class Preview1 extends StatelessWidget {
               Column(
                 children: [
                   Text(
-                    'UniPass ULV',
+                    'UniPass',
                     style: TextStyle(
                       fontSize: responsive.dp(3),
                       fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat',
                       color: Colors.black,
                     ),
                   ),
                   SizedBox(height: responsive.hp(3)),
                   SvgPicture.asset(
-                    'assets/image/presentation-1.svg',
+                    'assets/image/presentacion-1.svg',
                     height: imageHeight,
                   ),
                 ],
@@ -44,6 +45,7 @@ class Preview1 extends StatelessWidget {
                     style: TextStyle(
                       fontSize: responsive.dp(3),
                       fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat',
                       color: Colors.black,
                     ),
                   ),
@@ -52,6 +54,7 @@ class Preview1 extends StatelessWidget {
                     'Es una aplicación destinada para las salidas de los estudiantes internos de la Universidad Linda Vista',
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: 'Roboto',
                       fontSize: responsive.dp(2.4),
                       color: Colors.grey[600],
                     ),
@@ -67,10 +70,10 @@ class Preview1 extends StatelessWidget {
                       context,
                       PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) =>
-                            Preview2(),
+                            const Preview2(),
                         transitionsBuilder:
                             (context, animation, secondaryAnimation, child) {
-                          var begin = Offset(1.0, 0.0);
+                          var begin = const Offset(1.0, 0.0);
                           var end = Offset.zero;
                           var curve = Curves.ease;
 
@@ -86,7 +89,7 @@ class Preview1 extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                     padding: EdgeInsets.symmetric(
                       vertical: responsive.hp(2),
                     ),
@@ -95,7 +98,7 @@ class Preview1 extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'CONTINUAR',
+                    'Continuar',
                     style: TextStyle(
                       fontSize: responsive.dp(2),
                       color: Colors.white,

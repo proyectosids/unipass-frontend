@@ -13,7 +13,7 @@ class _LoginAppState extends State<LoginApp> {
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(5); // 5% del ancho de la pantalla
-    final double imageHeight = responsive.hp(20);
+    final double imageHeight = responsive.dp(20);
 
     return WillPopScope(
       onWillPop: () async {
@@ -108,7 +108,7 @@ class _LoginAppState extends State<LoginApp> {
         return exit;
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -127,17 +127,15 @@ class _LoginAppState extends State<LoginApp> {
                           'UniPass',
                           style: TextStyle(
                             fontSize: responsive.dp(3),
+                            fontFamily: 'Montserrat',
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: const Color.fromARGB(255, 255, 255, 255),
                           ),
                         ),
                         SizedBox(height: responsive.hp(2)),
-                        Opacity(
-                          opacity: 0.8,
-                          child: Image.asset(
-                            'assets/image/U Linda Vista LOGO-01.png',
-                            height: imageHeight,
-                          ),
+                        Image.asset(
+                          'assets/image/ULINDAVISTALOGO.png',
+                          height: imageHeight,
                         ),
                       ],
                     ),
@@ -147,9 +145,10 @@ class _LoginAppState extends State<LoginApp> {
                       'Bienvenido a tu aplicacion de salidas institucionales',
                       textAlign: TextAlign.center,
                       style: TextStyle(
+                        fontFamily: 'Montserrat',
                         fontSize: responsive.dp(2),
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(height: responsive.hp(2)),
@@ -159,8 +158,9 @@ class _LoginAppState extends State<LoginApp> {
                     Text(
                       '¿Olvidaste tu contraseña?',
                       style: TextStyle(
+                        fontFamily: 'Montserrat',
                         fontSize: responsive.dp(1.5),
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -172,7 +172,8 @@ class _LoginAppState extends State<LoginApp> {
                       child: Text(
                         'Recuperar',
                         style: TextStyle(
-                          color: Colors.blue,
+                          fontFamily: 'Roboto',
+                          color: const Color.fromRGBO(250, 198, 0, 1),
                           fontSize: responsive.dp(1.8),
                           decoration: TextDecoration.underline,
                         ),
@@ -180,7 +181,7 @@ class _LoginAppState extends State<LoginApp> {
                     ),
                     SizedBox(height: responsive.hp(1.5)),
                     Divider(
-                      color: Colors.black,
+                      color: Colors.white,
                       height: responsive.hp(1),
                       thickness: responsive.hp(0.2),
                       indent: responsive.wp(5),
@@ -193,9 +194,10 @@ class _LoginAppState extends State<LoginApp> {
                         Text(
                           '¿Eres nuevo?',
                           style: TextStyle(
+                            fontFamily: 'Montserrat',
                             fontSize: responsive.dp(1.5),
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         TextButton(
@@ -206,7 +208,8 @@ class _LoginAppState extends State<LoginApp> {
                           child: Text(
                             'Crear una cuenta',
                             style: TextStyle(
-                              color: Colors.blue,
+                              fontFamily: 'Roboto',
+                              color: const Color.fromRGBO(250, 198, 0, 1),
                               fontSize: responsive.dp(1.8),
                               decoration: TextDecoration.underline,
                             ),

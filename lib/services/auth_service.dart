@@ -34,20 +34,24 @@ class AuthServices {
     }
   }
 
-  Future<bool> updatePassword(String matricula, String newPassword) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/password/$matricula'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'NewPassword': newPassword}),
-    );
+  Future<bool> updatePassword(String correo, String newPassword) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/password/$correo'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'NewPassword': newPassword}),
+      );
 
-    if (response.statusCode == 200) {
-      return true; // Contraseña actualizada con éxito
-    } else if (response.statusCode == 404) {
-      throw Exception(
-          'No se pudo actualizar la contraseña: Matricula no encontrada');
-    } else {
-      throw Exception('Error al actualizar la contraseña');
+      if (response.statusCode == 200) {
+        return true; // Contraseña actualizada con éxito
+      } else if (response.statusCode == 404) {
+        throw Exception(
+            'No se pudo actualizar la contraseña: Usuario no encontrado');
+      } else {
+        throw Exception('Error al actualizar la contraseña: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Fallo en la actualización de la contraseña: $e');
     }
   }
 }

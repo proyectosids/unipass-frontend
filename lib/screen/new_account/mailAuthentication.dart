@@ -61,10 +61,11 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                     Column(
                       children: [
                         Text(
-                          'UniPass ULV',
+                          'UniPass',
                           style: TextStyle(
                               fontSize: responsive.dp(3),
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Montserrat',
                               color: Colors.black),
                         ),
                         SizedBox(height: responsive.dp(3)),
@@ -72,7 +73,8 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                           'Crear una cuenta',
                           style: TextStyle(
                             fontSize: responsive.dp(2.4),
-                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),
@@ -106,7 +108,7 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                                 }
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                           padding: EdgeInsets.symmetric(
                               vertical: responsive.hp(1.6)),
                           shape: RoundedRectangleBorder(
@@ -118,6 +120,8 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                           'CONTINUAR',
                           style: TextStyle(
                             fontSize: responsive.dp(2),
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
                         ),
@@ -128,6 +132,7 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                       'Ya tengo una cuenta',
                       style: TextStyle(
                         fontSize: responsive.dp(1.8),
+                        fontFamily: 'Montserrat',
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
@@ -142,6 +147,7 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                         'Regresar',
                         style: TextStyle(
                           color: Colors.blue,
+                          fontFamily: 'Roboto',
                           fontSize: responsive.dp(1.8),
                           decoration: TextDecoration.underline,
                         ),
