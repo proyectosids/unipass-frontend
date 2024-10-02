@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
+import 'package:flutter_application_unipass/models/users.dart';
+
+import 'package:flutter_application_unipass/screen/widgets/input_authentication.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/otp_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,7 +19,10 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final OtpServices _otpServices = OtpServices();
-  late String correo;
+  final AuthServices _authService = AuthServices();
+  String? userId; // Modificado a String? para evitar problemas con late
+  String? email; // Modificado a String? para evitar problemas con late
+  late Future<UserData?> futureUserData;
 
   @override
   void initState() {
@@ -82,26 +88,9 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                           height: imageHeight,
                         ),
                         SizedBox(height: responsive.hp(3)),
-                        TextFieldWidget(
-                          label:
-                              'Correo Electrónico', // O cualquier etiqueta que desees
-                          keyboardType: TextInputType
-                              .emailAddress, // Configura el tipo de teclado para correos
-                          controller:
-                              _emailController, // Usa el controlador que ya tienes definido
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor ingresa tu correo electrónico';
-                            }
-                            // Valida que el formato sea de correo electrónico
-                            final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                            if (!emailRegex.hasMatch(value)) {
-                              return 'Ingresa un correo electrónico válido';
-                            }
-                            correo = value;
-                            return null;
-                          },
-                        ),
+                        InputAuthentication(
+                            responsive: responsive,
+                            emailController: _emailController),
                       ],
                     ),
                     SizedBox(height: responsive.hp(3)),
@@ -114,21 +103,43 @@ class _AuthenticationPasswordState extends State<AuthenticationPassword> {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
                                   // Usa el correo ingresado manualmente
-                                  correo = _emailController.text;
+                                  userId = _emailController.text;
+                                  try {
+                                    Map<String, dynamic>? userData =
+                                        await _authService
+                                            .getinfoMatricula(userId!);
+                                    if (userData == null) {
+                                      // ignore: use_build_context_synchronously
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'Usuario no encontrado')));
+                                      return;
+                                    }
 
-                                  // Realiza la autenticación de OTP
-                                  await _otpServices.loginOTP();
+                                    email = userData['Correo'];
 
-                                  // Envía el OTP al correo ingresado
-                                  await _otpServices.forgotOTP(correo);
-
-                                  // Navega a la pantalla de verificación de contraseña
-                                  await Navigator.pushReplacementNamed(
-                                    context,
-                                    '/verificationPassword',
-                                    arguments:
-                                        correo, // Pasa el correo como argumento
-                                  );
+                                    // Realiza la autenticación de OTP
+                                    try {
+                                      await _otpServices.loginOTP();
+                                      await _otpServices.forgotOTP(email!);
+                                      await Navigator.pushReplacementNamed(
+                                        context,
+                                        '/verificationPassword',
+                                        arguments: email,
+                                      );
+                                    } catch (error) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'Error enviando OTP: $error')));
+                                    }
+                                  } catch (error) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Error recuperando usuario: $error')));
+                                  }
                                 }
                               },
                         style: ElevatedButton.styleFrom(
