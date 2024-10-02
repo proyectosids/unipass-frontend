@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/screen/widgets/text_input.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/otp_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 
@@ -17,6 +18,8 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final OtpServices _otpServices = OtpServices(); // Servicio OTP
+  final AuthServices _authServices =
+      AuthServices(); // Servicio de autenticación
 
   @override
   void dispose() {
@@ -104,8 +107,16 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
         return; // Detener la ejecución si el OTP es inválido
       }
 
-      // Mostramos un diálogo de éxito si la contraseña fue cambiada correctamente
-      _showSuccessDialog();
+      // Si el OTP es válido, intentamos actualizar la contraseña
+      bool isPasswordUpdated = await _authServices.updatePassword(
+          email, newPassword); // Llamamos al servicio de autenticación
+
+      if (isPasswordUpdated) {
+        // Si la contraseña fue actualizada, mostrar un diálogo de éxito
+        _showSuccessDialog();
+      } else {
+        throw Exception('No se pudo actualizar la contraseña');
+      }
     } catch (error) {
       // Manejamos errores mostrando un mensaje
       ScaffoldMessenger.of(context).showSnackBar(
@@ -119,6 +130,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
     return (await showDialog(
           context: context,
           builder: (context) => Dialog(
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(responsive.wp(10)),
             ),
@@ -173,7 +185,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                           ),
                         ),
                         SizedBox(
-                          width: responsive.wp(60), // Ancho del botón "Salir"
+                          width: responsive.wp(30), // Ancho del botón "Salir"
                           child: ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).pushNamedAndRemoveUntil(
