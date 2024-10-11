@@ -67,20 +67,38 @@ class PermissionService {
     if (response.statusCode == 200) {
       final permissionCreated = json.decode(response.body);
       print(permissionCreated);
-      int IdPermission = permissionCreated['Id'];
+      int idPermission = permissionCreated['Id'];
+      int idTipoSalida = permissionCreated['IdTipoSalida'];
+      DateTime fechsalida =
+          DateTime.parse(permissionCreated['FechaSalida']); // Si es DateTime
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int? idDepto = prefs.getInt('idDepto');
       int? idJefe = prefs.getInt('idJefe');
       String? nivelAcdemico = prefs.getString('nivelAcademico');
       String? sexo = prefs.getString('sexo');
-      await _authorizeService.asignarAuthorice(idJefe!, idDepto!, IdPermission);
       final asigPreceptor =
           await _authorizeService.asignarPreceptor(nivelAcdemico!, sexo!);
       print(asigPreceptor);
       final idPrece = await _registerService.getPreceptor(asigPreceptor!);
       print(idPrece);
-      await _authorizeService.asignarAuthorice(
-          idPrece!, asigPreceptor, IdPermission);
+
+      // Obtén el día de la semana directamente de fechsalida
+      int diaSemana = fechsalida.weekday; // Obtiene el día de la semana
+
+      if (idTipoSalida == 4) {}
+
+      if (idPrece != idJefe && diaSemana != 6) {
+        await _authorizeService.asignarAuthorice(
+            idJefe!, idDepto!, idPermission);
+        await _authorizeService.asignarAuthorice(
+            idPrece!, asigPreceptor, idPermission);
+      } else if (idPrece == idJefe || idTipoSalida == 2 && diaSemana == 6) {
+        // Verifica si es sábado (6)
+        // Aquí puedes manejar el caso cuando la fecha de salida es sábado
+        await _authorizeService.asignarAuthorice(
+            idPrece!, asigPreceptor, idPermission);
+        print("La fecha de salida es un sábado.");
+      }
 
       return json.decode(response.body);
     } else {

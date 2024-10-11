@@ -95,4 +95,33 @@ class RegisterService {
           jsonDecode(response.body)['message'] ?? 'Failed to register user');
     }
   }
+
+  Future<int?> getEncargadoDepto(int noDepto) async {
+    final uri = Uri.parse('$endpointUrl/api/datos/JefeDepto/$noDepto');
+    final respuesta = await http.get(uri);
+
+    if (respuesta.statusCode == 200) {
+      final data = json.decode(respuesta.body);
+      final matricula = data['EmpMatricula'];
+      return int.tryParse(matricula);
+    } else {
+      print(
+          'Fallo al obtener el jefe de trabajo. Status code: ${respuesta.statusCode}');
+      return null;
+    }
+  }
+
+  Future<int?> getCordinador(int matricula) async {
+    final uri = Uri.parse('$endpointUrl/api/datos/coordinador/$matricula');
+    final respuesta = await http.get(uri);
+
+    if (respuesta.statusCode == 200) {
+      final data = json.decode(respuesta.body);
+      return int.tryParse(data);
+    } else {
+      print(
+          'Fallo al obtener el jefe de trabajo. Status code: ${respuesta.statusCode}');
+      return null;
+    }
+  }
 }

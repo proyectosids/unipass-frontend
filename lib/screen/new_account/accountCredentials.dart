@@ -109,6 +109,18 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
     );
   }
 
+  String _validateString(dynamic value) {
+    return (value == null || value.toString().isEmpty)
+        ? 'N/A'
+        : value.toString();
+  }
+
+  int _validateInt(dynamic value) {
+    return (value == null || value.toString().isEmpty)
+        ? 0
+        : int.tryParse(value.toString()) ?? 0;
+  }
+
   Future<void> _registerUser() async {
     if (_formKey.currentState?.validate() == true) {
       try {
@@ -158,15 +170,16 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         });
 
         final userData = {
-          'Matricula': widget.userData['matricula'].toString(),
+          'Matricula': _validateInt(widget.userData['matricula']),
           'Contraseña': _passwordController.text,
-          'Correo': widget.userData['correoInstitucional'],
-          'Nombre': widget.userData['nombres'],
-          'Apellidos': widget.userData['apellidos'],
-          'TipoUser': tipoUsuario,
-          'Sexo': widget.userData['sexo'],
-          'FechaNacimiento': widget.userData['fechaNacimiento'],
-          'Celular': widget.userData['celular'],
+          'Correo': _validateString(widget.userData['correoInstitucional']),
+          'Nombre': _validateString(widget.userData['nombres']),
+          'Apellidos': _validateString(widget.userData['apellidos']),
+          'TipoUser': _validateString(tipoUsuario),
+          'Sexo': _validateString(widget.userData['sexo']),
+          'FechaNacimiento':
+              _validateString(widget.userData['fechaNacimiento']),
+          'Celular': _validateString(widget.userData['celular']),
           'Dormitorio': dormitorio,
         };
         await registerService.registerUser(userData);

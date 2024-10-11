@@ -36,6 +36,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     'Pueblo': 1,
     'Especial': 2,
     'A casa': 3,
+    'Fin de curso': 4,
   };
 
   @override
@@ -253,6 +254,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(5);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
@@ -285,22 +287,31 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                     fontWeight: FontWeight.bold, fontSize: responsive.dp(1.9)),
               ),
               SizedBox(height: responsive.hp(1.5)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildChoiceChip('Pueblo'),
-                  _buildChoiceChip('Especial'),
-                  _buildChoiceChip('A casa'),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildChoiceChip('Pueblo'),
+                    SizedBox(width: responsive.wp(5)),
+                    _buildChoiceChip('Especial'),
+                    SizedBox(width: responsive.wp(5)),
+                    _buildChoiceChip('A casa'),
+                    SizedBox(width: responsive.wp(5)),
+                    _buildChoiceChip('Fin de curso'),
+                  ],
+                ),
               ),
               const SizedBox(height: 20),
               _buildDateTimePickerSalida('Fecha y hora de salida',
                   _selectedStartDate, _selectedStartTime, true),
               const SizedBox(height: 20),
-              _buildDateTimePickerRetorno('Fecha y hora de retorno',
-                  _selectedEndDate, _selectedEndTime, false,
-                  enabled: _selectedType != 'Pueblo'),
+              // Mostrar el campo de Fecha y hora de retorno solo si no es "Fin de curso"
+              if (_selectedType != 'Fin de curso')
+                _buildDateTimePickerRetorno('Fecha y hora de retorno',
+                    _selectedEndDate, _selectedEndTime, false),
               const SizedBox(height: 20),
+              // Deshabilitar el campo de motivo si el tipo de salida es "Fin de curso"
               DropdownButtonFormField<String>(
                 value: _selectedReason,
                 decoration: const InputDecoration(labelText: 'Motivo'),
@@ -311,11 +322,15 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                     child: Text(value),
                   );
                 }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedReason = newValue!;
-                  });
-                },
+                onChanged: _selectedType == 'Fin de curso'
+                    ? null
+                    : (String? newValue) {
+                        setState(() {
+                          _selectedReason = newValue!;
+                        });
+                      },
+                disabledHint: Text(
+                    _selectedReason), // Mostrar el valor actual si está deshabilitado
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -344,6 +359,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
 
   Widget _buildChoiceChip(String label) {
     return ChoiceChip(
+      backgroundColor: Colors.white,
       label: Text(label),
       selected: _selectedType == label,
       onSelected: (bool selected) {

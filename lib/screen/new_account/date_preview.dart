@@ -31,7 +31,7 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
-    final double padding = responsive.wp(5);
+    final double padding = responsive.wp(3);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -74,276 +74,225 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                   child: ListView(
                     padding: EdgeInsets.all(padding),
                     children: [
+                      // Sección de Información Personal
                       Text(
-                        'TIPO DE USUARIO:',
+                        'Información Personal',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                          fontSize: responsive.dp(1.6),
+                          fontWeight: FontWeight.bold,
+                          fontSize: responsive.dp(2.0),
                         ),
                       ),
-                      Text(
-                        checkEmpty(userData.type),
-                        style: TextStyle(
-                            fontSize: responsive.dp(1.8),
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.bold),
+                      const SizedBox(height: 10),
+                      ListTile(
+                        title: Text(
+                          'Nombre',
+                          style: TextStyle(
+                            fontSize: responsive.dp(1.5),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        trailing: Text(
+                          checkEmpty(isAlumno ? user.nombre : user.nombres),
+                          style: TextStyle(
+                            fontSize: responsive.dp(1.6),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      if (isAlumno &&
-                          userData.students != null &&
-                          userData.students!.isNotEmpty) ...[
-                        Text(
-                          'ESTUDIANTE:',
+                      ListTile(
+                        title: Text(
+                          'Apellidos',
                           style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                            fontSize: responsive.dp(1.5),
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
-                        Text(
-                          '${checkEmpty(userData.students![0].nombre)} ${checkEmpty(userData.students![0].apellidos)}',
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'CELULAR:',
+                        trailing: Text(
+                          checkEmpty(user.apellidos),
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          checkEmpty(userData.students![0].celular),
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Tipo de usuario:',
                           style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
+                            fontSize: responsive.dp(1.5),
+                            fontWeight: FontWeight.normal,
+                          ),
                         ),
-                        Text(
-                          'MATRICULA:',
+                        trailing: Text(
+                          checkEmpty(userData.type),
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          checkEmpty(userData.students![0].matricula),
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Correo Institucional',
                           style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
+                            fontSize: responsive.dp(1.5),
+                            fontWeight: FontWeight.normal,
+                          ),
                         ),
-                        Text(
-                          'CORREO INSTITUCIONAL:',
+                        trailing: Text(
+                          checkEmpty(isAlumno
+                              ? user.correoInstitucional
+                              : user.emailInstitucional),
                           style: TextStyle(
                             fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          checkEmpty(userData.students![0].correoInstitucional),
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Residencia',
                           style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'NIVEL EDUCATIVO:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                            fontSize: responsive.dp(1.5),
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
-                        Text(
-                          checkEmpty(userData.students![0].nivelAcademico),
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'RESIDENCIA:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
+                        trailing: Text(
                           checkEmpty(userData.students![0].residencia),
                           style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'ESCUELA:',
-                          style: TextStyle(
                             fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
+                          ), // Aquí agregas los puntos suspensivos
+                          maxLines: 2, // Limita a una sola línea
+                        ),
+                      ),
+
+                      ListTile(
+                        title: Text(
+                          'N° Celular',
+                          style: TextStyle(
+                            fontSize: responsive.dp(1.5),
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
-                        Text(
-                          checkEmpty(userData.students![0].nombreEscuela),
+                        trailing: Text(
+                          checkEmpty(user.celular),
                           style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
+                            fontSize: responsive.dp(1.6),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ],
+                      ),
+                      if (isAlumno)
+                        ListTile(
+                          title: Text(
+                            'Nivel Académico',
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.5),
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          trailing: Text(
+                            checkEmpty(user.nivelAcademico),
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.6),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      const Divider(),
+                      // Sección de Información del Tutor
                       if (isAlumno &&
                           userData.tutors != null &&
                           userData.tutors!.isNotEmpty) ...[
                         Text(
-                          'TUTOR:',
+                          'Información del Tutor',
                           style: TextStyle(
-                            fontSize: responsive.dp(1.6),
                             fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
+                            fontSize: responsive.dp(2.0),
                           ),
                         ),
-                        Text(
-                          '${checkEmpty(userData.tutors![0].nombre)} ${checkEmpty(userData.tutors![0].apellidos)}',
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'CELULAR TUTOR:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                        const SizedBox(height: 10),
+                        ListTile(
+                          title: Text(
+                            'Nombre',
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.5),
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          trailing: Text(
+                            '${checkEmpty(userData.tutors![0].nombre)} \n${checkEmpty(userData.tutors![0].apellidos)}',
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.6),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        Text(
-                          checkEmpty(userData.tutors![0].celular),
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
+                        ListTile(
+                          title: Text(
+                            'N° Celular',
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.5),
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          trailing: Text(
+                            checkEmpty(userData.tutors![0].celular),
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.6),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
+                        const Divider(),
                       ],
+                      // Sección de Información del Departamento
                       if (isAlumno &&
                           userData.works != null &&
                           userData.works!.isNotEmpty) ...[
                         Text(
-                          'DEPARTAMENTO:',
+                          'Información del Departamento',
                           style: TextStyle(
-                            fontSize: responsive.dp(1.6),
                             fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
+                            fontSize: responsive.dp(2.0),
                           ),
                         ),
-                        Text(
-                          checkEmpty(userData.works![0].nombreDepartamento),
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'JEFE DEPARTAMENTO:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                        const SizedBox(height: 10),
+                        ListTile(
+                          title: Text(
+                            'Nombre',
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.5),
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          trailing: Text(
+                            checkEmpty(userData.works![0].nombreDepartamento),
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.6),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        Text(
-                          checkEmpty(userData.works![0].jefeDepartamento),
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                      if (userData.type == 'EMPLEADO' &&
-                          userData.employees != null &&
-                          userData.employees!.isNotEmpty) ...[
-                        Text(
-                          'EMPLEADO:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                        ListTile(
+                          title: Text(
+                            'Encargado',
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.5),
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
-                        ),
-                        Text(
-                          '${checkEmpty(userData.employees![0].nombres)} ${checkEmpty(userData.employees![0].apellidos)}',
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'CELULAR:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
+                          trailing: Text(
+                            checkEmpty(userData.works![0].jefeDepartamento),
+                            style: TextStyle(
+                              fontSize: responsive.dp(1.6),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text(
-                          checkEmpty(userData.employees![0].celular),
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'MATRICULA:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          checkEmpty(
-                              userData.employees![0].matricula.toString()),
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'CORREO INSTITUCIONAL:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          checkEmpty(userData.employees![0].emailInstitucional),
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'DEPARTAMENTO:',
-                          style: TextStyle(
-                            fontSize: responsive.dp(1.6),
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          checkEmpty(userData.employees![0].departamento),
-                          style: TextStyle(
-                              fontSize: responsive.dp(1.8),
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ],
@@ -356,7 +305,6 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                         .wp(60), // Botón ocupa todo el ancho disponible
                     child: ElevatedButton(
                       onPressed: () async {
-                        // Ejecuta launchOTP antes de proceder
                         try {
                           await _otpServices.launchOTP(isAlumno
                               ? user.correoInstitucional
@@ -390,13 +338,11 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                             }
                           }
 
-                          // Si todo está bien, procede a la siguiente pantalla
                           Navigator.pushReplacementNamed(
                               context, '/verificationAccount',
                               arguments: userInfo);
                           print('Datos confirmados');
                         } catch (e) {
-                          // Manejar errores
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Error al enviar OTP: $e')),
                           );
