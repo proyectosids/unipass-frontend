@@ -262,10 +262,13 @@ class _ExitStudentState extends State<ExitStudent> {
   }
 
   Future<bool?> _showConfirmationDialog(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
     return showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(responsive.wp(10))),
           title: const Text('Confirmación'),
           content:
               const Text('¿Estás seguro de que deseas eliminar esta salida?'),

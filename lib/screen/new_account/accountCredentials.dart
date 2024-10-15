@@ -170,7 +170,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         });
 
         final userData = {
-          'Matricula': _validateInt(widget.userData['matricula']),
+          'Matricula': _validateString(widget.userData['matricula']),
           'Contraseña': _passwordController.text,
           'Correo': _validateString(widget.userData['correoInstitucional']),
           'Nombre': _validateString(widget.userData['nombres']),

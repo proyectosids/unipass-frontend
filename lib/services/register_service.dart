@@ -111,13 +111,25 @@ class RegisterService {
     }
   }
 
-  Future<int?> getCordinador(int matricula) async {
+  Future<Map<String, dynamic>?> getCordinador(String matricula) async {
     final uri = Uri.parse('$endpointUrl/api/datos/coordinador/$matricula');
     final respuesta = await http.get(uri);
 
     if (respuesta.statusCode == 200) {
       final data = json.decode(respuesta.body);
-      return int.tryParse(data);
+
+      // Verifica que 'data' contiene las claves esperadas
+      if (data is Map<String, dynamic> &&
+          data.containsKey('empMatricula') &&
+          data.containsKey('IdDepartamento')) {
+        return {
+          'empMatricula': data['empMatricula'],
+          'IdDepartamento': data['IdDepartamento'],
+        };
+      } else {
+        print('Respuesta no contiene las claves esperadas.');
+        return null;
+      }
     } else {
       print(
           'Fallo al obtener el jefe de trabajo. Status code: ${respuesta.statusCode}');

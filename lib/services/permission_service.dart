@@ -75,6 +75,7 @@ class PermissionService {
       int? idDepto = prefs.getInt('idDepto');
       int? idJefe = prefs.getInt('idJefe');
       String? nivelAcdemico = prefs.getString('nivelAcademico');
+      String? matricula = prefs.getString('matricula');
       String? sexo = prefs.getString('sexo');
       final asigPreceptor =
           await _authorizeService.asignarPreceptor(nivelAcdemico!, sexo!);
@@ -84,10 +85,27 @@ class PermissionService {
 
       // Obtén el día de la semana directamente de fechsalida
       int diaSemana = fechsalida.weekday; // Obtiene el día de la semana
+      //Pendiente arreglar la el retorno de los datos del coordinador con
+      //matricula y iddepto
+      if (idTipoSalida == 4) {
+        final encBiblio = await _registerService.getEncargadoDepto(204);
+        final encFinanzasEst = await _registerService.getEncargadoDepto(265);
+        final coordinador = await _registerService.getCordinador(matricula!);
+        final encVidaUtil = await _registerService.getEncargadoDepto(333);
+        await _authorizeService.asignarAuthorice(encBiblio!, 204, idPermission);
+        await _authorizeService.asignarAuthorice(
+            encFinanzasEst!, 265, idPermission);
+        await _authorizeService.asignarAuthorice(
+            int.tryParse(coordinador!['empMatricula'].toString()) ?? 0,
+            int.tryParse(coordinador['IdDepartamento'].toString()) ?? 0,
+            idPermission);
+        await _authorizeService.asignarAuthorice(
+            encVidaUtil!, 333, idPermission);
+        await _authorizeService.asignarAuthorice(
+            asigPreceptor, idDepto!, idPermission);
+      }
 
-      if (idTipoSalida == 4) {}
-
-      if (idPrece != idJefe && diaSemana != 6) {
+      if (idPrece != idJefe && diaSemana != 6 && idTipoSalida != 4) {
         await _authorizeService.asignarAuthorice(
             idJefe!, idDepto!, idPermission);
         await _authorizeService.asignarAuthorice(
