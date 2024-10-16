@@ -10,7 +10,6 @@ class VerificationNewAccount extends StatefulWidget {
       : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _VerificationNewAccountState createState() => _VerificationNewAccountState();
 }
 
@@ -68,8 +67,10 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
         _controller4.text;
 
     // Obtener el correo del usuario desde los datos proporcionados
-    String userEmail = widget.userData['correoInstitucional'] ?? '';
-
+    String userEmail = widget.userData['cuentaEmail'] ??
+        ''; // Obtiene el correo institucional pasado
+    final String emailControllerText =
+        widget.userData['emailController'] ?? 'Email no disponible';
     try {
       // Llamar al servicio verificationOTP con el OTP y el correo
       bool? isValid = await _otpServices.verificationOTP(otpCode, userEmail);
@@ -77,8 +78,8 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
       if (isValid == true) {
         // Navegar a la siguiente pantalla si la verificación es exitosa
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(context, '/accountCredentials',
-            arguments: widget.userData);
+        Navigator.pushReplacementNamed(context, '/confirmData',
+            arguments: emailControllerText); // Pasa los mismos datos recibidos
       } else {
         // Mostrar un error si la verificación falla
         // ignore: use_build_context_synchronously
@@ -99,9 +100,13 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(5);
-    final userData = widget.userData;
 
-    // ignore: deprecated_member_use
+    // Obtiene tanto el correo del controlador como el correo institucional
+    final String emailControllerText =
+        widget.userData['emailController'] ?? 'Email no disponible';
+    final String cuentaEmail =
+        widget.userData['cuentaEmail'] ?? 'Correo no disponible';
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -149,7 +154,8 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
                         ),
                         SizedBox(height: responsive.hp(5)),
                         Text(
-                          'Correo: ${userData['correoInstitucional']}',
+                          'Correo institucional: $cuentaEmail',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: responsive.dp(2.2),
                               fontFamily: 'Roboto',

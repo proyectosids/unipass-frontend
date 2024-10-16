@@ -348,11 +348,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                       child: ElevatedButton(
                         onPressed: () async {
                           try {
-                            await _otpServices.launchOTP(isAlumno
-                                ? user.correoInstitucional
-                                : user.emailInstitucional);
-
-                            print("OTP enviado con éxito");
+                            //await _otpServices.launchOTP(isAlumno
+                            //    ? user.correoInstitucional
+                            //    : user.emailInstitucional);
 
                             if (userData.type == 'EMPLEADO') {
                               final registerService = RegisterService();
@@ -383,7 +381,7 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                             }
 
                             Navigator.pushReplacementNamed(
-                                context, '/verificationAccount',
+                                context, '/accountCredentials',
                                 arguments: userInfo);
                             print('Datos confirmados');
                           } catch (e) {

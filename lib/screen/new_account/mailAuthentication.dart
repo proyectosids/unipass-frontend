@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/models/users.dart';
 import 'package:flutter_application_unipass/screen/new_account/date_preview.dart';
+import 'package:flutter_application_unipass/screen/new_account/verificacionAccount.dart';
 import 'package:flutter_application_unipass/services/otp_service.dart';
+import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:flutter_application_unipass/screen/widgets/input_authentication.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,12 +20,14 @@ class NewAccountAuthentication extends StatefulWidget {
 class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  final OtpServices _otpServices =
-      OtpServices(); // Mover aquí la instancia de OtpServices
+  late final OtpServices _otpServices;
+  late String cuentaEmail;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _otpServices = OtpServices();
     _emailController.addListener(_validateForm);
   }
 
@@ -34,6 +39,32 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
 
   void _validateForm() {
     setState(() {});
+  }
+
+  // Convertir obtenerCorreo en una función asincrónica
+  Future<String> obtenerCorreo(String matricula) async {
+    final UserData userData = await RegisterService().getDatosUser(
+        matricula); // Espera el resultado de la llamada asincrónica
+    return userData.type == 'ALUMNO'
+        ? userData.students?.first.correoInstitucional ?? 'Correo no disponible'
+        : userData.employees?.first.emailInstitucional ??
+            'Correo no disponible';
+  }
+
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  void _hideLoadingDialog() {
+    Navigator.of(context).pop();
   }
 
   @override
@@ -82,6 +113,8 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                         SvgPicture.asset(
                           'assets/image/NewUser.svg',
                           height: imageHeight,
+                          placeholderBuilder: (BuildContext context) =>
+                              const CircularProgressIndicator(),
                         ),
                         SizedBox(height: responsive.hp(3)),
                         InputAuthentication(
@@ -98,13 +131,29 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                             : () async {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
+                                  // Mostrar el indicador de carga
+                                  _showLoadingDialog();
+
                                   await _otpServices
                                       .loginOTP(); // Ahora el servicio está accesible aquí
+
+                                  // Llamar a obtenerCorreo de forma asincrónica
+                                  cuentaEmail = await obtenerCorreo(
+                                      _emailController.text);
+
+                                  await _otpServices.launchOTP(cuentaEmail);
+                                  print("OTP enviado con éxito");
+
+                                  // Ocultar el indicador de carga antes de navegar
+                                  _hideLoadingDialog();
+
                                   Navigator.pushNamed(
-                                    context,
-                                    ConfirmDataUser.routeName,
-                                    arguments: _emailController.text,
-                                  );
+                                      context, VerificationNewAccount.routeName,
+                                      arguments: {
+                                        'emailController':
+                                            _emailController.text,
+                                        'cuentaEmail': cuentaEmail,
+                                      });
                                 }
                               },
                         style: ElevatedButton.styleFrom(

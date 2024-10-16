@@ -418,7 +418,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                           ),
                         ),
                         child: Text(
-                          'Guardar contraseña',
+                          'Registrar cuenta',
                           style: TextStyle(
                             fontSize: responsive.hp(2),
                             fontFamily: 'Montserrat',
