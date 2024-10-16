@@ -262,54 +262,117 @@ class _HomeDepartamentState extends State<HomeDepartament> {
 
   void _showObservationDialog(Map<String, dynamic> check, int index) {
     TextEditingController _observationController = TextEditingController();
+    final Responsive responsive = Responsive.of(context);
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Agregar Observación"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _observationController,
-                decoration: InputDecoration(
-                  hintText: "Escribe tu observación",
-                ),
-              ),
-            ],
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(responsive.wp(10)),
           ),
-          actions: [
-            TextButton(
-              child: Text("Cancelar"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+          child: Padding(
+            padding: EdgeInsets.all(responsive.wp(5)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Agregar Observación',
+                  style: TextStyle(
+                    fontSize: responsive.dp(2.8),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: responsive.hp(5)),
+                TextField(
+                  controller: _observationController,
+                  decoration: InputDecoration(
+                    hintText: 'Escribe tu observación',
+                    hintStyle: TextStyle(
+                      fontSize: responsive.dp(1.8),
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+                SizedBox(height: responsive.hp(5)),
+                SizedBox(
+                  width: responsive.wp(80),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: responsive.wp(30), // Ancho del botón "Cancelar"
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            padding: EdgeInsets.symmetric(
+                                vertical: responsive.hp(1.6)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(responsive.wp(30)),
+                            ),
+                          ),
+                          child: Text(
+                            'Cancelar',
+                            style: TextStyle(
+                              fontSize: responsive.dp(2),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: responsive.wp(5)),
+                      SizedBox(
+                        width: responsive.wp(30), // Ancho del botón "Confirmar"
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            String observacion = _observationController.text;
+                            if (observacion.isNotEmpty) {
+                              await _checksService.actualizarEstadoCheck(
+                                check['idCheck'],
+                                "Confirmada",
+                                observacion,
+                              );
+                              setState(() {
+                                check['Estatus'] = "Confirmada";
+                                if (_selectedIndex == 0 &&
+                                    index < _salidaChecks.length) {
+                                  _salidaChecks.removeAt(index);
+                                } else if (_selectedIndex == 1 &&
+                                    index < _retornoChecks.length) {
+                                  _retornoChecks.removeAt(index);
+                                }
+                              });
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromRGBO(250, 198, 0, 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: responsive.hp(1.6)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(responsive.wp(30)),
+                            ),
+                          ),
+                          child: Text(
+                            'Confirmar',
+                            style: TextStyle(
+                              fontSize: responsive.dp(2),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            TextButton(
-              child: Text("Confirmar"),
-              onPressed: () async {
-                String observacion = _observationController.text;
-                if (observacion.isNotEmpty) {
-                  await _checksService.actualizarEstadoCheck(
-                    check['idCheck'],
-                    "Confirmada",
-                    observacion,
-                  );
-                  setState(() {
-                    check['Estatus'] = "Confirmada";
-                    if (_selectedIndex == 0 && index < _salidaChecks.length) {
-                      _salidaChecks.removeAt(index);
-                    } else if (_selectedIndex == 1 &&
-                        index < _retornoChecks.length) {
-                      _retornoChecks.removeAt(index);
-                    }
-                  });
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
+          ),
         );
       },
     );
@@ -324,7 +387,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
           content: Text(message),
           actions: [
             TextButton(
-              child: Text("Cerrar"),
+              child: const Text("Cerrar"),
               onPressed: () {
                 Navigator.of(context).pop();
               },

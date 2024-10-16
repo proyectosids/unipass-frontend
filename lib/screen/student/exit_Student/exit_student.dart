@@ -26,6 +26,7 @@ class _ExitStudentState extends State<ExitStudent> {
   final PermissionService _permissionService =
       PermissionService(RegisterService(), AuthorizeService());
   String? matricula;
+  bool _isLoading = true; // Estado de carga
 
   @override
   void initState() {
@@ -35,9 +36,16 @@ class _ExitStudentState extends State<ExitStudent> {
   }
 
   Future<void> _loadPermissions() async {
+    setState(() {
+      _isLoading = true; // Inicia la pantalla de carga
+    });
+
     int? id = await AuthUtils.getUserId();
     if (id == null) {
       print('User ID not found');
+      setState(() {
+        _isLoading = false; // Desactiva la pantalla de carga si falla
+      });
       return;
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -45,6 +53,9 @@ class _ExitStudentState extends State<ExitStudent> {
 
     if (matricula == null) {
       print('Matricula not found');
+      setState(() {
+        _isLoading = false; // Desactiva la pantalla de carga si falla
+      });
       return;
     }
 
@@ -57,9 +68,14 @@ class _ExitStudentState extends State<ExitStudent> {
 
       setState(() {
         _permissions = permissions;
+        _isLoading =
+            false; // Desactiva la pantalla de carga cuando se completan los datos
       });
     } catch (e) {
       print('Failed to load permissions: $e');
+      setState(() {
+        _isLoading = false; // Desactiva la pantalla de carga si hay un error
+      });
     }
   }
 
@@ -110,71 +126,75 @@ class _ExitStudentState extends State<ExitStudent> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        // Agregar scroll
-        child: Padding(
-          padding: EdgeInsets.all(padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 16),
-              _buildDatePicker(),
-              const SizedBox(height: 16),
-              const Text(
-                'Salidas',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(), // Mostrar indicador de carga
+            )
+          : SingleChildScrollView(
+              // Mostrar contenido una vez cargado
+              child: Padding(
+                padding: EdgeInsets.all(padding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 16),
+                    _buildDatePicker(),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Salidas',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    // Aquí está el ListView.builder
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _permissions.length,
+                      itemBuilder: (context, index) {
+                        final permission = _permissions[index];
+                        return permission.statusPermission == 'Pendiente'
+                            ? Dismissible(
+                                key: Key(permission.id.toString()),
+                                direction: DismissDirection.endToStart,
+                                confirmDismiss: (direction) async {
+                                  return await _showConfirmationDialog(context);
+                                },
+                                onDismissed: (direction) {
+                                  _cancelPermission(permission.id);
+                                },
+                                background: Container(
+                                  color: Colors.red,
+                                  alignment: Alignment.centerRight,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: const Icon(Icons.delete,
+                                      color: Colors.white),
+                                ),
+                                child: _buildPermissionItem(
+                                  context,
+                                  'SALIDA ${permission.descripcion}',
+                                  permission.fechasolicitud.toIso8601String(),
+                                  permission.fechasalida.toIso8601String(),
+                                  permission.statusPermission,
+                                  permission,
+                                ),
+                              )
+                            : _buildPermissionItem(
+                                context,
+                                'SALIDA ${permission.descripcion}',
+                                permission.fechasolicitud.toIso8601String(),
+                                permission.fechasalida.toIso8601String(),
+                                permission.statusPermission,
+                                permission,
+                              );
+                      },
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              // Aquí está el ListView.builder
-              ListView.builder(
-                shrinkWrap:
-                    true, // Permite que el ListView se ajuste al contenido
-                physics:
-                    const NeverScrollableScrollPhysics(), // Desactiva el scroll interno
-                itemCount: _permissions.length,
-                itemBuilder: (context, index) {
-                  final permission = _permissions[index];
-                  return permission.statusPermission == 'Pendiente'
-                      ? Dismissible(
-                          key: Key(permission.id.toString()),
-                          direction: DismissDirection.endToStart,
-                          confirmDismiss: (direction) async {
-                            return await _showConfirmationDialog(context);
-                          },
-                          onDismissed: (direction) {
-                            _cancelPermission(permission.id);
-                          },
-                          background: Container(
-                            color: Colors.red,
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child:
-                                const Icon(Icons.delete, color: Colors.white),
-                          ),
-                          child: _buildPermissionItem(
-                            context,
-                            'SALIDA ${permission.descripcion}',
-                            permission.fechasolicitud.toIso8601String(),
-                            permission.fechasalida.toIso8601String(),
-                            permission.statusPermission,
-                            permission,
-                          ),
-                        )
-                      : _buildPermissionItem(
-                          context,
-                          'SALIDA ${permission.descripcion}',
-                          permission.fechasolicitud.toIso8601String(),
-                          permission.fechasalida.toIso8601String(),
-                          permission.statusPermission,
-                          permission,
-                        );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -266,22 +286,90 @@ class _ExitStudentState extends State<ExitStudent> {
     return showDialog<bool>(
       context: context,
       builder: (context) {
-        return AlertDialog(
+        return Dialog(
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(responsive.wp(10))),
-          title: const Text('Confirmación'),
-          content:
-              const Text('¿Estás seguro de que deseas eliminar esta salida?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancelar'),
+            borderRadius: BorderRadius.circular(responsive.wp(10)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(responsive.wp(5)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Confirmación',
+                  style: TextStyle(
+                    fontSize: responsive.dp(2.8),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: responsive.hp(5)),
+                Text(
+                  '¿Estás seguro de que deseas eliminar esta salida?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: responsive.dp(1.8),
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(height: responsive.hp(5)),
+                SizedBox(
+                  width: responsive.wp(80),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: responsive.wp(30), // Ancho del botón "Cancelar"
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            padding: EdgeInsets.symmetric(
+                                vertical: responsive.hp(1.6)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(responsive.wp(30)),
+                            ),
+                          ),
+                          child: Text(
+                            'Cancelar',
+                            style: TextStyle(
+                              fontSize: responsive.dp(2),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: responsive.wp(5)),
+                      SizedBox(
+                        width: responsive.wp(30), // Ancho del botón "Salir"
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromRGBO(250, 198, 0, 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: responsive.hp(1.6)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(responsive.wp(30)),
+                            ),
+                          ),
+                          child: Text(
+                            'Eliminar',
+                            style: TextStyle(
+                              fontSize: responsive.dp(2),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Eliminar'),
-            ),
-          ],
+          ),
         );
       },
     );

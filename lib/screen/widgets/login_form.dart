@@ -54,9 +54,39 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
   void _submit() async {
     final isOk = _formKey.currentState?.validate() ?? false;
     if (isOk) {
+      // Mostrar el diálogo de carga
+      showDialog(
+        context: context,
+        barrierDismissible:
+            false, // Evitar que se cierre al tocar fuera del diálogo
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Iniciando sesión...',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
       try {
         final result = await _authService.authenticateUser(
             _usernameOrEmail, _usernameOrEmail, _password);
+
+        // Cerrar el diálogo de carga
+        Navigator.pop(context);
+
         if (result['success']) {
           String tipoUser = result['user']['TipoUser'];
           String userId = result['user']['Matricula'];
@@ -110,7 +140,6 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
               );
             }
           } else {
-            // Si el usuario no está activo
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Usuario no activo')),
             );
@@ -121,6 +150,8 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
           );
         }
       } catch (error) {
+        // Cerrar el diálogo de carga en caso de error
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error de autenticación')),
         );

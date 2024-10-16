@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:flutter_application_unipass/screen/widgets/verification_otp.dart';
 import 'package:flutter_application_unipass/services/otp_service.dart';
-import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class VerificationNewAccount extends StatefulWidget {
   static const routeName = '/verificationAccount';
@@ -11,6 +10,7 @@ class VerificationNewAccount extends StatefulWidget {
       : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _VerificationNewAccountState createState() => _VerificationNewAccountState();
 }
 
@@ -27,7 +27,7 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
         _controller4.text.isNotEmpty;
   }
 
-  OtpServices _otpServices = OtpServices(); // Instancia de OtpServices
+  final OtpServices _otpServices = OtpServices(); // Instancia de OtpServices
 
   @override
   void initState() {
@@ -76,16 +76,19 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
 
       if (isValid == true) {
         // Navegar a la siguiente pantalla si la verificación es exitosa
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, '/accountCredentials',
             arguments: widget.userData);
       } else {
         // Mostrar un error si la verificación falla
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error: OTP inválido')),
         );
       }
     } catch (e) {
       // Manejar errores y mostrar un mensaje en caso de excepción
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al verificar OTP: $e')),
       );
@@ -98,6 +101,7 @@ class _VerificationNewAccountState extends State<VerificationNewAccount> {
     final double padding = responsive.wp(5);
     final userData = widget.userData;
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
