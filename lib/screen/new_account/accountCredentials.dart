@@ -22,6 +22,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
   String? sexo;
   int dormitorio = 0;
   final BedroomService _bedroomService = BedroomService();
+  bool _isLoading = false; // Variable para manejar la pantalla de carga
 
   @override
   void dispose() {
@@ -43,6 +44,22 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
     }
   }
 
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  void _hideLoadingDialog() {
+    Navigator.of(context).pop();
+  }
+
   void _showSuccessDialog() {
     final Responsive responsive = Responsive.of(context);
     showDialog(
@@ -50,6 +67,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(responsive.wp(10)),
           ),
@@ -86,7 +104,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
+                      backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                       padding: EdgeInsets.symmetric(vertical: responsive.hp(2)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(responsive.wp(30)),
@@ -123,6 +141,11 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
 
   Future<void> _registerUser() async {
     if (_formKey.currentState?.validate() == true) {
+      setState(() {
+        _isLoading = true;
+      });
+      _showLoadingDialog(); // Mostrar pantalla de carga
+
       try {
         final registerService = RegisterService();
         List<int> dormitorios = [315, 316, 317, 318];
@@ -133,7 +156,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
               await registerService.getPreceptor(dormitorios[i]);
           if (preceMatricula == widget.userData['matricula']) {
             tipoUsuario = 'PRECEPTOR';
-            break; // Si ya encontraste el tipo de usuario, puedes salir del bucle
+            break;
           }
         }
 
@@ -152,17 +175,14 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         int? dormitorio;
 
         if (tipoUsuario == 'ALUMNO') {
-          // Si es 'Alumno', obtenemos el dormitorio usando la función.
           dormitorio =
               await _bedroomService.obtenerDormitorio(nivelAcademico, sexo);
         } else if (tipoUsuario == 'EMPLEADO' ||
             tipoUsuario == 'PRECEPTOR' ||
             tipoUsuario == 'VIGILANCIA') {
-          // Si es 'Empleado', 'Preceptor' o 'Vigilancia', asignamos 0 como dormitorio.
           dormitorio = 0;
         }
 
-// En caso de que el dormitorio sea nulo, lo asignamos a 0
         dormitorio ??= 0;
 
         setState(() {
@@ -183,8 +203,11 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
           'Dormitorio': dormitorio,
         };
         await registerService.registerUser(userData);
-        _showSuccessDialog();
+
+        _hideLoadingDialog(); // Ocultar pantalla de carga
+        _showSuccessDialog(); // Mostrar diálogo de éxito
       } catch (e) {
+        _hideLoadingDialog(); // Ocultar pantalla de carga en caso de error
         String errorMessage = 'Error: $e';
         if (e.toString().contains('Usuario ya registrado')) {
           errorMessage = 'El usuario ya está registrado';
@@ -192,6 +215,10 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(errorMessage)),
         );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -318,9 +345,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                        height:
-                            responsive.hp(5)), // Añadimos espacio al principio
+                    SizedBox(height: responsive.hp(5)),
                     Text(
                       'UniPass',
                       style: TextStyle(
@@ -428,8 +453,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                        height: responsive.hp(2)), // Añadimos espacio al final
+                    SizedBox(height: responsive.hp(2)),
                   ],
                 ),
               ),

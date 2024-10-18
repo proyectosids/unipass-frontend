@@ -141,10 +141,11 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   }
 
   Future<void> _contactoWhatsApp(Uri whatsApp) async {
+    print('Opening WhatsApp URL: $whatsApp');
+
     if (await canLaunchUrl(whatsApp)) {
       await launchUrl(whatsApp);
     } else {
-      // ignore: avoid_print
       print('No se puede abrir WhatsApp');
     }
   }
@@ -447,7 +448,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
         IconButton(
           icon: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green),
           onPressed: () =>
-              _contactoWhatsApp(Uri.parse('https://wa.me/$phoneNumber')),
+              _contactoWhatsApp(Uri.parse('https://wa.me/52$phoneNumber')),
         ),
       ],
     );

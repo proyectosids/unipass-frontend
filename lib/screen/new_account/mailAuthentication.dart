@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/models/users.dart';
-import 'package:flutter_application_unipass/screen/new_account/date_preview.dart';
 import 'package:flutter_application_unipass/screen/new_account/verificacionAccount.dart';
 import 'package:flutter_application_unipass/services/otp_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';

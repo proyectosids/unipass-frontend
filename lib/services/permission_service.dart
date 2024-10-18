@@ -102,7 +102,7 @@ class PermissionService {
         await _authorizeService.asignarAuthorice(
             encVidaUtil!, 333, idPermission);
         await _authorizeService.asignarAuthorice(
-            asigPreceptor, idDepto!, idPermission);
+            idPrece!, asigPreceptor, idPermission);
       }
 
       if (idPrece != idJefe && diaSemana != 6 && idTipoSalida != 4) {
