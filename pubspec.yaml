@@ -54,6 +54,7 @@ dependencies:
   flutter_timezone: ^2.1.0
   flutter_date_pickers: ^0.4.3
   font_awesome_flutter: ^10.7.0
+  flutter_cached_pdfview: ^0.4.3
 
 dev_dependencies:
   flutter_test:

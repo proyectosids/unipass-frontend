@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
-import 'package:flutter_application_unipass/services/document_service.dart'; // Importa el servicio
+import 'package:flutter_application_unipass/services/document_service.dart';
+import 'package:flutter_application_unipass/config/config_url.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart'; // Importar flutter_cached_pdfview
 
 class FileOfDocuments extends StatefulWidget {
   const FileOfDocuments({super.key});
@@ -13,11 +16,10 @@ class FileOfDocuments extends StatefulWidget {
 
 class _FileOfDocumentsState extends State<FileOfDocuments> {
   List<Map<String, dynamic>> expedientes = [];
-  List<Map<String, dynamic>> filteredExpedientes = []; // Lista filtrada
+  List<Map<String, dynamic>> filteredExpedientes = [];
   bool isLoading = true;
   int? idDormi;
-  TextEditingController searchController =
-      TextEditingController(); // Controlador del buscador
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -27,9 +29,7 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
 
   Future<void> _loadDormitorioAndExpedientes() async {
     try {
-      // Obtén el IdDormitorio de SharedPreferences
       int? dormitorioId = await AuthUtils.getIdDormitorio();
-
       if (dormitorioId != null) {
         setState(() {
           idDormi = dormitorioId;
@@ -57,8 +57,7 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
           await DocumentService().getExpedientesPorDormitorio(idDormi!);
       setState(() {
         expedientes = result;
-        filteredExpedientes =
-            result; // Inicialmente la lista filtrada es igual a la lista completa
+        filteredExpedientes = result;
         isLoading = false;
       });
     } catch (e) {
@@ -69,56 +68,21 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
     }
   }
 
-  Future<void> _showArchivosAlumno(
-      int dormitorio, String nombre, String apellidos) async {
-    try {
-      List<Map<String, dynamic>> archivos = await DocumentService()
-          .getArchivosAlumno(
-              dormitorio, nombre, apellidos); // Llama al servicio
-
-      // Muestra los archivos en un diálogo o una nueva pantalla
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Archivos de $nombre $apellidos"),
-            content: archivos.isEmpty
-                ? Text("No se encontraron archivos.")
-                : SizedBox(
-                    width: double.maxFinite,
-                    height: 300,
-                    child: ListView.builder(
-                      itemCount: archivos.length,
-                      itemBuilder: (context, index) {
-                        final archivo = archivos[index];
-                        return ListTile(
-                          title: Text(archivo['TipoDocumento']),
-                          subtitle: Text(archivo['Archivo']),
-                        );
-                      },
-                    ),
-                  ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("Cerrar"),
-              ),
-            ],
-          );
-        },
-      );
-    } catch (e) {
-      print('Error al obtener archivos: $e');
-    }
+  void _navigateToDocumentListScreen(
+      int dormitorio, String nombre, String apellidos) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => DocumentListScreen(
+        dormitorio: dormitorio,
+        nombre: nombre,
+        apellidos: apellidos,
+      ),
+    ));
   }
 
   void _filterExpedientes(String query) {
     List<Map<String, dynamic>> results = [];
     if (query.isEmpty) {
-      results =
-          expedientes; // Si la búsqueda está vacía, mostrar todos los expedientes
+      results = expedientes;
     } else {
       results = expedientes.where((expediente) {
         final nombreCompleto =
@@ -175,8 +139,7 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
                       fillColor: Colors.white,
                     ),
                     onChanged: (query) {
-                      _filterExpedientes(
-                          query); // Filtrar expedientes a medida que se escribe
+                      _filterExpedientes(query);
                     },
                   ),
                 ),
@@ -199,11 +162,8 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
                             ),
                           ),
                           onPressed: () {
-                            _showArchivosAlumno(
-                                idDormi!,
-                                expediente['Nombre'],
-                                expediente[
-                                    'Apellidos']); // Llama al servicio al presionar
+                            _navigateToDocumentListScreen(idDormi!,
+                                expediente['Nombre'], expediente['Apellidos']);
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -219,6 +179,126 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
                 ),
               ],
             ),
+    );
+  }
+}
+
+class DocumentListScreen extends StatelessWidget {
+  final int dormitorio;
+  final String nombre;
+  final String apellidos;
+
+  const DocumentListScreen({
+    Key? key,
+    required this.dormitorio,
+    required this.nombre,
+    required this.apellidos,
+  }) : super(key: key);
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse('$baseUrl$url');
+    try {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _getDocumentos() async {
+    try {
+      return await DocumentService()
+          .getArchivosAlumno(dormitorio, nombre, apellidos);
+    } catch (e) {
+      print('Error al obtener archivos: $e');
+      return [];
+    }
+  }
+
+  void _openDocument(BuildContext context, String archivo) {
+    if (archivo.endsWith('.pdf')) {
+      // Si el archivo es un PDF, navegar a la pantalla de visualización de PDF
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => PdfViewerScreen(url: archivo),
+        ),
+      );
+    } else {
+      // Si no es PDF, usar el método _launchURL
+      _launchURL(archivo);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Documentos de $nombre $apellidos'),
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _getDocumentos(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error al cargar los documentos'));
+          }
+
+          final documentos = snapshot.data ?? [];
+
+          if (documentos.isEmpty) {
+            return const Center(child: Text('No se encontraron documentos.'));
+          }
+
+          return ListView.builder(
+            itemCount: documentos.length,
+            itemBuilder: (context, index) {
+              final documento = documentos[index];
+              final tipoDocumento = documento['TipoDocumento'];
+              final archivo = documento['Archivo'];
+
+              return ListTile(
+                title: Text(tipoDocumento),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  _openDocument(
+                      context, archivo); // Abrir el documento al hacer clic
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class PdfViewerScreen extends StatelessWidget {
+  final String url;
+
+  const PdfViewerScreen({Key? key, required this.url}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Construye la URL completa usando $baseUrl
+    final String fullUrl = '$baseUrl$url';
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Visualizar PDF'),
+        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+      ),
+      body: const PDF().cachedFromUrl(
+        fullUrl, // Usamos la URL completa con baseUrl
+        placeholder: (progress) => Center(child: Text('$progress %')),
+        errorWidget: (error) => Center(child: Text(error.toString())),
+      ),
     );
   }
 }
