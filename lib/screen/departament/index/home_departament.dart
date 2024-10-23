@@ -98,7 +98,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: isUserDataLoading
-            ? CircularProgressIndicator()
+            ? const CircularProgressIndicator()
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -126,12 +126,18 @@ class _HomeDepartamentState extends State<HomeDepartament> {
       ),
       backgroundColor: Colors.white,
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ToggleButtons(
+                    onPressed: _onItemTapped,
+                    isSelected: [_selectedIndex == 0, _selectedIndex == 1],
+                    color: Colors.black,
+                    fillColor: Colors.deepPurple,
+                    selectedColor: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -142,12 +148,6 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                         child: Text('Regreso'),
                       ),
                     ],
-                    onPressed: _onItemTapped,
-                    isSelected: [_selectedIndex == 0, _selectedIndex == 1],
-                    color: Colors.black,
-                    fillColor: Colors.deepPurple,
-                    selectedColor: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 Expanded(
@@ -171,9 +171,10 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                           direction: DismissDirection.endToStart,
                           background: Container(
                             color: Colors.red,
-                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             alignment: Alignment.centerLeft,
-                            child: Icon(Icons.cancel, color: Colors.white),
+                            child:
+                                const Icon(Icons.cancel, color: Colors.white),
                           ),
                           onDismissed: (direction) async {
                             await _checksService.actualizarEstadoCheck(
@@ -261,7 +262,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
   }
 
   void _showObservationDialog(Map<String, dynamic> check, int index) {
-    TextEditingController _observationController = TextEditingController();
+    TextEditingController observationController = TextEditingController();
     final Responsive responsive = Responsive.of(context);
 
     showDialog(
@@ -286,7 +287,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                 ),
                 SizedBox(height: responsive.hp(5)),
                 TextField(
-                  controller: _observationController,
+                  controller: observationController,
                   decoration: InputDecoration(
                     hintText: 'Escribe tu observación',
                     hintStyle: TextStyle(
@@ -328,7 +329,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                         width: responsive.wp(30), // Ancho del botón "Confirmar"
                         child: ElevatedButton(
                           onPressed: () async {
-                            String observacion = _observationController.text;
+                            String observacion = observationController.text;
                             if (observacion.isNotEmpty) {
                               await _checksService.actualizarEstadoCheck(
                                 check['idCheck'],

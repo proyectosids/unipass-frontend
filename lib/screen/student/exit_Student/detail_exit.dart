@@ -1,5 +1,4 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
-import 'package:http/http.dart';
 
 class ExitDetailScreen extends StatefulWidget {
   static const routeName = '/exitDetail';

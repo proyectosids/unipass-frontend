@@ -127,7 +127,7 @@ class _ExitStudentState extends State<ExitStudent> {
       ),
       backgroundColor: Colors.white,
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(), // Mostrar indicador de carga
             )
           : SingleChildScrollView(
@@ -235,7 +235,7 @@ class _ExitStudentState extends State<ExitStudent> {
               : null, // Deshabilita el botón si la fecha no es válida
           style: ElevatedButton.styleFrom(
             backgroundColor: _isDateWithin7Days()
-                ? Color.fromRGBO(6, 66, 106, 1)
+                ? const Color.fromRGBO(6, 66, 106, 1)
                 : Colors.grey, // Cambia el color si está deshabilitado
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
@@ -259,7 +259,7 @@ class _ExitStudentState extends State<ExitStudent> {
         height: 100,
         locale: 'es',
         initialSelectedDate: _selectedDate,
-        selectionColor: Color.fromRGBO(6, 66, 106, 1),
+        selectionColor: const Color.fromRGBO(6, 66, 106, 1),
         selectedTextColor: Colors.white,
         dayTextStyle: const TextStyle(color: Colors.black),
         dateTextStyle:

@@ -37,7 +37,7 @@ class TextFieldWidget extends StatelessWidget {
           inputFormatters, // Pasa los inputFormatters al TextFormField
       decoration: InputDecoration(
         filled: true,
-        fillColor: Color.fromARGB(255, 255, 255, 255), // Fondo blanco
+        fillColor: const Color.fromARGB(255, 255, 255, 255), // Fondo blanco
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: BorderSide(color: Colors.black, width: responsive.wp(10)),
@@ -59,7 +59,7 @@ class TextFieldWidget extends StatelessWidget {
         ),
         labelText: label,
         labelStyle: TextStyle(
-          color: Color.fromARGB(255, 0, 0, 0),
+          color: const Color.fromARGB(255, 0, 0, 0),
           fontSize: responsive.dp(1.8),
           fontFamily: 'Roboto',
           fontWeight: FontWeight.w500,

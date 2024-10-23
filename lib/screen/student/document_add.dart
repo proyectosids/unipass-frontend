@@ -135,7 +135,7 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: const Color.fromRGBO(250, 198, 0, 1),
+            color: Color.fromRGBO(250, 198, 0, 1),
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -173,7 +173,7 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
                 width: double.infinity,
                 height: 150,
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(189, 188, 188, 1),
+                  color: const Color.fromRGBO(189, 188, 188, 1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(

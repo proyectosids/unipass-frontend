@@ -141,4 +141,30 @@ class DocumentService {
       throw Exception('Failed to delete document');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getExpedientesPorDormitorio(
+      int idDormi) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/getExpediente/$idDormi'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('No se encontraron expedientes para este dormitorio');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getArchivosAlumno(
+      int dormitorio, String nombre, String apellidos) async {
+    final response = await http
+        .get(Uri.parse('$baseUrl/getArchivos/$dormitorio/$nombre/$apellidos'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('No se encontraron archivos para este alumno');
+    }
+  }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
-import 'package:flutter_application_unipass/utils/responsive.dart';
 
 class MenuScreen extends StatelessWidget {
   static const routeName = '/menu';

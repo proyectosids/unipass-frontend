@@ -13,7 +13,7 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
   bool isAvisosSelected = true;
   String? nombre;
   String? apellidos;
-  List<Map<String, String>> _notices = [
+  final List<Map<String, String>> _notices = [
     {
       'directedTo': 'Departamento de trabajo',
       'title': 'No deber horas para salir a prácticas',

@@ -49,7 +49,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Center(
+        return const Center(
           child: CircularProgressIndicator(),
         );
       },
@@ -150,12 +150,14 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         final registerService = RegisterService();
         List<int> dormitorios = [315, 316, 317, 318];
         String? tipoUsuario;
+        int? dormitorio;
 
         for (var i = 0; i < 4; i++) {
           int? preceMatricula =
               await registerService.getPreceptor(dormitorios[i]);
           if (preceMatricula == widget.userData['matricula']) {
             tipoUsuario = 'PRECEPTOR';
+            dormitorio = i + 1;
             break;
           }
         }
@@ -172,13 +174,11 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         String? nivelAcademico = prefs.getString('nivelAcademico');
         String? sexo = prefs.getString('sexo');
 
-        int? dormitorio;
-
         if (tipoUsuario == 'ALUMNO') {
           dormitorio =
               await _bedroomService.obtenerDormitorio(nivelAcademico, sexo);
         } else if (tipoUsuario == 'EMPLEADO' ||
-            tipoUsuario == 'PRECEPTOR' ||
+            //tipoUsuario == 'PRECEPTOR' ||
             tipoUsuario == 'VIGILANCIA') {
           dormitorio = 0;
         }

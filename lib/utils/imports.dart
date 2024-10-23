@@ -12,7 +12,7 @@ export 'package:flutter_application_unipass/screen/student/index/home_student.da
 export 'package:flutter_application_unipass/screen/student/index/menu_student.dart';
 export 'package:flutter_application_unipass/screen/student/notifications_students.dart';
 export 'package:flutter_application_unipass/screen/student/exit_Student/exit_student.dart';
-export 'package:carousel_slider/carousel_slider.dart';
+//export 'package:flutter/src/material/carousel.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:shared_preferences/shared_preferences.dart';
 export 'package:flutter_application_unipass/utils/responsive.dart';

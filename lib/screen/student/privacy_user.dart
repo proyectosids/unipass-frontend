@@ -107,7 +107,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                             color: Colors.black,
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),

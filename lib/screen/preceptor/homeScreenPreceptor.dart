@@ -1,4 +1,3 @@
-import 'package:flutter_application_unipass/screen/preceptor/index/menu_preceptor.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 class HomeScreenPreceptor extends StatefulWidget {

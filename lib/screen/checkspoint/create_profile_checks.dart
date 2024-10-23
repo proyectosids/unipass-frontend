@@ -97,7 +97,7 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
 
         // Mostrar un mensaje de éxito
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Usuario registrado exitosamente')),
+          const SnackBar(content: Text('Usuario registrado exitosamente')),
         );
       } catch (error) {
         // Mostrar un mensaje de error si el registro falla
@@ -299,8 +299,8 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
                         background: Container(
                           color: Colors.red,
                           alignment: Alignment.centerLeft,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Icon(Icons.delete, color: Colors.white),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: const Icon(Icons.delete, color: Colors.white),
                         ),
                         child: ListTile(
                           title: Text('${user['Nombre']} ${user['Apellidos']}'),

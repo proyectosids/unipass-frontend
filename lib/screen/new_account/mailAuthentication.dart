@@ -21,7 +21,7 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
   final TextEditingController _emailController = TextEditingController();
   late final OtpServices _otpServices;
   late String cuentaEmail;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Center(
+        return const Center(
           child: CircularProgressIndicator(),
         );
       },

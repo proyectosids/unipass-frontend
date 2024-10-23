@@ -25,7 +25,7 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
     Item(
       headerValue: '¿Dónde puedo cambiar mi área de trabajo?',
       expandedValue:
-          'Puedes cambiar tu área de trabajo en la sección de “Perfil” en la app.',
+          'Tu área de trabajo se actualiza cuando ingresas a la aplicación, en caso de no estar actualizado comunicarte con vida útil.',
     ),
     Item(
       headerValue: '¿Porqué un jefe puede rechazar la solicitud?',
@@ -33,9 +33,10 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
           'Tu jefe puede rechazar la solicitud por varias razones, incluyendo necesidades operativas o falta de documentos.',
     ),
     Item(
-      headerValue: '¿Cómo sé que un alumno llegó tarde?',
+      headerValue:
+          '¿Qué sucede si un alumno llega en una hora o fecha distinta, a la solicitada?',
       expandedValue:
-          'Puedes revisar el historial de asistencia en la sección de “Reportes” en la app.',
+          'El preceptor tendrá un registro de las irregularidades de tu entrada y salidas, con lo que podra tomar desiciones para posteriores solicitudes.',
     ),
   ];
 
@@ -109,21 +110,15 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
               ],
             ),
             const SizedBox(height: 16),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Preguntas más frecuentes',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Lógica para navegar a otra sección de "Ver todo"
-                  },
-                  child: const Text('Ver todo'),
                 ),
               ],
             ),
@@ -132,22 +127,6 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
           ],
         ),
       ),
-      //bottomNavigationBar: BottomNavigationBar(
-      //  items: const <BottomNavigationBarItem>[
-      //    BottomNavigationBarItem(
-      //      icon: Icon(Icons.home),
-      //      label: 'Inicio',
-      //    ),
-      //    BottomNavigationBarItem(
-      //      icon: Icon(Icons.list),
-      //      label: 'Salidas',
-      //    ),
-      //    BottomNavigationBarItem(
-      //      icon: Icon(Icons.person),
-      //      label: 'Perfil',
-      //    ),
-      //  ],
-      //),
     );
   }
 
@@ -185,7 +164,7 @@ class _HelpFAQUserState extends State<HelpFAQUser> {
         return ExpansionTile(
           title: Text(
             item.headerValue,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           children: [
             ListTile(

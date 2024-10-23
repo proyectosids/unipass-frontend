@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/models/permission.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';

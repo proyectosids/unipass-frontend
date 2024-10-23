@@ -64,9 +64,9 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
             backgroundColor: Colors.transparent,
             child: Container(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   CircularProgressIndicator(),
                   SizedBox(height: 16.0),
                   Text(
@@ -93,7 +93,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
           String newUserId = userId.replaceFirst('MTR', '');
 
           // Guardar idDormitorio en SharedPreferences
-          if (tipoUser == 'DEPARTAMENTO') {
+          if (tipoUser == 'DEPARTAMENTO' || tipoUser == 'PRECEPTOR') {
             await AuthUtils.saveIdDormitorio(result['user']['Dormitorio']);
           }
 

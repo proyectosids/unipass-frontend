@@ -18,9 +18,7 @@ class PermissionService {
     final userData = userResponse.toJson();
 
     // Verificar que los datos del usuario no sean nulos
-    if (userData == null ||
-        userData['student'] == null ||
-        userData['student'].isEmpty) {
+    if (userData['student'] == null || userData['student'].isEmpty) {
       throw Exception('Invalid user data received from API');
     }
 
@@ -29,11 +27,6 @@ class PermissionService {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-
-      // Verificar que los datos de permisos no sean nulos
-      if (data == null) {
-        throw Exception('Invalid permissions data received from API');
-      }
 
       // Combinar datos del usuario con permisos
       return data.map<Permission>((permissionJson) {
@@ -132,10 +125,6 @@ class PermissionService {
     if (response.statusCode == 200) {
       List<dynamic> permissionData = json.decode(response.body);
 
-      if (permissionData == null) {
-        throw Exception('Informacion no recibida de la API');
-      }
-
       List<Permission> permissionsEmployee = [];
       for (var permissionJson in permissionData) {
         String matricula = permissionJson['Matricula'];
@@ -144,9 +133,7 @@ class PermissionService {
         final userData = userResponse.toJson();
 
         //Verificar los datos del usuario
-        if (userData == null ||
-            userData['student'] == null ||
-            userData['student'].isEmpty) {
+        if (userData['student'] == null || userData['student'].isEmpty) {
           throw Exception('Informacion del usuario no recibida de la API');
         }
 
@@ -168,10 +155,6 @@ class PermissionService {
     if (response.statusCode == 200) {
       List<dynamic> permissionData = json.decode(response.body);
 
-      if (permissionData == null) {
-        throw Exception('Informacion no recibida de la API');
-      }
-
       List<Permission> permissionsEmployee = [];
       for (var permissionJson in permissionData) {
         String matricula = permissionJson['Matricula'];
@@ -180,9 +163,7 @@ class PermissionService {
         final userData = userResponse.toJson();
 
         //Verificar los datos del usuario
-        if (userData == null ||
-            userData['student'] == null ||
-            userData['student'].isEmpty) {
+        if (userData['student'] == null || userData['student'].isEmpty) {
           throw Exception('Informacion del usuario no recibida de la API');
         }
 
