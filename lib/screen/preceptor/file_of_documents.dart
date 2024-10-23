@@ -69,6 +69,51 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
     }
   }
 
+  Future<void> _showArchivosAlumno(
+      int dormitorio, String nombre, String apellidos) async {
+    try {
+      List<Map<String, dynamic>> archivos = await DocumentService()
+          .getArchivosAlumno(
+              dormitorio, nombre, apellidos); // Llama al servicio
+
+      // Muestra los archivos en un diálogo o una nueva pantalla
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Archivos de $nombre $apellidos"),
+            content: archivos.isEmpty
+                ? Text("No se encontraron archivos.")
+                : SizedBox(
+                    width: double.maxFinite,
+                    height: 300,
+                    child: ListView.builder(
+                      itemCount: archivos.length,
+                      itemBuilder: (context, index) {
+                        final archivo = archivos[index];
+                        return ListTile(
+                          title: Text(archivo['TipoDocumento']),
+                          subtitle: Text(archivo['Archivo']),
+                        );
+                      },
+                    ),
+                  ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Cerrar"),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print('Error al obtener archivos: $e');
+    }
+  }
+
   void _filterExpedientes(String query) {
     List<Map<String, dynamic>> results = [];
     if (query.isEmpty) {
@@ -126,8 +171,8 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      filled: true, // Activa el color de fondo
-                      fillColor: Colors.white, // Color de fondo blanco
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
                     onChanged: (query) {
                       _filterExpedientes(
@@ -137,8 +182,7 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount:
-                        filteredExpedientes.length, // Mostrar la lista filtrada
+                    itemCount: filteredExpedientes.length,
                     itemBuilder: (context, index) {
                       final expediente = filteredExpedientes[index];
                       final nombreCompleto =
@@ -155,8 +199,11 @@ class _FileOfDocumentsState extends State<FileOfDocuments> {
                             ),
                           ),
                           onPressed: () {
-                            // Acción al presionar el botón
-                            print('Expediente seleccionado: $nombreCompleto');
+                            _showArchivosAlumno(
+                                idDormi!,
+                                expediente['Nombre'],
+                                expediente[
+                                    'Apellidos']); // Llama al servicio al presionar
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
