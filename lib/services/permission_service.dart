@@ -1,3 +1,5 @@
+import 'package:api_cache_manager/models/cache_db_model.dart';
+import 'package:api_cache_manager/utils/cache_manager.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:http/http.dart' as http;
@@ -13,44 +15,69 @@ class PermissionService {
   PermissionService(this._registerService, this._authorizeService);
 
   Future<List<Permission>> getPermissions(int id, String matricula) async {
-    // Obtener datos del usuario
-    final userResponse = await _registerService.getDatosUser(matricula);
-    final userData = userResponse.toJson();
+    String cacheKey = "API_Permission_$id"; // Usa un key único por usuario
+    bool isCacheExist = await APICacheManager().isAPICacheKeyExist(cacheKey);
 
-    // Verificar que los datos del usuario no sean nulos
-    if (userData['student'] == null || userData['student'].isEmpty) {
-      throw Exception('Invalid user data received from API');
-    }
+    if (!isCacheExist) {
+      // Obtener datos del usuario
+      final userResponse = await _registerService.getDatosUser(matricula);
+      final userData = userResponse.toJson();
 
-    // Obtener permisos
-    final response = await http.get(Uri.parse('$baseUrl/permission/$id'));
+      if (userData['student'] == null || userData['student'].isEmpty) {
+        throw Exception('Invalid user data received from API');
+      }
 
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
+      // Obtener permisos de la API
+      final response = await http.get(Uri.parse('$baseUrl/permission/$id'));
+      print("API:URL");
+      if (response.statusCode == 200) {
+        // Almacenar la respuesta en caché
+        APICacheDBModel cacheDBModel = APICacheDBModel(
+          key: cacheKey,
+          syncData: response.body,
+        );
+        await APICacheManager().addCacheData(cacheDBModel);
 
-      // Combinar datos del usuario con permisos
+        List<dynamic> data = json.decode(response.body);
+        return data.map<Permission>((permissionJson) {
+          return Permission.fromJson(permissionJson, userData);
+        }).toList();
+      } else {
+        throw Exception('Failed to load permissions');
+      }
+    } else {
+      // Obtener datos de la caché
+      var cacheData = await APICacheManager().getCacheData(cacheKey);
+      print("CACHE:HIT");
+      List<dynamic> data = json.decode(cacheData.syncData);
+
+      final userResponse = await _registerService.getDatosUser(matricula);
+      final userData = userResponse.toJson();
+
       return data.map<Permission>((permissionJson) {
         return Permission.fromJson(permissionJson, userData);
       }).toList();
-    } else {
-      throw Exception('Failed to load permissions');
     }
   }
 
-  Future<void> cancelPermission(int id) async {
+  Future<void> cancelPermission(int id, int userId) async {
     final response = await http.put(
       Uri.parse('$baseUrl/permission/$id'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'StatusPermission': 'Cancelado'}),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      // Eliminar la caché para el usuario específico
+      await APICacheManager().deleteCache("API_Permission_$userId");
+      print("CACHE:DELETE");
+    } else {
       throw Exception('Failed to cancel permission');
     }
   }
 
   Future<Map<String, dynamic>> createPermission(
-      Map<String, dynamic> permission) async {
+      Map<String, dynamic> permission, int userId) async {
     final response = await http.post(
       Uri.parse('$baseUrl/permission'),
       headers: {'Content-Type': 'application/json'},
@@ -58,6 +85,9 @@ class PermissionService {
     );
 
     if (response.statusCode == 200) {
+      // Eliminar la caché del usuario cuando se crea una nueva salida
+      await APICacheManager().deleteCache("API_Permission_$userId");
+      print("CACHE:DELETE");
       final permissionCreated = json.decode(response.body);
       print(permissionCreated);
       int idPermission = permissionCreated['Id'];

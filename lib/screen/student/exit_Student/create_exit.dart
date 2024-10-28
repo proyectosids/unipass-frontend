@@ -138,7 +138,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     };
 
     try {
-      final result = await _permissionService.createPermission(newExit);
+      final result = await _permissionService.createPermission(newExit, userId);
 
       Permission newPermission = Permission(
         id: result['IdPermission'] as int? ?? 0,

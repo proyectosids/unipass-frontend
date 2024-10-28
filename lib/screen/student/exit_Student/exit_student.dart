@@ -80,9 +80,15 @@ class _ExitStudentState extends State<ExitStudent> {
   }
 
   Future<void> _cancelPermission(int id) async {
+    int? userId = await AuthUtils.getUserId();
+    if (userId == null) {
+      print('User ID not found');
+      return;
+    }
+
     try {
-      await _permissionService.cancelPermission(id);
-      await _loadPermissions(); // Recargar las salidas después de cancelar
+      await _permissionService.cancelPermission(id, userId);
+      await _loadPermissions(); // Recargar permisos después de la cancelación
     } catch (e) {
       print('Failed to cancel permission: $e');
     }
