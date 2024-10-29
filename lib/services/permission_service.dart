@@ -1,5 +1,6 @@
 import 'package:api_cache_manager/models/cache_db_model.dart';
 import 'package:api_cache_manager/utils/cache_manager.dart';
+import 'package:flutter_application_unipass/models/PaginatedPermissions.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:http/http.dart' as http;
@@ -14,49 +15,39 @@ class PermissionService {
 
   PermissionService(this._registerService, this._authorizeService);
 
-  Future<List<Permission>> getPermissions(int id, String matricula) async {
-    String cacheKey = "API_Permission_$id"; // Usa un key único por usuario
-    bool isCacheExist = await APICacheManager().isAPICacheKeyExist(cacheKey);
+  Future<PaginatedPermissions> getPermissions(int id, String matricula,
+      {int page = 1, int limit = 10}) async {
+    final response = await http
+        .get(Uri.parse('$baseUrl/permission/$id?page=$page&limit=$limit'));
+    if (response.statusCode == 200) {
+      final responseBody = json.decode(response.body);
 
-    if (!isCacheExist) {
-      // Obtener datos del usuario
+      // Obtener datos adicionales de usuario
       final userResponse = await _registerService.getDatosUser(matricula);
       final userData = userResponse.toJson();
 
-      if (userData['student'] == null || userData['student'].isEmpty) {
-        throw Exception('Invalid user data received from API');
-      }
+      // Extraer datos de permisos y pasar los dos argumentos necesarios
+      List<dynamic> data = responseBody['data'];
+      List<Permission> permissions = data
+          .map<Permission>((json) => Permission.fromJson(json, userData))
+          .toList();
 
-      // Obtener permisos de la API
-      final response = await http.get(Uri.parse('$baseUrl/permission/$id'));
-      print("API:URL");
-      if (response.statusCode == 200) {
-        // Almacenar la respuesta en caché
-        APICacheDBModel cacheDBModel = APICacheDBModel(
-          key: cacheKey,
-          syncData: response.body,
-        );
-        await APICacheManager().addCacheData(cacheDBModel);
+      // Extraer metadatos de paginación
+      final pagination = responseBody['pagination'];
+      int totalItems = pagination['totalItems'];
+      int totalPages = pagination['totalPages'];
+      int currentPage = pagination['currentPage'];
+      int limit = pagination['limit'];
 
-        List<dynamic> data = json.decode(response.body);
-        return data.map<Permission>((permissionJson) {
-          return Permission.fromJson(permissionJson, userData);
-        }).toList();
-      } else {
-        throw Exception('Failed to load permissions');
-      }
+      return PaginatedPermissions(
+        permissions: permissions,
+        totalItems: totalItems,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        limit: limit,
+      );
     } else {
-      // Obtener datos de la caché
-      var cacheData = await APICacheManager().getCacheData(cacheKey);
-      print("CACHE:HIT");
-      List<dynamic> data = json.decode(cacheData.syncData);
-
-      final userResponse = await _registerService.getDatosUser(matricula);
-      final userData = userResponse.toJson();
-
-      return data.map<Permission>((permissionJson) {
-        return Permission.fromJson(permissionJson, userData);
-      }).toList();
+      throw Exception('Failed to load permissions');
     }
   }
 

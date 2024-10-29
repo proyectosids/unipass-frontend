@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/models/PaginatedPermissions.dart';
 import 'package:flutter_application_unipass/screen/student/exit_Student/create_exit.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -27,12 +28,26 @@ class _ExitStudentState extends State<ExitStudent> {
       PermissionService(RegisterService(), AuthorizeService());
   String? matricula;
   bool _isLoading = true; // Estado de carga
+  bool _isLoadingMore = false; // Estado de carga adicional para paginación
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  int _totalPages = 1;
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('es_MX', null);
     _loadPermissions();
+
+    // Detecta cuando el usuario llega al final de la lista
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent &&
+          !_isLoadingMore &&
+          _currentPage < _totalPages) {
+        _loadMorePermissions();
+      }
+    });
   }
 
   Future<void> _loadPermissions() async {
@@ -60,14 +75,12 @@ class _ExitStudentState extends State<ExitStudent> {
     }
 
     try {
-      List<Permission> permissions =
-          await _permissionService.getPermissions(id, matricula!);
-
-      // Ordenar los permisos por fecha, asegurándose de que el más reciente esté primero
-      permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
+      PaginatedPermissions paginatedPermissions = await _permissionService
+          .getPermissions(id, matricula!, page: _currentPage);
 
       setState(() {
-        _permissions = permissions;
+        _permissions = paginatedPermissions.permissions;
+        _totalPages = paginatedPermissions.totalPages;
         _isLoading =
             false; // Desactiva la pantalla de carga cuando se completan los datos
       });
@@ -75,6 +88,36 @@ class _ExitStudentState extends State<ExitStudent> {
       print('Failed to load permissions: $e');
       setState(() {
         _isLoading = false; // Desactiva la pantalla de carga si hay un error
+      });
+    }
+  }
+
+  Future<void> _loadMorePermissions() async {
+    if (_currentPage >= _totalPages) return;
+
+    setState(() {
+      _isLoadingMore = true; // Inicia la pantalla de carga para más permisos
+    });
+
+    _currentPage += 1;
+
+    try {
+      int? id = await AuthUtils.getUserId();
+      if (id == null) return;
+
+      PaginatedPermissions paginatedPermissions = await _permissionService
+          .getPermissions(id, matricula!, page: _currentPage);
+
+      setState(() {
+        _permissions.addAll(paginatedPermissions.permissions);
+        _isLoadingMore =
+            false; // Desactiva la carga adicional después de agregar más permisos
+      });
+    } catch (e) {
+      print('Failed to load more permissions: $e');
+      setState(() {
+        _isLoadingMore =
+            false; // Desactiva la pantalla de carga si hay un error
       });
     }
   }
@@ -100,7 +143,6 @@ class _ExitStudentState extends State<ExitStudent> {
     });
   }
 
-  // Función para verificar si la fecha seleccionada está dentro de los próximos 7 días
   bool _isDateWithin7Days() {
     final now = DateTime.now();
     final difference = _selectedDate.difference(now).inDays;
@@ -133,11 +175,9 @@ class _ExitStudentState extends State<ExitStudent> {
       ),
       backgroundColor: Colors.white,
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(), // Mostrar indicador de carga
-            )
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              // Mostrar contenido una vez cargado
+              controller: _scrollController,
               child: Padding(
                 padding: EdgeInsets.all(padding),
                 child: Column(
@@ -153,48 +193,58 @@ class _ExitStudentState extends State<ExitStudent> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
-                    // Aquí está el ListView.builder
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _permissions.length,
+                      itemCount: _permissions.length + 1,
                       itemBuilder: (context, index) {
-                        final permission = _permissions[index];
-                        return permission.statusPermission == 'Pendiente'
-                            ? Dismissible(
-                                key: Key(permission.id.toString()),
-                                direction: DismissDirection.endToStart,
-                                confirmDismiss: (direction) async {
-                                  return await _showConfirmationDialog(context);
-                                },
-                                onDismissed: (direction) {
-                                  _cancelPermission(permission.id);
-                                },
-                                background: Container(
-                                  color: Colors.red,
-                                  alignment: Alignment.centerRight,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child: const Icon(Icons.delete,
-                                      color: Colors.white),
-                                ),
-                                child: _buildPermissionItem(
+                        if (index < _permissions.length) {
+                          final permission = _permissions[index];
+                          return permission.statusPermission == 'Pendiente'
+                              ? Dismissible(
+                                  key: Key(permission.id.toString()),
+                                  direction: DismissDirection.endToStart,
+                                  confirmDismiss: (direction) async {
+                                    return await _showConfirmationDialog(
+                                        context);
+                                  },
+                                  onDismissed: (direction) {
+                                    _cancelPermission(permission.id);
+                                  },
+                                  background: Container(
+                                    color: Colors.red,
+                                    alignment: Alignment.centerRight,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: const Icon(Icons.delete,
+                                        color: Colors.white),
+                                  ),
+                                  child: _buildPermissionItem(
+                                    context,
+                                    'SALIDA ${permission.descripcion}',
+                                    permission.fechasolicitud.toIso8601String(),
+                                    permission.fechasalida.toIso8601String(),
+                                    permission.statusPermission,
+                                    permission,
+                                  ),
+                                )
+                              : _buildPermissionItem(
                                   context,
                                   'SALIDA ${permission.descripcion}',
                                   permission.fechasolicitud.toIso8601String(),
                                   permission.fechasalida.toIso8601String(),
                                   permission.statusPermission,
                                   permission,
-                                ),
-                              )
-                            : _buildPermissionItem(
-                                context,
-                                'SALIDA ${permission.descripcion}',
-                                permission.fechasolicitud.toIso8601String(),
-                                permission.fechasalida.toIso8601String(),
-                                permission.statusPermission,
-                                permission,
-                              );
+                                );
+                        } else {
+                          return _isLoadingMore
+                              ? const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : const SizedBox.shrink();
+                        }
                       },
                     ),
                   ],
@@ -216,8 +266,7 @@ class _ExitStudentState extends State<ExitStudent> {
           capitalizedDate,
           style: TextStyle(
               fontSize: responsive.dp(2.4), fontWeight: FontWeight.bold),
-          overflow: TextOverflow
-              .ellipsis, // Añadir truncamiento con puntos suspensivos
+          overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
         ElevatedButton(
@@ -227,22 +276,21 @@ class _ExitStudentState extends State<ExitStudent> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => CreateExitScreen(
-                        initialDate:
-                            _selectedDate, // Pasar la fecha seleccionada
+                        initialDate: _selectedDate,
                       ),
                     ),
                   );
 
                   if (result != null && result is Permission) {
                     _addNewPermission(result);
-                    _loadPermissions(); // Recargar las salidas cuando regresas de la otra pantalla
+                    _loadPermissions();
                   }
                 }
-              : null, // Deshabilita el botón si la fecha no es válida
+              : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: _isDateWithin7Days()
                 ? const Color.fromRGBO(6, 66, 106, 1)
-                : Colors.grey, // Cambia el color si está deshabilitado
+                : Colors.grey,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
