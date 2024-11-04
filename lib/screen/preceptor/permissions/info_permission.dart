@@ -141,12 +141,14 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   }
 
   Future<void> _contactoWhatsApp(Uri whatsApp) async {
-    print('Opening WhatsApp URL: $whatsApp');
+    final url = 'https://wa.me/52${exitDetails['ContactoTutor'] ?? ''}';
+    print('Intentando abrir WhatsApp con URL: $url');
 
-    if (await canLaunchUrl(whatsApp)) {
-      await launchUrl(whatsApp);
+    if (await canLaunch(url)) {
+      await launch(url);
     } else {
-      print('No se puede abrir WhatsApp');
+      print(
+          'No se puede abrir WhatsApp. Verifica si está instalado en el dispositivo.');
     }
   }
 
@@ -447,8 +449,9 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
         ),
         IconButton(
           icon: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green),
-          onPressed: () =>
-              _contactoWhatsApp(Uri.parse('https://wa.me/52$phoneNumber')),
+          onPressed: () => _contactoWhatsApp(
+            Uri.parse('whatsapp://send?phone=52$phoneNumber'),
+          ),
         ),
       ],
     );

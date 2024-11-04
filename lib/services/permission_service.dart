@@ -119,12 +119,12 @@ class PermissionService {
             idPrece!, asigPreceptor, idPermission);
       }
 
-      if (idPrece != idJefe && diaSemana != 6 && idTipoSalida != 4) {
+      if (idPrece != idJefe && diaSemana != 6 && idTipoSalida == 1) {
         await _authorizeService.asignarAuthorice(
             idJefe!, idDepto!, idPermission);
         await _authorizeService.asignarAuthorice(
             idPrece!, asigPreceptor, idPermission);
-      } else if (idPrece == idJefe || idTipoSalida == 2 && diaSemana == 6) {
+      } else if (idPrece == idJefe || idTipoSalida == 2 || idTipoSalida == 3) {
         // Verifica si es sábado (6)
         // Aquí puedes manejar el caso cuando la fecha de salida es sábado
         await _authorizeService.asignarAuthorice(
