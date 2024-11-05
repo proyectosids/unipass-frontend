@@ -18,6 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UniPass ULV',
+      locale: const Locale('es'),
+      supportedLocales: const [Locale('en', ''), Locale('es', '')],
+      localizationsDelegates: const [
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       initialRoute: isFirstTime ? Preview1.routeName : LoginApp.routeName,
       routes: {
         Preview1.routeName: (context) => const Preview1(),

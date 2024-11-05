@@ -27,7 +27,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     hour: (TimeOfDay.now().hour + 4) % 24,
     minute: TimeOfDay.now().minute,
   );
-  String _selectedReason = 'Compras';
+  String _selectedReason = 'Otros';
   String _selectedType = '';
   final PermissionService _permissionService =
       PermissionService(RegisterService(), AuthorizeService());
@@ -303,20 +303,27 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              _buildDateTimePickerSalida('Fecha y hora de salida',
-                  _selectedStartDate, _selectedStartTime, true),
+              _buildDateTimePickerSalida('Hora de salida', _selectedStartDate,
+                  _selectedStartTime, true),
               const SizedBox(height: 20),
               // Mostrar el campo de Fecha y hora de retorno solo si no es "Fin de curso"
               if (_selectedType != 'Fin de curso')
                 _buildDateTimePickerRetorno('Fecha y hora de retorno',
-                    _selectedEndDate, _selectedEndTime, false),
+                    _selectedEndDate, _selectedEndTime, false,
+                    enabled: _selectedType != 'Pueblo'),
               const SizedBox(height: 20),
               // Deshabilitar el campo de motivo si el tipo de salida es "Fin de curso"
               DropdownButtonFormField<String>(
                 value: _selectedReason,
                 decoration: const InputDecoration(labelText: 'Motivo'),
-                items: <String>['Compras', 'Trabajo', 'Salud', 'Otros']
-                    .map((String value) {
+                items: <String>[
+                  'Otros',
+                  'Compras',
+                  'Trabajo',
+                  'Salud',
+                  'Trámites',
+                  'Asuntos Familiaress'
+                ].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -394,7 +401,11 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  time.format(context),
+                  // Convierte `TimeOfDay` a `DateTime` y luego formatea
+                  DateFormat('hh:mm a').format(
+                    DateTime(date.year, date.month, date.day, time.hour,
+                        time.minute),
+                  ),
                   style: TextStyle(color: enabled ? Colors.black : Colors.grey),
                 ),
                 Icon(Icons.access_time,
