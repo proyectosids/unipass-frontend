@@ -1,6 +1,5 @@
-import 'package:api_cache_manager/models/cache_db_model.dart';
 import 'package:api_cache_manager/utils/cache_manager.dart';
-import 'package:flutter_application_unipass/models/PaginatedPermissions.dart';
+import 'package:flutter_application_unipass/models/paginated_permissions.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:http/http.dart' as http;

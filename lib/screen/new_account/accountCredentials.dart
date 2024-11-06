@@ -29,7 +29,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
-    _loadUserInfo();
+    //_loadUserInfo();
   }
 
   Future<void> _loadUserInfo() async {
@@ -170,9 +170,8 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
 
         tipoUsuario ??= widget.userData['type'];
 
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? nivelAcademico = prefs.getString('nivelAcademico');
-        String? sexo = prefs.getString('sexo');
+        String? nivelAcademico = widget.userData['nivelAcademico'];
+        String? sexo = widget.userData['sexo'];
 
         if (tipoUsuario == 'ALUMNO') {
           dormitorio =

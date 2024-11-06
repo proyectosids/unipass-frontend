@@ -139,6 +139,11 @@ class _DocumentStudentState extends State<DocumentStudent> {
     }
   }
 
+  bool _isAllDocumentsComplete() {
+    int completedDocuments = documents.values.where((e) => e).length;
+    return completedDocuments == documents.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
@@ -163,7 +168,7 @@ class _DocumentStudentState extends State<DocumentStudent> {
             color: Color.fromRGBO(250, 198, 0, 1),
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, _isAllDocumentsComplete());
           },
         ),
       ),

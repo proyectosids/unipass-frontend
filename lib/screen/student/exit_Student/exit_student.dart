@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_unipass/models/PaginatedPermissions.dart';
+import 'package:flutter_application_unipass/models/paginated_permissions.dart';
 import 'package:flutter_application_unipass/screen/student/exit_Student/create_exit.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:intl/date_symbol_data_local.dart';

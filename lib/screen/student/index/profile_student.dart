@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_application_unipass/config/config_url.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profileStudent';
@@ -70,6 +71,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
       _loadProfileImage();
     }
+  }
+
+  Future<void> _clearUserPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Limpia todas las preferencias
   }
 
   @override
@@ -180,8 +186,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       String routeName, Color color) {
     final Responsive responsive = Responsive.of(context);
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (routeName == '/login') {
+          await _clearUserPreferences(); // Limpia SharedPreferences antes de cerrar sesión
           Navigator.pushNamedAndRemoveUntil(
             context,
             routeName,

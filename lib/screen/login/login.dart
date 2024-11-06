@@ -142,7 +142,7 @@ class _LoginAppState extends State<LoginApp> {
                     SizedBox(
                         height: responsive.hp(2)), // Space between sections
                     Text(
-                      'Bienvenido a tu aplicacion de salidas institucionales',
+                      'Bienvenido a tu aplicaciÓn de salidas institucionales',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Montserrat',

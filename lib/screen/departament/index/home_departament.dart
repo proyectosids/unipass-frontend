@@ -71,12 +71,14 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                   'name': check['Nombre'],
                   'Estatus': check['Estatus'],
                   'linkedSalida': _salidaChecks.firstWhere(
-                      (salidaCheck) => salidaCheck['name'] == check['Nombre'],
+                      (salidaCheck) =>
+                          salidaCheck['name'] == check['Nombre'] &&
+                          salidaCheck['Estatus'] == 'Confirmada',
                       orElse: () => {
                             'idCheck': null,
                             'name': check['Nombre'],
                             'Estatus': 'No Confirmada',
-                          }) // Proporciona un valor por defecto si no encuentra una salida
+                          })
                 })
             .toList();
 
@@ -190,60 +192,28 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                 isApproved ? 'Confirmada' : 'No Confirmada'),
                             value: isApproved,
                             onChanged: (bool? value) async {
-                              if (_selectedIndex == 1) {
-                                var salidaCheck = _salidaChecks.firstWhere(
-                                    (s) =>
-                                        s['name'] == check['name'] &&
-                                        s['Estatus'] == "Confirmada",
-                                    orElse: () => {'Estatus': 'No Confirmada'});
-                                if (salidaCheck['Estatus'] == "Confirmada") {
-                                  if (value != null) {
-                                    String estado =
-                                        value ? "Confirmada" : "No Confirmada";
-                                    await _checksService.actualizarEstadoCheck(
-                                        check['idCheck'], estado, "Ninguna");
-                                    setState(() {
-                                      check['Estatus'] = estado;
-                                    });
+                              // Esta sección permite confirmar o desconfirmar el check independientemente
+                              if (value != null) {
+                                String estado =
+                                    value ? "Confirmada" : "No Confirmada";
+                                await _checksService.actualizarEstadoCheck(
+                                    check['idCheck'], estado, "Ninguna");
+                                setState(() {
+                                  check['Estatus'] = estado;
+                                });
 
-                                    if (value) {
-                                      Future.delayed(const Duration(seconds: 3),
-                                          () {
-                                        setState(() {
-                                          if (index < _retornoChecks.length) {
-                                            _retornoChecks.removeAt(index);
-                                          }
-                                        });
-                                      });
-                                    }
-                                  }
-                                } else {
-                                  _showErrorDialog(
-                                      context,
-                                      "Acción no permitida",
-                                      "No se puede confirmar el regreso sin una salida confirmada.");
-                                }
-                              } else {
-                                if (value != null) {
-                                  String estado =
-                                      value ? "Confirmada" : "No Confirmada";
-                                  await _checksService.actualizarEstadoCheck(
-                                      check['idCheck'], estado, "Ninguna");
+                                // Remueve el check después de confirmarlo si está en el índice correcto
+                                Future.delayed(const Duration(seconds: 2), () {
                                   setState(() {
-                                    check['Estatus'] = estado;
+                                    if (_selectedIndex == 0 &&
+                                        index < _salidaChecks.length) {
+                                      _salidaChecks.removeAt(index);
+                                    } else if (_selectedIndex == 1 &&
+                                        index < _retornoChecks.length) {
+                                      _retornoChecks.removeAt(index);
+                                    }
                                   });
-
-                                  if (value) {
-                                    Future.delayed(const Duration(seconds: 2),
-                                        () {
-                                      setState(() {
-                                        if (index < _salidaChecks.length) {
-                                          _salidaChecks.removeAt(index);
-                                        }
-                                      });
-                                    });
-                                  }
-                                }
+                                });
                               }
                             },
                             secondary: Icon(
