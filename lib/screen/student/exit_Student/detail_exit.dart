@@ -90,21 +90,21 @@ class _ExitDetailScreenState extends State<ExitDetailScreen> {
                 ),
               ),
               SizedBox(height: responsive.hp(1.4)),
-              Text(
-                'Avance del proceso',
-                style: TextStyle(
-                    fontSize: responsive.dp(1.8), fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: responsive.hp(1.4)),
-              _buildProgressBar(responsive, isFinalized),
-              SizedBox(height: responsive.hp(1.4)),
-              Center(
-                child: Text(
-                  'A la espera para salir de la universidad',
-                  style: TextStyle(
-                      fontSize: responsive.dp(1.5), color: Colors.grey[600]),
-                ),
-              ),
+              //Text(
+              //  'Avance del proceso',
+              //  style: TextStyle(
+              //      fontSize: responsive.dp(1.8), fontWeight: FontWeight.bold),
+              //),
+              //SizedBox(height: responsive.hp(1.4)),
+              //_buildProgressBar(responsive, isFinalized),
+              //SizedBox(height: responsive.hp(1.4)),
+              //Center(
+              //  child: Text(
+              //    'A la espera para salir de la universidad',
+              //    style: TextStyle(
+              //        fontSize: responsive.dp(1.5), color: Colors.grey[600]),
+              //  ),
+              //),
               SizedBox(height: responsive.hp(1.4)),
               Center(
                 child: ElevatedButton(

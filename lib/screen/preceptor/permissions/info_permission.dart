@@ -5,6 +5,7 @@ import 'package:flutter_application_unipass/services/point_check_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class InfoPermissionDetail extends StatefulWidget {
   const InfoPermissionDetail({super.key});
@@ -107,18 +108,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
 
       // Manejando la navegación según el tipo de usuario
       if (mounted) {
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context, true); // Refrescará la pantalla anterior
-        } else {
-          // Si no se puede retroceder, puedes redirigir a una pantalla específica
-          if (tipoUser == 'PRECEPTOR') {
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/AuthorizationPreceptor', (route) => false);
-          } else if (tipoUser == 'EMPLEADO' || tipoUser == 'VIGILANCIA') {
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/AuthorizationEmployee', (route) => false);
-          }
-        }
+        Navigator.pop(context, true);
       }
     } catch (e) {
       // ignore: avoid_print
@@ -242,141 +232,7 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                       minimumSize: Size(responsive.wp(60), responsive.hp(6)),
                     ),
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => Dialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                responsive.wp(10)), // Bordes redondeados.
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(
-                                responsive.wp(5)), // Padding uniforme.
-                            child: Column(
-                              mainAxisSize: MainAxisSize
-                                  .min, // La columna se ajusta al tamaño del contenido.
-                              children: [
-                                Text(
-                                  'Rechazar Permiso',
-                                  style: TextStyle(
-                                    fontSize: responsive
-                                        .dp(2.8), // Tamaño de fuente dinámico.
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(
-                                    height:
-                                        responsive.hp(5)), // Espacio vertical.
-                                Text(
-                                  '¿Estás seguro de que quieres rechazar este permiso?',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: responsive.dp(1.8),
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                SizedBox(height: responsive.hp(5)),
-                                DropdownButtonFormField<String>(
-                                  decoration: const InputDecoration(
-                                    labelText: 'Seleccione un motivo',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  value:
-                                      selectedValue, // Asegúrate de que este valor inicial esté en la lista de ítems.
-                                  items: <String>[
-                                    'Foto no identificable',
-                                    'Horas pendientes',
-                                    'Indisciplinado',
-                                    'Faltas a culto',
-                                    'Falta de aseo',
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      selectedValue = newValue!;
-                                    });
-                                  },
-                                  validator: (String? value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Debe seleccionar un motivo';
-                                    }
-                                    return null;
-                                  },
-                                ),
-
-                                SizedBox(height: responsive.hp(5)),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    valorar = 'Rechazada';
-                                    _asignarAutorizacion(
-                                        valorar, selectedValue);
-
-                                    Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                      '/AuthorizationEmployee',
-                                      (Route<dynamic> route) => false,
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: Size(double.infinity,
-                                        responsive.wp(8)), // Tamaño mínimo.
-                                    backgroundColor: Colors.red,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: responsive
-                                            .hp(1.6)), // Padding vertical.
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          responsive.wp(
-                                              30)), // Bordes redondeados del botón.
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Rechazar',
-                                    style: TextStyle(
-                                      fontSize: responsive
-                                          .dp(2), // Tamaño de fuente dinámico.
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: responsive.wp(3)),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(
-                                        false); // Cierra el diálogo sin realizar acción.
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey,
-                                    minimumSize: Size(double.infinity,
-                                        responsive.wp(8)), // Tamaño mínimo.
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: responsive
-                                            .hp(1.6)), // Padding vertical.
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          responsive.wp(
-                                              30)), // Bordes redondeados del botón.
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Cancelar',
-                                    style: TextStyle(
-                                      fontSize: responsive
-                                          .dp(2), // Tamaño de fuente dinámico.
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                      _showRejectDialog(context, responsive);
                     },
                     child: const Text(
                       'Rechazar',
@@ -416,7 +272,149 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     );
   }
 
+  Future<dynamic> _showRejectDialog(
+      BuildContext context, Responsive responsive) {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(responsive.wp(10)), // Bordes redondeados.
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(responsive.wp(5)), // Padding uniforme.
+          child: Column(
+            mainAxisSize: MainAxisSize
+                .min, // La columna se ajusta al tamaño del contenido.
+            children: [
+              Text(
+                'Rechazar Permiso',
+                style: TextStyle(
+                  fontSize: responsive.dp(2.8), // Tamaño de fuente dinámico.
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: responsive.hp(5)), // Espacio vertical.
+              Text(
+                '¿Estás seguro de que quieres rechazar este permiso?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: responsive.dp(1.8),
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: responsive.hp(5)),
+              _buildRejectDropdown(),
+
+              SizedBox(height: responsive.hp(5)),
+              ElevatedButton(
+                onPressed: () {
+                  valorar = 'Rechazada';
+                  _asignarAutorizacion(valorar, selectedValue);
+
+                  Navigator.pop(context, true);
+                  //Navigator.of(context).pushNamedAndRemoveUntil(
+                  //  '/AuthorizationEmployee',
+                  //  (Route<dynamic> route) => false,
+                  //);
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize:
+                      Size(double.infinity, responsive.wp(8)), // Tamaño mínimo.
+                  backgroundColor: Colors.red,
+                  padding: EdgeInsets.symmetric(
+                      vertical: responsive.hp(1.6)), // Padding vertical.
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        responsive.wp(30)), // Bordes redondeados del botón.
+                  ),
+                ),
+                child: Text(
+                  'Rechazar',
+                  style: TextStyle(
+                    fontSize: responsive.dp(2), // Tamaño de fuente dinámico.
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(height: responsive.wp(3)),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pop(false); // Cierra el diálogo sin realizar acción.
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey,
+                  minimumSize:
+                      Size(double.infinity, responsive.wp(8)), // Tamaño mínimo.
+                  padding: EdgeInsets.symmetric(
+                      vertical: responsive.hp(1.6)), // Padding vertical.
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        responsive.wp(30)), // Bordes redondeados del botón.
+                  ),
+                ),
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(
+                    fontSize: responsive.dp(2), // Tamaño de fuente dinámico.
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  DropdownButtonFormField<String> _buildRejectDropdown() {
+    return DropdownButtonFormField<String>(
+      decoration: const InputDecoration(
+        labelText: 'Seleccione un motivo',
+        border: OutlineInputBorder(),
+      ),
+      value:
+          selectedValue, // Asegúrate de que este valor inicial esté en la lista de ítems.
+      items: <String>[
+        'Foto no identificable',
+        'Horas pendientes',
+        'Indisciplinado',
+        'Faltas a culto',
+        'Falta de aseo',
+      ].map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          selectedValue = newValue!;
+        });
+      },
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return 'Debe seleccionar un motivo';
+        }
+        return null;
+      },
+    );
+  }
+
   Widget _buildDetailItem(String title, String value) {
+    // Intenta parsear el valor como una fecha para formatearla
+    String formattedValue = value;
+    try {
+      DateTime parsedDate = DateTime.parse(value);
+      formattedValue =
+          DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
+    } catch (e) {
+      // Si ocurre un error al parsear, deja el valor como está
+      formattedValue = value;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -426,9 +424,8 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
             title,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          //const SizedBox(height: 1),
           Text(
-            value,
+            formattedValue,
             style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),
           const Divider(color: Colors.orange, thickness: 1),

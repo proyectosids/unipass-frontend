@@ -96,10 +96,10 @@ class _PermissionAuthorizationEmployeeState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
-            SizedBox(height: responsive.hp(1)),
+            //_buildHeader(),
+            //SizedBox(height: responsive.hp(1)),
             _buildDatePicker(),
-            SizedBox(height: responsive.hp(2)),
+            //SizedBox(height: responsive.hp(2)),
             const Text(
               'Salidas',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -131,12 +131,12 @@ class _PermissionAuthorizationEmployeeState
 
   Widget _buildDatePicker() {
     final Responsive responsive = Responsive.of(context);
-    final double padding = responsive.wp(5);
+    final double padding = responsive.wp(1);
     DateTime currentDate = DateTime.now();
     DateTime startDate =
         currentDate.subtract(const Duration(days: 30)); // 30 días atrás
     DateTime endDate =
-        currentDate.add(const Duration(days: 60)); // 60 días adelante
+        currentDate.add(const Duration(days: 30)); // 30 días adelante
 
     return Center(
       child: Container(
@@ -218,10 +218,8 @@ class _PermissionAuthorizationEmployeeState
   Widget _buildPermissionItem(BuildContext context, String title, String date,
       String dateE, String status, Permission permission) {
     final Responsive responsive = Responsive.of(context);
-    DateTime parsedDate = DateTime.parse(date)
-        .subtract(const Duration(hours: 6)); // Restar 6 horas
-    DateTime parsedDateE = DateTime.parse(dateE)
-        .subtract(const Duration(hours: 6)); // Restar 6 horas
+    DateTime parsedDate = DateTime.parse(date); // Restar 6 horas
+    DateTime parsedDateE = DateTime.parse(dateE); // Restar 6 horas
 
     String formattedDate =
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);

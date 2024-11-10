@@ -447,10 +447,8 @@ class _ExitStudentState extends State<ExitStudent> {
     DateTime parsedDate;
     DateTime parsedDateE;
     try {
-      parsedDate = DateTime.parse(date)
-          .subtract(const Duration(hours: 6)); // Restar 6 horas
-      parsedDateE = DateTime.parse(dateE)
-          .subtract(const Duration(hours: 6)); // Restar 6 horas
+      parsedDate = DateTime.parse(date); // Restar 6 horas
+      parsedDateE = DateTime.parse(dateE); // Restar 6 horas
     } catch (e) {
       return const Text('Fecha inválida');
     }

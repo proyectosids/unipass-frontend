@@ -236,9 +236,23 @@ class DocumentListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Documentos de $nombre $apellidos'),
+        title: Text(
+          'Documentos de $nombre',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600),
+        ),
         backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromRGBO(250, 198, 0, 1),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _getDocumentos(),
         builder: (context, snapshot) {
@@ -291,8 +305,18 @@ class PdfViewerScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Visualizar PDF'),
+        title: const Text(
+          'Visualizar PDF',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
         backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromRGBO(250, 198, 0, 1),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: const PDF().cachedFromUrl(
         fullUrl, // Usamos la URL completa con baseUrl
