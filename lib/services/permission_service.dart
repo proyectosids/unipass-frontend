@@ -173,6 +173,10 @@ class PermissionService {
         await http.get(Uri.parse('$baseUrl/PermissionsPreceptor/$idEmpleado'));
 
     if (response.statusCode == 200) {
+      if (response.body == "null" || response.body.isEmpty) {
+        // Retornar una lista vacía si la respuesta es `null` o vacía
+        return [];
+      }
       List<dynamic> permissionData = json.decode(response.body);
 
       List<Permission> permissionsEmployee = [];

@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/screen/preceptor/delegate_user.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 void main() async {
@@ -98,6 +99,8 @@ class MyApp extends StatelessWidget {
         HomeScreenDepartament.routeName: (context) =>
             const HomeScreenDepartament(),
         HomeDepartament.routeName: (context) => const HomeDepartament(),
+        DelegatePositionScreen.routeName: (context) =>
+            const DelegatePositionScreen()
       },
     );
   }

@@ -66,6 +66,8 @@ class _MenuPreceptorScreenState extends State<MenuPreceptorScreen> {
                   ),
                   _buildMenuItem(context, 'Checks', 'assets/image/checks.svg',
                       '/NewProfileChecks', Colors.white),
+                  _buildMenuItem(context, 'Delegar', 'assets/image/HelpApp.svg',
+                      '/delegatePosition', Colors.white),
                 ],
               ),
             ),

@@ -90,6 +90,13 @@ class _MenuScreenState extends State<MenuScreen> {
                     Colors.white,
                     true,
                   ),
+                  _buildMenuItem(
+                      context,
+                      'Autorizar',
+                      'assets/image/checks.svg',
+                      '/AuthorizationPreceptor',
+                      Colors.white,
+                      true)
                 ],
               ),
             ),

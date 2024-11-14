@@ -34,6 +34,19 @@ class AuthServices {
     }
   }
 
+  Future<Map<String, dynamic>?> UserInfoExt(String userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/InfoCargo/$userId'));
+
+    if (response.statusCode == 200) {
+      if (response.body == 'null') {
+        return null;
+      }
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load user info');
+    }
+  }
+
   Future<bool> updatePassword(String correo, String newPassword) async {
     try {
       final response = await http.put(
@@ -63,6 +76,23 @@ class AuthServices {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load user info');
+    }
+  }
+
+  Future<dynamic> buscarpersona(String nombre) async {
+    final response = await http.get(Uri.parse('$baseUrl/buscarUser/$nombre'));
+
+    if (response.statusCode == 200) {
+      final decodedResponse = json.decode(response.body);
+      if (decodedResponse is List) {
+        return decodedResponse; // Retorna la lista de usuarios
+      } else if (decodedResponse is Map) {
+        return decodedResponse; // Retorna un solo usuario en un mapa
+      } else {
+        throw Exception('Unexpected response format');
+      }
+    } else {
+      throw Exception('Failed to search user info');
     }
   }
 }

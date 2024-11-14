@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/models/permission.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
@@ -23,6 +24,7 @@ class _HistoryPermissionAuthorizationState
   List<Permission> _filteredPermissions = []; // Lista filtrada
   final PermissionService _permissionService =
       PermissionService(RegisterService(), AuthorizeService());
+  final AuthServices _authService = AuthServices();
 
   @override
   void initState() {
@@ -40,10 +42,31 @@ class _HistoryPermissionAuthorizationState
       return;
     }
 
+    // Sección para buscar la matricula si alguien me asignó
+    Map<String, dynamic>? userInfoExt =
+        await _authService.UserInfoExt(matricula);
+
+    String? cargoEmp;
+    if (userInfoExt != null) {
+      cargoEmp = userInfoExt['MatriculaEncargado'];
+    } else {
+      print('User info not found');
+      cargoEmp = '0'; // Valor predeterminado si no hay información
+    }
+
     try {
-      List<Permission> permissions =
+      List<Permission> permissionsPrece =
           await _permissionService.getPermissionForAutorizacionPrece(matricula);
 
+      // Verificar si cargoEmp es válido antes de hacer la segunda llamada
+      List<Permission> permissionsAsig = [];
+      if (cargoEmp != null && cargoEmp != '0') {
+        permissionsAsig = await _permissionService
+            .getPermissionForAutorizacionPrece(cargoEmp);
+      }
+
+      // Combinar las listas
+      List<Permission> permissions = permissionsPrece + permissionsAsig;
       permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
 
       setState(() {
