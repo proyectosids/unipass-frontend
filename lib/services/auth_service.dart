@@ -91,8 +91,11 @@ class AuthServices {
       } else {
         throw Exception('Unexpected response format');
       }
+    } else if (response.statusCode == 404) {
+      // Manejar el caso de datos no encontrados
+      return null; // Retorna null si no se encuentran usuarios
     } else {
-      throw Exception('Failed to search user info');
+      throw Exception('Failed to search user info: ${response.statusCode}');
     }
   }
 }
