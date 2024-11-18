@@ -25,6 +25,99 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
   dynamic _personaInfo;
   dynamic _matriculaInfo;
 
+  Future<void> _eliminarAsignacion() async {
+    if (_matriculaInfo == null) return;
+
+    final url =
+        Uri.parse('$baseUrl/cambiarCargo/${_matriculaInfo['Matricula']}');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _matriculaInfo = null; // Limpiar información de la persona asignada
+          _personaInfo = null; // Limpiar resultados de búsqueda
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Asignación eliminada exitosamente")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error al eliminar la asignación")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error al eliminar la asignación: $e")),
+      );
+    }
+  }
+
+  Future<void> _buscarPersona() async {
+    if (_matriculaInfo != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                "Ya hay una persona asignada. Elimina primero la asignación para buscar otra.")),
+      );
+      return;
+    }
+
+    final nombre = _nombreController.text;
+    if (nombre.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Por favor, ingrese un nombre para buscar")),
+      );
+      return;
+    }
+
+    try {
+      setState(() => _isLoading = true);
+      final personaInfo = await _authServices.buscarpersona(nombre);
+      setState(() {
+        _personaInfo = personaInfo;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error al buscar la persona: $e")),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _toggleActivo(bool isActive, int idCargo) async {
+    final url = Uri.parse('$baseUrl/activarCargo/$idCargo');
+
+    // Traduce el booleano a número (1 o 0)
+    final int activoValue = isActive ? 1 : 0;
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'Activo': activoValue}), // Envía solo el número
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _matriculaInfo['Activo'] =
+            activoValue; // Actualiza el estado localmente
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Estado actualizado exitosamente")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error al actualizar el estado")),
+      );
+    }
+  }
+
   Future<void> _delegatePosition(
       String matriculaEncargado, String classUser, String asignado) async {
     if (!_formKey.currentState!.validate()) return;
@@ -88,37 +181,12 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
     }
   }
 
-  Future<void> _buscarPersona() async {
-    final nombre = _nombreController.text;
-    if (nombre.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("Por favor, ingrese un nombre para buscar")),
-      );
-      return;
-    }
-
-    try {
-      setState(() => _isLoading = true);
-      final personaInfo = await _authServices.buscarpersona(nombre);
-      setState(() {
-        _personaInfo = personaInfo;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error al buscar la persona: $e")),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
   Future<void> _obtenerInfoMatricula() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? matricula = prefs.getString('matricula');
     try {
       setState(() => _isLoading = true);
-      final matriculaInfo = await _authServices.UserInfoExt(matricula!);
+      final matriculaInfo = await _authServices.UserInfoDelegado(matricula!);
       setState(() {
         _matriculaInfo = matriculaInfo;
       });
@@ -249,8 +317,20 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
                             Text("${_matriculaInfo['Celular']}"),
                           ],
                         ),
+                        trailing: Switch(
+                          value: _matriculaInfo['Activo'] == 1,
+                          onChanged: (bool newValue) async {
+                            await _toggleActivo(
+                                newValue, _matriculaInfo['IdCargo']);
+                          },
+                        ),
+                        onLongPress: () async {
+                          await _eliminarAsignacion();
+                          setState(() {}); // Refrescar pantalla
+                        },
                       ),
                     ),
+
                   SizedBox(
                     height: responsive.hp(3),
                   ),
@@ -263,12 +343,14 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
                     ),
                   ),
                   SizedBox(height: responsive.hp(2)),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _buscarPersona,
-                    child: Text('Buscar Persona'),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _buscarPersona,
+                      child: Text('Buscar Persona'),
+                    ),
                   ),
 
-                  // Mostrar información de la persona buscada o mensaje si no hay usuarios
+                  // Mostrar información de la persona buscada
                   if (_personaInfo != null && _personaInfo is List)
                     _personaInfo.isEmpty
                         ? Text(

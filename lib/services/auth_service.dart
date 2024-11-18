@@ -47,6 +47,19 @@ class AuthServices {
     }
   }
 
+  Future<Map<String, dynamic>?> UserInfoDelegado(String userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/InfoDelegado/$userId'));
+
+    if (response.statusCode == 200) {
+      if (response.body == 'null') {
+        return null;
+      }
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load user info');
+    }
+  }
+
   Future<bool> updatePassword(String correo, String newPassword) async {
     try {
       final response = await http.put(

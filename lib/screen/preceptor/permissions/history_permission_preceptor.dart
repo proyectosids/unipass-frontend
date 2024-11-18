@@ -47,20 +47,25 @@ class _HistoryPermissionAuthorizationState
         await _authService.UserInfoExt(matricula);
 
     String? cargoEmp;
+    int? activo;
     if (userInfoExt != null) {
       cargoEmp = userInfoExt['MatriculaEncargado'];
+      activo = userInfoExt['Activo']; // Obtener el valor de 'Activo'
     } else {
       print('User info not found');
       cargoEmp = '0'; // Valor predeterminado si no hay información
+      activo = 0; // Valor predeterminado para 'Activo'
     }
 
     try {
+      // Obtener permisos de la matrícula principal
       List<Permission> permissionsPrece =
           await _permissionService.getPermissionForAutorizacionPrece(matricula);
 
-      // Verificar si cargoEmp es válido antes de hacer la segunda llamada
       List<Permission> permissionsAsig = [];
-      if (cargoEmp != null && cargoEmp != '0') {
+
+      // Verificar si cargoEmp es válido y si 'Activo' es igual a 1
+      if (cargoEmp != null && cargoEmp != '0' && activo == 1) {
         permissionsAsig = await _permissionService
             .getPermissionForAutorizacionPrece(cargoEmp);
       }
