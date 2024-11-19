@@ -33,6 +33,17 @@ class ChecksService {
     }
   }
 
+  Future<List<dynamic>> obtenerChecksDormitorioFin(int idDormitorio) async {
+    final response = await http.get(
+        Uri.parse('$baseUrl/checksDormitorioFin/$idDormitorio'),
+        headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Error al obtener los checks del dormitorio');
+    }
+  }
+
   // Servicio para obtener todos los checks pendientes por autorizar en vigilancia
   Future<List<dynamic>> obtenerChecksVigilancia() async {
     final response = await http.get(Uri.parse('$baseUrl/checksVigilancia'),

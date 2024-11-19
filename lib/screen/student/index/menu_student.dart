@@ -1,4 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuScreen extends StatefulWidget {
   static const routeName = '/menu';
@@ -11,16 +16,37 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
   bool isComplete = false;
+  bool hasIdCargoDelegado = false;
+  final AuthServices _authService = AuthServices();
 
   @override
   void initState() {
     super.initState();
     _checkDocumentCompletion();
+    _fetchUserInfo();
+  }
+
+  Future<void> _fetchUserInfo() async {
+    int? userId = await AuthUtils.getUserId();
+    if (userId == null) {
+      print('User ID not found');
+      return;
+    }
+
+    Map<String, dynamic>? userInfo = await _authService.getUserInfo(userId);
+    if (userInfo == null) {
+      print('User info not found');
+      return;
+    }
+    if (userInfo['IdCargoDelegado'] != null) {
+      setState(() {
+        hasIdCargoDelegado = true;
+      });
+    }
   }
 
   Future<void> _checkDocumentCompletion() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Aquí asumimos que tienes los nombres de los documentos como claves
     bool ineTutor = prefs.getBool('INE del Tutor_isUploaded') ?? false;
     bool reglamentoDormitorio =
         prefs.getBool('Reglamento dormitorio_isUploaded') ?? false;
@@ -37,15 +63,54 @@ class _MenuScreenState extends State<MenuScreen> {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(3);
 
+    List<Widget> menuItems = [
+      _buildMenuItem(
+        context,
+        'Salidas',
+        'assets/image/salidas.svg',
+        '/ExitStudent',
+        Colors.white,
+        isComplete,
+      ),
+      _buildMenuItem(
+        context,
+        'Ayuda',
+        'assets/image/HelpApp.svg',
+        '/helpUser',
+        Colors.white,
+        true,
+      ),
+      _buildMenuItem(
+        context,
+        'Documentos',
+        'assets/image/documents.svg',
+        '/documentStudent',
+        Colors.white,
+        true,
+      ),
+    ];
+
+    if (hasIdCargoDelegado) {
+      menuItems.add(_buildMenuItem(
+        context,
+        'Autorizar',
+        'assets/image/checks.svg',
+        '/AuthorizationPreceptor',
+        Colors.white,
+        true,
+      ));
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
           'Menu',
           style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: responsive.dp(2.2),
-              fontWeight: FontWeight.w600),
+            fontFamily: 'Montserrat',
+            fontSize: responsive.dp(2.2),
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
         actions: [
@@ -65,39 +130,7 @@ class _MenuScreenState extends State<MenuScreen> {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                children: [
-                  _buildMenuItem(
-                    context,
-                    'Salidas',
-                    'assets/image/salidas.svg',
-                    '/ExitStudent',
-                    Colors.white,
-                    isComplete, // Este valor determina si el botón está habilitado
-                  ),
-                  _buildMenuItem(
-                    context,
-                    'Ayuda',
-                    'assets/image/HelpApp.svg',
-                    '/helpUser',
-                    Colors.white,
-                    true,
-                  ),
-                  _buildMenuItem(
-                    context,
-                    'Documentos',
-                    'assets/image/documents.svg',
-                    '/documentStudent',
-                    Colors.white,
-                    true,
-                  ),
-                  _buildMenuItem(
-                      context,
-                      'Autorizar',
-                      'assets/image/checks.svg',
-                      '/AuthorizationPreceptor',
-                      Colors.white,
-                      true)
-                ],
+                children: menuItems,
               ),
             ),
           ],
@@ -111,11 +144,9 @@ class _MenuScreenState extends State<MenuScreen> {
     final Responsive responsive = Responsive.of(context);
     return GestureDetector(
       onTap: () async {
-        // Abre `DocumentStudent` y espera a que devuelva un valor
         if (routeName == DocumentStudent.routeName) {
           final result = await Navigator.pushNamed(context, routeName);
           if (result != null && result == true) {
-            // Si se devolvió `true`, vuelve a cargar el estado de documentos
             _checkDocumentCompletion();
           }
         } else if (isEnabled) {

@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/screen/checkspoint/form_create_user.dart';
 import 'package:flutter_application_unipass/screen/preceptor/delegate_user.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
@@ -100,7 +101,8 @@ class MyApp extends StatelessWidget {
             const HomeScreenDepartament(),
         HomeDepartament.routeName: (context) => const HomeDepartament(),
         DelegatePositionScreen.routeName: (context) =>
-            const DelegatePositionScreen()
+            const DelegatePositionScreen(),
+        CreateUserChecks.RouteName: (context) => const CreateUserChecks(),
       },
     );
   }
