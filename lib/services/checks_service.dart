@@ -15,6 +15,7 @@ class ChecksService {
         }));
     if (response.statusCode == 200) {
       print(response.body);
+
       return json.decode(response.body);
     } else {
       throw Exception('Error al crear la autorizacion');
@@ -24,10 +25,12 @@ class ChecksService {
   // Servicio para obtener todos los checks pendientes por autorizar en los dormitorios
   Future<List<dynamic>> obtenerChecksDormitorio(int idDormitorio) async {
     final response = await http.get(
-        Uri.parse('$baseUrl/checksDormitorio/$idDormitorio'),
-        headers: {'Content-Type': 'application/json'});
+      Uri.parse('$baseUrl/checksDormitorio/$idDormitorio'),
+      headers: {'Content-Type': 'application/json'},
+    );
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final data = json.decode(response.body);
+      return data ?? []; // Devuelve una lista vacía si la respuesta es null
     } else {
       throw Exception('Error al obtener los checks del dormitorio');
     }
@@ -35,10 +38,12 @@ class ChecksService {
 
   Future<List<dynamic>> obtenerChecksDormitorioFin(int idDormitorio) async {
     final response = await http.get(
-        Uri.parse('$baseUrl/checksDormitorioFin/$idDormitorio'),
-        headers: {'Content-Type': 'application/json'});
+      Uri.parse('$baseUrl/checksDormitorioFin/$idDormitorio'),
+      headers: {'Content-Type': 'application/json'},
+    );
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final data = json.decode(response.body);
+      return data ?? []; // Devuelve una lista vacía si la respuesta es null
     } else {
       throw Exception('Error al obtener los checks del dormitorio');
     }
@@ -46,12 +51,15 @@ class ChecksService {
 
   // Servicio para obtener todos los checks pendientes por autorizar en vigilancia
   Future<List<dynamic>> obtenerChecksVigilancia() async {
-    final response = await http.get(Uri.parse('$baseUrl/checksVigilancia'),
-        headers: {'Content-Type': 'application/json'});
+    final response = await http.get(
+      Uri.parse('$baseUrl/checksVigilancia'),
+      headers: {'Content-Type': 'application/json'},
+    );
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final data = json.decode(response.body);
+      return data ?? []; // Devuelve una lista vacía si la respuesta es null
     } else {
-      throw Exception('Error al obtener los checks del dormitorio');
+      throw Exception('Error al obtener los checks de vigilancia');
     }
   }
 

@@ -165,80 +165,98 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                 ),
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh:
-                        _fetchChecks, // Llama al método para recargar datos
-                    child: ListView.builder(
-                      itemCount: _selectedIndex == 0
-                          ? _salidaChecks.length
-                          : _retornoChecks.length,
-                      itemBuilder: (context, index) {
-                        final check = _selectedIndex == 0
-                            ? _salidaChecks[index]
-                            : _retornoChecks[index];
-
-                        bool isApproved = check['Estatus'] == "Confirmada";
-
-                        return GestureDetector(
-                          onLongPress: () {
-                            _showObservationDialog(check, index);
-                          },
-                          child: Dismissible(
-                            key: Key(check['idCheck'].toString()),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              color: Colors.red,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              alignment: Alignment.centerLeft,
-                              child:
-                                  const Icon(Icons.cancel, color: Colors.white),
+                    onRefresh: _fetchChecks,
+                    child: _selectedIndex == 0 && _salidaChecks.isEmpty ||
+                            _selectedIndex == 1 && _retornoChecks.isEmpty
+                        ? Center(
+                            child: Text(
+                              'No hay checks disponibles.',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.grey),
                             ),
-                            onDismissed: (direction) async {
-                              await _checksService.actualizarEstadoCheck(
-                                  check['idCheck'], "No Confirmada", "Ninguna");
-                              setState(() {
-                                check['Estatus'] = "No Confirmada";
-                              });
-                            },
-                            child: CheckboxListTile(
-                              title: Text(
-                                  '${_selectedIndex == 0 ? 'Salida' : 'Retorno'} de ${check['name']}'),
-                              subtitle: Text(
-                                  isApproved ? 'Confirmada' : 'No Confirmada'),
-                              value: isApproved,
-                              onChanged: (bool? value) async {
-                                if (value != null) {
-                                  String estado =
-                                      value ? "Confirmada" : "No Confirmada";
-                                  await _checksService.actualizarEstadoCheck(
-                                      check['idCheck'], estado, "Ninguna");
-                                  setState(() {
-                                    check['Estatus'] = estado;
-                                  });
+                          )
+                        : ListView.builder(
+                            itemCount: _selectedIndex == 0
+                                ? _salidaChecks.length
+                                : _retornoChecks.length,
+                            itemBuilder: (context, index) {
+                              final check = _selectedIndex == 0
+                                  ? _salidaChecks[index]
+                                  : _retornoChecks[index];
 
-                                  Future.delayed(const Duration(seconds: 2),
-                                      () {
+                              bool isApproved =
+                                  check['Estatus'] == "Confirmada";
+
+                              return GestureDetector(
+                                onLongPress: () {
+                                  _showObservationDialog(check, index);
+                                },
+                                child: Dismissible(
+                                  key: Key(check['idCheck'].toString()),
+                                  direction: DismissDirection.endToStart,
+                                  background: Container(
+                                    color: Colors.red,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    alignment: Alignment.centerLeft,
+                                    child: const Icon(Icons.cancel,
+                                        color: Colors.white),
+                                  ),
+                                  onDismissed: (direction) async {
+                                    await _checksService.actualizarEstadoCheck(
+                                        check['idCheck'],
+                                        "No Confirmada",
+                                        "Ninguna");
                                     setState(() {
-                                      if (_selectedIndex == 0 &&
-                                          index < _salidaChecks.length) {
-                                        _salidaChecks.removeAt(index);
-                                      } else if (_selectedIndex == 1 &&
-                                          index < _retornoChecks.length) {
-                                        _retornoChecks.removeAt(index);
-                                      }
+                                      check['Estatus'] = "No Confirmada";
                                     });
-                                  });
-                                }
-                              },
-                              secondary: Icon(
-                                isApproved ? Icons.check : Icons.close,
-                                color: isApproved ? Colors.green : Colors.red,
-                              ),
-                            ),
+                                  },
+                                  child: CheckboxListTile(
+                                    title: Text(
+                                        '${_selectedIndex == 0 ? 'Salida' : 'Retorno'} de ${check['name']}'),
+                                    subtitle: Text(isApproved
+                                        ? 'Confirmada'
+                                        : 'No Confirmada'),
+                                    value: isApproved,
+                                    onChanged: (bool? value) async {
+                                      if (value != null) {
+                                        String estado = value
+                                            ? "Confirmada"
+                                            : "No Confirmada";
+                                        await _checksService
+                                            .actualizarEstadoCheck(
+                                                check['idCheck'],
+                                                estado,
+                                                "Ninguna");
+                                        setState(() {
+                                          check['Estatus'] = estado;
+                                        });
+
+                                        Future.delayed(
+                                            const Duration(seconds: 2), () {
+                                          setState(() {
+                                            if (_selectedIndex == 0 &&
+                                                index < _salidaChecks.length) {
+                                              _salidaChecks.removeAt(index);
+                                            } else if (_selectedIndex == 1 &&
+                                                index < _retornoChecks.length) {
+                                              _retornoChecks.removeAt(index);
+                                            }
+                                          });
+                                        });
+                                      }
+                                    },
+                                    secondary: Icon(
+                                      isApproved ? Icons.check : Icons.close,
+                                      color: isApproved
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
               ],
