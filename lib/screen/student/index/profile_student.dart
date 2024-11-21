@@ -80,6 +80,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final double padding = responsive.wp(3);
     String profileText = widget.userType == 'student'
         ? 'Alumno'
         : 'Empleado'; // Cambia según el tipo de usuario
@@ -100,50 +102,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: imageFile != null
-                    ? FileImage(imageFile!)
-                    : (profileImageUrl != null
-                        ? NetworkImage(profileImageUrl!)
-                        : null) as ImageProvider<Object>?,
-                child: imageFile == null && profileImageUrl == null
-                    ? const Icon(
-                        Icons.add_a_photo,
-                        size: 50,
-                        color: Colors.grey,
-                      )
-                    : null,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(profileText,
-                style: const TextStyle(fontSize: 24)), // Usa el texto dinámico
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Activar notificaciones',
-                    style: TextStyle(fontSize: 16)),
-                Switch(
-                  value: _notificationsEnabled,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _notificationsEnabled = value;
-                    });
-                  },
+        padding: EdgeInsets.all(padding),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.center, // Centra horizontalmente los hijos
+            children: [
+              Center(
+                // Centra el contenido horizontalmente
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment
+                      .center, // Centra verticalmente los hijos
+                  children: [
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundImage: imageFile != null
+                            ? FileImage(imageFile!)
+                            : (profileImageUrl != null
+                                ? NetworkImage(profileImageUrl!)
+                                : null) as ImageProvider<Object>?,
+                        child: imageFile == null && profileImageUrl == null
+                            ? const Icon(
+                                Icons.add_a_photo,
+                                size: 50,
+                                color: Colors.grey,
+                              )
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      profileText,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.count(
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Activar notificaciones',
+                      style: TextStyle(fontSize: 16)),
+                  Switch(
+                    value: _notificationsEnabled,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _notificationsEnabled = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              GridView.count(
                 crossAxisCount: 2,
+                shrinkWrap:
+                    true, // Permite que el GridView se ajuste a su contenido
+                physics:
+                    const NeverScrollableScrollPhysics(), // Desactiva el scroll interno
                 children: [
                   _buildProfileItem(
                     context,
@@ -175,8 +194,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

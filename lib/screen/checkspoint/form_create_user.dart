@@ -40,10 +40,23 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
   void _addUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? correo = prefs.getString('correo');
-    String? user = "MTR$matricula";
-    final registerService = RegisterService();
+
+    // Validar el formulario antes de proceder
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+      _formKey.currentState!.save(); // Guarda los valores del formulario
+
+      if (matricula == null || matricula!.isEmpty) {
+        // Mostrar un error si la matrícula es nula o vacía
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('La matrícula no puede estar vacía')),
+        );
+        return;
+      }
+
+      // Asegurarse de que el prefijo sea correcto
+      String user = "MTR$matricula";
+
+      final registerService = RegisterService();
 
       // Convertir el género seleccionado a 'M' o 'F'
       String genderValue = gender == 'Hombre' ? 'M' : 'F';
@@ -98,6 +111,7 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
 
         // Resetear el formulario
         _formKey.currentState!.reset();
+        matricula = null; // Restablecer la matrícula
 
         // Mostrar un mensaje de éxito
         ScaffoldMessenger.of(context).showSnackBar(
@@ -194,9 +208,32 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
                     children: [
                       TextFormField(
                         decoration: InputDecoration(
-                            labelText: 'Nombre',
-                            labelStyle:
-                                TextStyle(fontSize: responsive.dp(1.8))),
+                          labelText: 'Nombre',
+                          labelStyle: TextStyle(
+                              fontSize: responsive.dp(1.8),
+                              color: Colors.grey[700]),
+                          hintText: 'Ingresa tu nombre',
+                          hintStyle: TextStyle(
+                              fontSize: responsive.dp(1.6),
+                              color: Colors.grey[500]),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(6, 66, 106, 1)),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          prefixIcon: const Icon(Icons.person,
+                              color: Color.fromRGBO(6, 66, 106, 1)),
+                        ),
                         onSaved: (value) {
                           name = value;
                         },
@@ -207,11 +244,43 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
                           return null;
                         },
                       ),
+                      SizedBox(height: responsive.hp(2)),
                       TextFormField(
                         decoration: InputDecoration(
-                            labelText: 'Apellido',
-                            labelStyle:
-                                TextStyle(fontSize: responsive.dp(1.8))),
+                          labelText: 'Apellido',
+                          labelStyle: TextStyle(
+                            fontSize: responsive.dp(1.8),
+                            color:
+                                Colors.grey[700], // Color del texto del label
+                          ),
+                          hintText:
+                              'Ingresa tu apellido', // Texto de sugerencia
+                          hintStyle: TextStyle(
+                            fontSize: responsive.dp(1.6),
+                            color: Colors
+                                .grey[500], // Color del texto de sugerencia
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(12), // Bordes redondeados
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(6, 66, 106, 1)),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100], // Color de fondo
+                          prefixIcon: const Icon(
+                            Icons.person_outline, // Icono al inicio del campo
+                            color: Color.fromRGBO(6, 66, 106, 1),
+                          ),
+                        ),
                         onSaved: (value) {
                           surname = value;
                         },
@@ -222,11 +291,31 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
                           return null;
                         },
                       ),
+                      SizedBox(height: responsive.hp(2)),
                       DropdownButtonFormField<String>(
                         decoration: InputDecoration(
-                            labelText: 'Género',
-                            labelStyle:
-                                TextStyle(fontSize: responsive.dp(1.8))),
+                          labelText: 'Género',
+                          labelStyle: TextStyle(
+                              fontSize: responsive.dp(1.8),
+                              color: Colors.grey[700]),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(6, 66, 106, 1)),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          prefixIcon: const Icon(Icons.male,
+                              color: Color.fromRGBO(6, 66, 106, 1)),
+                        ),
                         items: _genders.map((String gender) {
                           return DropdownMenuItem<String>(
                             value: gender,
@@ -238,32 +327,88 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
                         },
                         validator: (value) {
                           if (value == null) {
-                            return 'Seleciona un género';
+                            return 'Selecciona un género';
                           }
                           return null;
                         },
                       ),
+                      SizedBox(height: responsive.hp(2)),
                       TextFormField(
                         decoration: InputDecoration(
-                            labelText: 'Celular',
-                            labelStyle:
-                                TextStyle(fontSize: responsive.dp(1.8))),
+                          labelText: 'Celular',
+                          labelStyle: TextStyle(
+                              fontSize: responsive.dp(1.8),
+                              color: Colors.grey[700]),
+                          hintText: 'Ingresa tu número de celular',
+                          hintStyle: TextStyle(
+                              fontSize: responsive.dp(1.6),
+                              color: Colors.grey[500]),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(6, 66, 106, 1)),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          prefixIcon: const Icon(Icons.phone,
+                              color: Color.fromRGBO(6, 66, 106, 1)),
+                        ),
                         keyboardType: TextInputType.phone,
                         onSaved: (value) {
                           phoneNumber = value;
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Ingresa un numero celular';
+                            return 'Ingresa un número celular';
                           }
                           return null;
                         },
                       ),
+                      SizedBox(height: responsive.hp(2)),
                       DropdownButtonFormField<String>(
                         decoration: InputDecoration(
-                            labelText: 'Lugar de control',
-                            labelStyle:
-                                TextStyle(fontSize: responsive.dp(1.8))),
+                          labelText: 'Lugar de control',
+                          labelStyle: TextStyle(
+                            fontSize: responsive.dp(1.8),
+                            color:
+                                Colors.grey[700], // Color del texto del label
+                          ),
+                          hintText:
+                              'Selecciona un lugar', // Texto de sugerencia
+                          hintStyle: TextStyle(
+                            fontSize: responsive.dp(1.6),
+                            color: Colors
+                                .grey[500], // Color del texto de sugerencia
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(12), // Bordes redondeados
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(6, 66, 106, 1)),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100], // Fondo suave
+                          prefixIcon: const Icon(
+                            Icons.location_on, // Icono al inicio del campo
+                            color: Color.fromRGBO(6, 66, 106, 1),
+                          ),
+                        ),
                         items: _dormitories.map((String dormitory) {
                           return DropdownMenuItem<String>(
                             value: dormitory,
@@ -275,32 +420,88 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
                         },
                         validator: (value) {
                           if (value == null) {
-                            return 'Seleciona el lugar de control';
+                            return 'Selecciona el lugar de control';
                           }
                           return null;
                         },
                       ),
+                      SizedBox(height: responsive.hp(2)),
                       TextFormField(
                         decoration: InputDecoration(
-                            labelText: 'Matricula del personal ha asignar',
-                            labelStyle:
-                                TextStyle(fontSize: responsive.dp(1.8))),
+                          labelText: 'Matrícula del personal a asignar',
+                          labelStyle: TextStyle(
+                            fontSize: responsive.dp(1.8),
+                            color: Colors.grey[700],
+                          ),
+                          hintText: 'Ingresa la matrícula',
+                          hintStyle: TextStyle(
+                            fontSize: responsive.dp(1.6),
+                            color: Colors.grey[500],
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(6, 66, 106, 1)),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          prefixIcon: const Icon(
+                            Icons.assignment_ind, // Icono al inicio
+                            color: Color.fromRGBO(6, 66, 106, 1),
+                          ),
+                        ),
                         onSaved: (value) {
                           matricula = value;
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Ingresar la matricula a asignar';
+                            return 'Ingresar la matrícula a asignar';
                           }
                           return null;
                         },
                       ),
+                      SizedBox(height: responsive.hp(2)),
                       TextFormField(
                         decoration: InputDecoration(
-                            labelText: 'Contraseña',
-                            labelStyle:
-                                TextStyle(fontSize: responsive.dp(1.8))),
-                        obscureText: true,
+                          labelText: 'Contraseña',
+                          labelStyle: TextStyle(
+                            fontSize: responsive.dp(1.8),
+                            color: Colors.grey[700],
+                          ),
+                          hintText: 'Ingresa la contraseña',
+                          hintStyle: TextStyle(
+                            fontSize: responsive.dp(1.6),
+                            color: Colors.grey[500],
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(6, 66, 106, 1)),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          prefixIcon: const Icon(
+                            Icons.lock_outline, // Icono al inicio
+                            color: Color.fromRGBO(6, 66, 106, 1),
+                          ),
+                        ),
+                        obscureText: true, // Contraseña oculta
                         onSaved: (value) {
                           password = value;
                         },
@@ -312,44 +513,63 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
                         },
                       ),
                       SizedBox(height: responsive.hp(3)),
-                      ElevatedButton(
-                        onPressed: _addUser,
-                        child: Text(
-                          'Crear usuario',
-                          style: TextStyle(fontSize: responsive.dp(1.8)),
+                      SizedBox(
+                        width: responsive.wp(60), // Ancho del botón
+                        child: ElevatedButton(
+                          onPressed: _addUser, // Acción que realiza el botón
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromRGBO(
+                                250, 198, 0, 1), // Color de fondo
+                            padding: EdgeInsets.symmetric(
+                                vertical:
+                                    responsive.hp(1.6)), // Padding interno
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  responsive.wp(10)), // Bordes redondeados
+                            ),
+                          ),
+                          child: Text(
+                            'Crear usuario', // Texto del botón
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: responsive.dp(2), // Tamaño del texto
+                              fontWeight: FontWeight.w700, // Negrita
+                              color: Colors.white, // Color del texto
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
                 SizedBox(height: responsive.hp(1.4)),
-                SizedBox(
-                  height: 300, // Especifica una altura que consideres adecuada
-                  child: ListView.builder(
-                    itemCount: _users.length,
-                    itemBuilder: (context, index) {
-                      final user = _users[index];
-                      return Dismissible(
-                        key: Key(user['Celular']),
-                        direction: DismissDirection.startToEnd,
-                        onDismissed: (direction) {
-                          _deleteUser(index);
-                        },
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerLeft,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: const Icon(Icons.delete, color: Colors.white),
-                        ),
-                        child: ListTile(
-                          title: Text('${user['Nombre']} ${user['Apellidos']}'),
-                          subtitle: Text(
-                              'Gender: ${user['Sexo']} - Phone: ${user['Celular']} - Usuario: ${user['Matricula']} - Password: ${user['Contraseña']}'),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                //SizedBox(
+                //  height: 300, // Especifica una altura que consideres adecuada
+                //  child: ListView.builder(
+                //    itemCount: _users.length,
+                //    itemBuilder: (context, index) {
+                //      final user = _users[index];
+                //      return Dismissible(
+                //        key: Key(user['Celular']),
+                //        direction: DismissDirection.startToEnd,
+                //        onDismissed: (direction) {
+                //          _deleteUser(index);
+                //        },
+                //        background: Container(
+                //          color: Colors.red,
+                //          alignment: Alignment.centerLeft,
+                //          padding: const EdgeInsets.symmetric(horizontal: 20),
+                //          child: const Icon(Icons.delete, color: Colors.white),
+                //        ),
+                //        child: ListTile(
+                //          title: Text('${user['Nombre']} ${user['Apellidos']}'),
+                //          subtitle: Text(
+                //              'Gender: ${user['Sexo']} - Phone: ${user['Celular']} - Usuario: ${user['Matricula']} - Password: ${user['Contraseña']}'),
+                //        ),
+                //      );
+                //    },
+                //  ),
+                //),
               ],
             ),
           ),

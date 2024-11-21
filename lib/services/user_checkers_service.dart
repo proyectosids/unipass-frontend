@@ -34,7 +34,7 @@ class UserCheckersService {
 
   Future<dynamic> deleteChecker(int id) async {
     final response =
-        await http.delete(Uri.parse('$baseUrl/buscarCheckers/$id'));
+        await http.delete(Uri.parse('$baseUrl/EliminarChecker/$id'));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {

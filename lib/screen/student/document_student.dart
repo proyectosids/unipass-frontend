@@ -147,7 +147,7 @@ class _DocumentStudentState extends State<DocumentStudent> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
-    final double padding = responsive.wp(5);
+    final double padding = responsive.wp(3);
     int completedDocuments = documents.values.where((e) => e).length;
     double progress = completedDocuments / documents.length;
     bool isComplete = progress == 1.0;
@@ -175,56 +175,60 @@ class _DocumentStudentState extends State<DocumentStudent> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.all(padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Para solicitar una salida, es necesario tener estos documentos adjuntos en tu aplicación.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Para solicitar una salida, es necesario tener estos documentos adjuntos en tu aplicación.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: 150,
-                  height: 150,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: 120,
-                        height: 120,
-                        child: CircularProgressIndicator(
-                          value: progress,
-                          backgroundColor: Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            isComplete ? Colors.green : Colors.yellow,
+                  SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: CircularProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.grey[300],
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isComplete ? Colors.green : Colors.yellow,
+                            ),
+                            strokeWidth: 10,
                           ),
-                          strokeWidth: 10,
                         ),
-                      ),
-                      Text(
-                        '${(progress * 100).round()}%',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: isComplete ? Colors.green : Colors.yellow,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          '${(progress * 100).round()}%',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: isComplete ? Colors.green : Colors.yellow,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
+                ],
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                physics:
+                    const NeverScrollableScrollPhysics(), // Desactiva el scroll interno
+                shrinkWrap:
+                    true, // Permite que el ListView se ajuste al contenido
                 itemCount: documents.length,
                 itemBuilder: (context, index) {
                   String key = documents.keys.elementAt(index);
@@ -284,8 +288,8 @@ class _DocumentStudentState extends State<DocumentStudent> {
                   );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

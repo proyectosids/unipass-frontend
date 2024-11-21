@@ -60,7 +60,10 @@ class _HomeDepartamentState extends State<HomeDepartament> {
         checks.addAll(checksFin);
       } else {
         // En caso de que sea vigilancia, obtener ambos tipos en un solo servicio
-        checks = await _checksService.obtenerChecksVigilancia();
+        final checksSalida = await _checksService.obtenerChecksVigilancia();
+        final checksFin = await _checksService.obtenerChecksVigilanciaRegreso();
+        checks.addAll(checksSalida);
+        checks.addAll(checksFin);
       }
 
       setState(() {

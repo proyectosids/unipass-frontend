@@ -37,6 +37,7 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(3);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -71,52 +72,64 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
         ],
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('¿Qué haremos hoy?', style: TextStyle(fontSize: 24)),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                _buildStatusButton('Avisos', isAvisosSelected),
-                const SizedBox(width: 8),
-                _buildStatusButton('Solicitudes', !isAvisosSelected),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildCards(),
-            const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  final result = await Navigator.pushNamed(
-                    context,
-                    '/noticePreceptor',
-                  );
-                  if (result != null && result is Map<String, String>) {
-                    setState(() {
-                      _notices.add(result);
-                    });
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text('Crear aviso',
-                    style: TextStyle(color: Colors.white)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('¿Qué haremos hoy?', style: TextStyle(fontSize: 24)),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  _buildStatusButton('Avisos', isAvisosSelected),
+                  const SizedBox(width: 8),
+                  _buildStatusButton('Solicitudes', !isAvisosSelected),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-            const Text('Recientes', style: TextStyle(fontSize: 24)),
-            _buildActivityList(),
-          ],
+              const SizedBox(height: 16),
+              _buildCards(),
+              const SizedBox(height: 16),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final result = await Navigator.pushNamed(
+                      context,
+                      '/noticePreceptor',
+                    );
+                    if (result != null && result is Map<String, String>) {
+                      setState(() {
+                        _notices.add(result);
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text('Crear aviso',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text('Recientes', style: TextStyle(fontSize: 24)),
+              _buildActivityList(), // Ajustado para que no use Expanded
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildActivityList() {
+    return Column(
+      children: [
+        _buildActivityItem('Salida al pueblo alumno 11', 'hace 2 horas'),
+        _buildActivityItem('Salida al pueblo alumno 152', 'hace 3 horas'),
+        _buildActivityItem('Salida especial alumno 74', 'hace 5 horas'),
+      ],
     );
   }
 
@@ -239,17 +252,17 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
     );
   }
 
-  Widget _buildActivityList() {
-    return Expanded(
-      child: ListView(
-        children: [
-          _buildActivityItem('Salida al pueblo alumno 11', 'hace 2 horas'),
-          _buildActivityItem('Salida al pueblo alumno 152', 'hace 3 horas'),
-          _buildActivityItem('Salida especial alumno 74', 'hace 5 horas'),
-        ],
-      ),
-    );
-  }
+  //Widget _buildActivityList() {
+  //  return Expanded(
+  //    child: ListView(
+  //      children: [
+  //        _buildActivityItem('Salida al pueblo alumno 11', 'hace 2 horas'),
+  //        _buildActivityItem('Salida al pueblo alumno 152', 'hace 3 horas'),
+  //        _buildActivityItem('Salida especial alumno 74', 'hace 5 horas'),
+  //      ],
+  //    ),
+  //  );
+  //}
 
   Widget _buildActivityItem(String title, String subtitle) {
     return Card(

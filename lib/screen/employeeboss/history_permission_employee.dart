@@ -91,24 +91,24 @@ class _PermissionAuthorizationEmployeeState
         ),
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //_buildHeader(),
-            //SizedBox(height: responsive.hp(1)),
-            _buildDatePicker(),
-            //SizedBox(height: responsive.hp(2)),
-            const Text(
-              'Salidas',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: responsive.hp(1.5)),
-            Expanded(
-              child: _buildPermissionList(), // Usar la lista filtrada aquí
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDatePicker(),
+              const Text(
+                'Salidas',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: responsive.hp(1.5)),
+              SizedBox(
+                height: 400, // Altura fija para la lista
+                child: _buildPermissionList(), // Lista de permisos
+              ),
+            ],
+          ),
         ),
       ),
     );

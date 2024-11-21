@@ -63,6 +63,20 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
     }
   }
 
+  Future<void> _deleteUser(int id) async {
+    try {
+      await _userCheckersService.deleteChecker(id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Actividad cambiada exitosamente')),
+      );
+      _fetchCheckers();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cambiar actividad: $e')),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -102,56 +116,95 @@ class _CreateProfileChecksState extends State<CreateProfileChecks> {
         body: Padding(
           padding: EdgeInsets.all(padding),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espaciado
             children: [
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : Expanded(
-                      child: ListView.builder(
-                        itemCount: _checkers.length,
-                        itemBuilder: (context, index) {
-                          final checker = _checkers[index];
-                          return GestureDetector(
-                            onLongPress: () {
-                              _changeActivity(
-                                checker['IdLogin'],
-                                0,
-                                checker['Matricula'],
-                              );
-                            },
-                            child: Card(
-                              child: ListTile(
-                                title: Text(
-                                    '${checker['Nombre']} ${checker['Apellidos']}'),
-                                subtitle:
-                                    Text('Matrícula: ${checker['Matricula']}'),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      if (_isLoading)
+                        const CircularProgressIndicator()
+                      else
+                        ListView.builder(
+                          shrinkWrap: true, // Ajusta su tamaño al contenido
+                          physics:
+                              const NeverScrollableScrollPhysics(), // Sin scroll interno
+                          itemCount: _checkers.length,
+                          itemBuilder: (context, index) {
+                            final checker = _checkers[index];
+                            return GestureDetector(
+                              onLongPress: () {
+                                _deleteUser(checker['IdLogin']);
+                              },
+                              child: Card(
+                                child: ListTile(
+                                  title: Text(
+                                      '${checker['Nombre']} ${checker['Apellidos']}'),
+                                  subtitle: Text(
+                                      'Matrícula: ${checker['Matricula']}'),
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                            );
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
-                    onPressed: _fetchCheckers,
-                    child: Text(
-                      'Actualizar Lista',
-                      style: TextStyle(fontSize: responsive.dp(1.8)),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _fetchCheckers,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
+                        padding:
+                            EdgeInsets.symmetric(vertical: responsive.hp(1.6)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              responsive.wp(10)), // Bordes redondeados
+                        ),
+                      ),
+                      child: Text(
+                        'Actualizar Lista',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: responsive.dp(2),
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final result = await Navigator.pushNamed(
-                          context, '/CreateUserChecks');
-                      if (result == true) {
-                        // Refrescar la lista si se creó un usuario
-                        _fetchCheckers();
-                      }
-                    },
-                    child: Text(
-                      'Crear Usuario',
-                      style: TextStyle(fontSize: responsive.dp(1.8)),
+                  SizedBox(width: responsive.wp(2)), // Espaciado entre botones
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final result = await Navigator.pushNamed(
+                            context, '/CreateUserChecks');
+                        if (result == true) {
+                          _fetchCheckers();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
+                        padding:
+                            EdgeInsets.symmetric(vertical: responsive.hp(1.6)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              responsive.wp(10)), // Bordes redondeados
+                        ),
+                      ),
+                      child: Text(
+                        'Crear Usuario',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: responsive.dp(2),
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ],

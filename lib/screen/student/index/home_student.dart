@@ -62,25 +62,28 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.all(padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('¿Qué haremos hoy?',
-                style: TextStyle(fontSize: responsive.dp(2.4))),
-            SizedBox(height: responsive.hp(1.8)),
-            Row(
-              children: [
-                _buildStatusButton('Avisos', isAvisosSelected),
-                SizedBox(width: responsive.wp(3)),
-                _buildStatusButton('En proceso', !isAvisosSelected),
-              ],
-            ),
-            SizedBox(height: responsive.hp(1.5)),
-            _buildCards(),
-            SizedBox(height: responsive.hp(1.5)),
-            Text('Actividad', style: TextStyle(fontSize: responsive.dp(2.2))),
-            _buildActivityList(),
-          ],
+        child: SingleChildScrollView(
+          // Envuelve el contenido en SingleChildScrollView
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('¿Qué haremos hoy?',
+                  style: TextStyle(fontSize: responsive.dp(2.4))),
+              SizedBox(height: responsive.hp(1.8)),
+              Row(
+                children: [
+                  _buildStatusButton('Avisos', isAvisosSelected),
+                  SizedBox(width: responsive.wp(3)),
+                  _buildStatusButton('En proceso', !isAvisosSelected),
+                ],
+              ),
+              SizedBox(height: responsive.hp(1.5)),
+              _buildCards(),
+              SizedBox(height: responsive.hp(1.5)),
+              Text('Actividad', style: TextStyle(fontSize: responsive.dp(2.2))),
+              _buildActivityList(), // Ya maneja un ListView para la actividad
+            ],
+          ),
         ),
       ),
     );
@@ -196,14 +199,15 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
   }
 
   Widget _buildActivityList() {
-    return Expanded(
-      child: ListView(
-        children: [
-          _buildActivityItem('Salida al pueblo', 'hace 12 horas'),
-          _buildActivityItem('Salida al pueblo', 'hace 5 días'),
-          _buildActivityItem('Salida especial', 'hace 15 días'),
-        ],
-      ),
+    return ListView(
+      shrinkWrap: true, // Permite anidar dentro de un SingleChildScrollView
+      physics:
+          NeverScrollableScrollPhysics(), // Evita el desplazamiento interno
+      children: [
+        _buildActivityItem('Salida al pueblo', 'hace 12 horas'),
+        _buildActivityItem('Salida al pueblo', 'hace 5 días'),
+        _buildActivityItem('Salida especial', 'hace 15 días'),
+      ],
     );
   }
 

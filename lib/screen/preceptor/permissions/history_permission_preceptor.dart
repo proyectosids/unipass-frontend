@@ -119,24 +119,26 @@ class _HistoryPermissionAuthorizationState
         ),
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //_buildHeader(),
-            //SizedBox(height: responsive.hp(1)),
-            _buildDatePicker(),
-            //SizedBox(height: responsive.hp(2)),
-            const Text(
-              'Salidas',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: responsive.hp(1.5)),
-            Expanded(
-              child: _buildPermissionList(), // Usar la lista filtrada aquí
-            ),
-          ],
+      body: SingleChildScrollView(
+        // Aquí envolvemos el contenido con SingleChildScrollView
+        child: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDatePicker(),
+              const Text(
+                'Salidas',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: responsive.hp(1.5)),
+              // La lista aún necesita un Expanded para que funcione correctamente
+              SizedBox(
+                height: responsive.hp(50), // Limitar el tamaño máximo
+                child: _buildPermissionList(), // Usar la lista filtrada aquí
+              ),
+            ],
+          ),
         ),
       ),
     );

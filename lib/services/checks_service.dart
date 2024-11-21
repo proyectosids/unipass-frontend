@@ -63,6 +63,19 @@ class ChecksService {
     }
   }
 
+  Future<List<dynamic>> obtenerChecksVigilanciaRegreso() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/checksVigilanciaRegreso'),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data ?? []; // Devuelve una lista vacía si la respuesta es null
+    } else {
+      throw Exception('Error al obtener los checks de vigilancia');
+    }
+  }
+
   // Servicio para actualizar el estado del Check
   Future<void> actualizarEstadoCheck(
       int idCheck, String estado, String observacion) async {
