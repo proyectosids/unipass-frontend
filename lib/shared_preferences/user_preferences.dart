@@ -118,4 +118,30 @@ class AuthUtils {
     await prefs.remove('nombre');
     await prefs.remove('apellidos');
   }
+
+  // Métodos para documentos
+  static Future<void> saveDocumentState(
+      String documentName, bool isUploaded, String? fileName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('${documentName}_isUploaded', isUploaded);
+    if (fileName != null) {
+      await prefs.setString('${documentName}_fileName', fileName);
+    }
+  }
+
+  static Future<bool?> getDocumentState(String documentName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('${documentName}_isUploaded');
+  }
+
+  static Future<String?> getDocumentFile(String documentName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('${documentName}_fileName');
+  }
+
+  static Future<void> clearDocumentState(String documentName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('${documentName}_isUploaded');
+    await prefs.remove('${documentName}_fileName');
+  }
 }

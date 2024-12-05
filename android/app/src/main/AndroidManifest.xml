@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
-    package="com.example.learning">
+    package="com.irvingdesarrolla.UNIPASS">
     
     <queries>
         <!-- Permitir que la aplicación consulte aplicaciones que pueden manejar el esquema 'tel' -->
@@ -23,7 +23,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:label="flutter_application_unipass"
+        android:label="UNIPASS"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         
