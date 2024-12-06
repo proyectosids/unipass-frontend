@@ -33,6 +33,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
           },
         ),
       ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
