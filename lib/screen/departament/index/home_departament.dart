@@ -72,7 +72,11 @@ class _HomeDepartamentState extends State<HomeDepartament> {
             .where((check) => check['Accion'] == 'SALIDA')
             .map((check) => {
                   'idCheck': check['IdCheck'],
+                  'idUser': check['IdUser'],
                   'name': check['Nombre'],
+                  'apellidos': check['Apellidos'],
+                  'matricula': check['Matricula'],
+                  'tipoSalida': check['Descripcion'],
                   'Estatus': check['Estatus'],
                 })
             .toList();
@@ -83,6 +87,9 @@ class _HomeDepartamentState extends State<HomeDepartament> {
             .map((check) => {
                   'idCheck': check['IdCheck'],
                   'name': check['Nombre'],
+                  'apellidos': check['Apellidos'],
+                  'matricula': check['Matricula'],
+                  'tipoSalida': check['Descripcion'],
                   'Estatus': check['Estatus'],
                   'linkedSalida': _salidaChecks.firstWhere(
                       (salidaCheck) =>
@@ -216,11 +223,21 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                   },
                                   child: CheckboxListTile(
                                     title: Text(
-                                        '${_selectedIndex == 0 ? 'Salida' : 'Retorno'} de ${check['name']}'),
-                                    subtitle: Text(isApproved
-                                        ? 'Confirmada'
-                                        : 'No Confirmada'),
-                                    value: isApproved,
+                                        '${_selectedIndex == 0 ? 'Salida' : 'Retorno'}: ${check['name']} ${check['apellidos']}'),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            'Matrícula: ${check['matricula']}'),
+                                        Text(
+                                            'Tipo de salida: ${check['tipoSalida']}'),
+                                        Text(check['Estatus'] == "Confirmada"
+                                            ? 'Estatus: Confirmada'
+                                            : 'Estatus: No Confirmada'),
+                                      ],
+                                    ),
+                                    value: check['Estatus'] == "Confirmada",
                                     onChanged: (bool? value) async {
                                       if (value != null) {
                                         String estado = value
@@ -234,24 +251,13 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                         setState(() {
                                           check['Estatus'] = estado;
                                         });
-
-                                        Future.delayed(
-                                            const Duration(seconds: 2), () {
-                                          setState(() {
-                                            if (_selectedIndex == 0 &&
-                                                index < _salidaChecks.length) {
-                                              _salidaChecks.removeAt(index);
-                                            } else if (_selectedIndex == 1 &&
-                                                index < _retornoChecks.length) {
-                                              _retornoChecks.removeAt(index);
-                                            }
-                                          });
-                                        });
                                       }
                                     },
                                     secondary: Icon(
-                                      isApproved ? Icons.check : Icons.close,
-                                      color: isApproved
+                                      check['Estatus'] == "Confirmada"
+                                          ? Icons.check
+                                          : Icons.close,
+                                      color: check['Estatus'] == "Confirmada"
                                           ? Colors.green
                                           : Colors.red,
                                     ),
