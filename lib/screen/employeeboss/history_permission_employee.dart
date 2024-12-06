@@ -218,7 +218,7 @@ class _PermissionAuthorizationEmployeeState
   Widget _buildPermissionItem(BuildContext context, String title, String date,
       String dateE, String status, Permission permission) {
     final Responsive responsive = Responsive.of(context);
-    DateTime parsedDate = DateTime.parse(date); // Restar 6 horas
+    DateTime parsedDate = DateTime.parse(date);
     DateTime parsedDateE = DateTime.parse(dateE); // Restar 6 horas
 
     String formattedDate =
@@ -227,8 +227,8 @@ class _PermissionAuthorizationEmployeeState
         DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDateE);
 
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
+      onTap: () async {
+        final result = await Navigator.pushNamed(
           context,
           '/infoPermission',
           arguments: {
@@ -249,6 +249,10 @@ class _PermissionAuthorizationEmployeeState
             'IdSalida': permission.idsalida,
           },
         );
+
+        if (result == true) {
+          _loadPermissions();
+        }
       },
       child: Card(
         color: Colors.white70,
@@ -263,8 +267,7 @@ class _PermissionAuthorizationEmployeeState
           title: Text(
             title,
             style: TextStyle(fontSize: responsive.dp(1.5)),
-            overflow: TextOverflow
-                .ellipsis, // Truncar el texto con puntos suspensivos
+            overflow: TextOverflow.ellipsis, // Agrega los puntos suspensivos
             maxLines: 1, // Limitar a 1 línea
           ),
           subtitle: Column(
@@ -272,8 +275,7 @@ class _PermissionAuthorizationEmployeeState
             children: [
               Text(
                 formattedDateE,
-                overflow: TextOverflow
-                    .ellipsis, // Truncar el texto con puntos suspensivos
+                overflow: TextOverflow.ellipsis, // Puntos suspensivos si excede
                 maxLines: 1, // Limitar a 1 línea
               ),
               const SizedBox(height: 4),
@@ -284,16 +286,16 @@ class _PermissionAuthorizationEmployeeState
                     child: Text(
                       status,
                       style: TextStyle(color: _getStatusColor(status)),
-                      overflow: TextOverflow.ellipsis, // Truncar el texto
-                      maxLines: 1, // Limitar a 1 línea
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
                   const SizedBox(width: 25),
                   Flexible(
                     child: Text(
                       formattedDate,
-                      overflow: TextOverflow.ellipsis, // Truncar el texto
-                      maxLines: 1, // Limitar a 1 línea
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
                 ],

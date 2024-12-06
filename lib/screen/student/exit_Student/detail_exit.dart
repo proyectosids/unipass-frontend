@@ -1,4 +1,5 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:intl/intl.dart';
 
 class ExitDetailScreen extends StatefulWidget {
   static const routeName = '/exitDetail';
@@ -145,6 +146,17 @@ class _ExitDetailScreenState extends State<ExitDetailScreen> {
   }
 
   Widget _buildDetailItem(String title, String value) {
+    // Intenta parsear el valor como una fecha para formatearla
+    String formattedValue = value;
+    try {
+      DateTime parsedDate = DateTime.parse(value);
+      formattedValue =
+          DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
+    } catch (e) {
+      // Si ocurre un error al parsear, deja el valor como está
+      formattedValue = value;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -154,9 +166,8 @@ class _ExitDetailScreenState extends State<ExitDetailScreen> {
             title,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 1),
           Text(
-            value,
+            formattedValue,
             style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),
           const Divider(color: Colors.orange, thickness: 1),
