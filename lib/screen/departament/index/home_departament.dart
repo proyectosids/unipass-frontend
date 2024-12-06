@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/config/config_url.dart';
 import 'package:flutter_application_unipass/services/checks_service.dart';
+import 'package:flutter_application_unipass/services/document_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +21,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
   String? nombre;
   String? apellidos;
   int _selectedIndex = 0;
+  final DocumentService _DocumentService = DocumentService();
   List<Map<String, dynamic>> _salidaChecks = [];
   List<Map<String, dynamic>> _retornoChecks = [];
   bool isLoading = true;
@@ -47,11 +50,11 @@ class _HomeDepartamentState extends State<HomeDepartament> {
     setState(() {
       isLoading = true;
     });
+
     try {
       List<dynamic> checks = [];
 
       if (idDormitorio != 0) {
-        // Obtener checks de salida y retorno por dormitorio
         final checksSalida =
             await _checksService.obtenerChecksDormitorio(idDormitorio!);
         final checksFin =
@@ -59,29 +62,37 @@ class _HomeDepartamentState extends State<HomeDepartament> {
         checks.addAll(checksSalida);
         checks.addAll(checksFin);
       } else {
-        // En caso de que sea vigilancia, obtener ambos tipos en un solo servicio
         final checksSalida = await _checksService.obtenerChecksVigilancia();
         final checksFin = await _checksService.obtenerChecksVigilanciaRegreso();
         checks.addAll(checksSalida);
         checks.addAll(checksFin);
       }
 
+      for (var check in checks) {
+        // Llama al servicio para obtener la foto de perfil
+        String? relativeImageUrl =
+            await _DocumentService.getProfile(check['IdUser'], 8);
+        String? fullImageUrl =
+            relativeImageUrl != null ? '$baseUrl$relativeImageUrl' : null;
+
+        // Agrega la URL completa de la foto a cada check
+        check['profilePic'] = fullImageUrl;
+      }
+
       setState(() {
-        // Procesar checks de salida
         _salidaChecks = checks
             .where((check) => check['Accion'] == 'SALIDA')
             .map((check) => {
                   'idCheck': check['IdCheck'],
-                  'idUser': check['IdUser'],
                   'name': check['Nombre'],
                   'apellidos': check['Apellidos'],
                   'matricula': check['Matricula'],
                   'tipoSalida': check['Descripcion'],
                   'Estatus': check['Estatus'],
+                  'profilePic': check['profilePic'],
                 })
             .toList();
 
-        // Procesar checks de retorno
         _retornoChecks = checks
             .where((check) => check['Accion'] == 'RETORNO')
             .map((check) => {
@@ -91,15 +102,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                   'matricula': check['Matricula'],
                   'tipoSalida': check['Descripcion'],
                   'Estatus': check['Estatus'],
-                  'linkedSalida': _salidaChecks.firstWhere(
-                      (salidaCheck) =>
-                          salidaCheck['name'] == check['Nombre'] &&
-                          salidaCheck['Estatus'] == 'Confirmada',
-                      orElse: () => {
-                            'idCheck': null,
-                            'name': check['Nombre'],
-                            'Estatus': 'No Confirmada',
-                          }),
+                  'profilePic': check['profilePic'],
                 })
             .toList();
 
@@ -222,6 +225,15 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                     });
                                   },
                                   child: CheckboxListTile(
+                                    secondary: CircleAvatar(
+                                      radius: 25,
+                                      backgroundImage: check['profilePic'] !=
+                                              null
+                                          ? NetworkImage(check['profilePic'])
+                                          : AssetImage(
+                                                  'assets/default_profile.png')
+                                              as ImageProvider,
+                                    ),
                                     title: Text(
                                         '${_selectedIndex == 0 ? 'Salida' : 'Retorno'}: ${check['name']} ${check['apellidos']}'),
                                     subtitle: Column(
@@ -243,24 +255,27 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                         String estado = value
                                             ? "Confirmada"
                                             : "No Confirmada";
+
+                                        // Actualiza el estado del check
                                         await _checksService
                                             .actualizarEstadoCheck(
                                                 check['idCheck'],
                                                 estado,
                                                 "Ninguna");
+
+                                        // Actualiza la lista para eliminar el elemento marcado
                                         setState(() {
                                           check['Estatus'] = estado;
+
+                                          // Elimina el check si está confirmado y pertenece a la lista actual
+                                          if (_selectedIndex == 0) {
+                                            _salidaChecks.remove(check);
+                                          } else if (_selectedIndex == 1) {
+                                            _retornoChecks.remove(check);
+                                          }
                                         });
                                       }
                                     },
-                                    secondary: Icon(
-                                      check['Estatus'] == "Confirmada"
-                                          ? Icons.check
-                                          : Icons.close,
-                                      color: check['Estatus'] == "Confirmada"
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ),
                                   ),
                                 ),
                               );
