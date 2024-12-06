@@ -29,7 +29,7 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
     if (_matriculaInfo == null) return;
 
     final url =
-        Uri.parse('$baseUrl/cambiarCargo/${_matriculaInfo['Matricula']}');
+        Uri.parse('$baseUrl/terminarCargo/${_matriculaInfo['Matricula']}');
 
     try {
       final response = await http.put(

@@ -96,6 +96,8 @@ class AuthServices {
     final response = await http.get(Uri.parse('$baseUrl/buscarUser/$nombre'));
 
     if (response.statusCode == 200) {
+      print(response.body);
+
       final decodedResponse = json.decode(response.body);
       if (decodedResponse is List) {
         return decodedResponse; // Retorna la lista de usuarios
