@@ -4,7 +4,7 @@ import 'package:flutter_application_unipass/config/config_url.dart';
 
 class AuthorizeService {
   Future<void> asignarAuthorice(
-      int idEmpleado, int noDepto, int idPermission) async {
+      int idEmpleado, int noDepto, int idPermission, String Status) async {
     final response = await http.post(Uri.parse('$baseUrl/authorize'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(
@@ -12,6 +12,7 @@ class AuthorizeService {
             "IdEmpleado": '$idEmpleado',
             "NoDepto": '$noDepto',
             "IdPermission": '$idPermission',
+            "StatusAuthorize": Status,
           },
         ));
 

@@ -105,29 +105,38 @@ class PermissionService {
         final encFinanzasEst = await _registerService.getEncargadoDepto(265);
         final coordinador = await _registerService.getCordinador(matricula!);
         final encVidaUtil = await _registerService.getEncargadoDepto(333);
-        await _authorizeService.asignarAuthorice(encBiblio!, 204, idPermission);
         await _authorizeService.asignarAuthorice(
-            encFinanzasEst!, 265, idPermission);
+            encBiblio!, 204, idPermission, 'Pendiente');
+        await _authorizeService.asignarAuthorice(
+            encFinanzasEst!, 265, idPermission, 'Pendiente');
         await _authorizeService.asignarAuthorice(
             int.tryParse(coordinador!['empMatricula'].toString()) ?? 0,
             int.tryParse(coordinador['IdDepartamento'].toString()) ?? 0,
-            idPermission);
+            idPermission,
+            'Pendiente');
         await _authorizeService.asignarAuthorice(
-            encVidaUtil!, 333, idPermission);
+            encVidaUtil!, 333, idPermission, 'Pendiente');
         await _authorizeService.asignarAuthorice(
-            idPrece!, asigPreceptor, idPermission);
+            idPrece!, asigPreceptor, idPermission, 'Pendiente');
       }
 
       if (idPrece != idJefe && diaSemana != 6 && idTipoSalida == 1) {
+        final coordinador = await _registerService.getCordinador(matricula!);
         await _authorizeService.asignarAuthorice(
-            idJefe!, idDepto!, idPermission);
+            idJefe!, idDepto!, idPermission, 'Pendiente');
         await _authorizeService.asignarAuthorice(
-            idPrece!, asigPreceptor, idPermission);
+            idPrece!, asigPreceptor, idPermission, 'Pendiente');
+        //Se manda aprobada para que solo el coordinaron pueda visualizar la salidas como historial
+        await _authorizeService.asignarAuthorice(
+            int.tryParse(coordinador!['empMatricula'].toString()) ?? 0,
+            int.tryParse(coordinador['IdDepartamento'].toString()) ?? 0,
+            idPermission,
+            'Aprobado');
       } else if (idPrece == idJefe || idTipoSalida == 2 || idTipoSalida == 3) {
         // Verifica si es sábado (6)
         // Aquí puedes manejar el caso cuando la fecha de salida es sábado
         await _authorizeService.asignarAuthorice(
-            idPrece!, asigPreceptor, idPermission);
+            idPrece!, asigPreceptor, idPermission, 'Pendiente');
         print("La fecha de salida es un sábado.");
       }
 

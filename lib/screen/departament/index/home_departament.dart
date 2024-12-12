@@ -285,6 +285,11 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                 ),
               ],
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _fetchChecks,
+        child: const Icon(Icons.refresh),
+        backgroundColor: Colors.deepPurple,
+      ),
     );
   }
 
