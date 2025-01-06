@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/models/authorization.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_application_unipass/config/config_url.dart';
@@ -68,6 +69,17 @@ class AuthorizeService {
       return json.decode(response.body);
     } else {
       throw Exception('Error al asignar la authorizacion');
+    }
+  }
+
+  Future<List<Authorization>> fetchAuthorizations(int idPermission) async {
+    final uri = Uri.parse('$baseUrl/progresAuthorize/$idPermission');
+    final response = await http.get(uri);
+    if (response.statusCode == 200) {
+      List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map((json) => Authorization.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load authorizations');
     }
   }
 }

@@ -464,6 +464,7 @@ class _ExitStudentState extends State<ExitStudent> {
           context,
           '/exitDetail',
           arguments: {
+            'IdPermission': permission.id,
             'TipoSalida': permission.descripcion,
             'NombreAlumno': permission.nombre,
             'ApellidosAlumno': permission.apellidos,
