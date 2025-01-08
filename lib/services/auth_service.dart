@@ -113,4 +113,43 @@ class AuthServices {
       throw Exception('Failed to search user info: ${response.statusCode}');
     }
   }
+
+  //Funciones para los Token FCM
+  Future<bool> updateTokenFCM(String matricula, String tokenFCM) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/TokenDispositivo/$matricula'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'TokenCFM': tokenFCM}),
+      );
+
+      if (response.statusCode == 200) {
+        return true; // Token actualizado correctamente
+      } else {
+        throw Exception('Failed to update token FCM: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Exception when updating token FCM: $e');
+    }
+  }
+
+  Future<String?> searchTokenFCM(String matricula) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/VerToken/$matricula'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data.isNotEmpty ? data[0]['TokenCFM'] : null;
+      } else if (response.statusCode == 404) {
+        return null; // No se encontró el token
+      } else {
+        throw Exception('Failed to fetch token FCM: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Exception when fetching token FCM: $e');
+    }
+  }
 }

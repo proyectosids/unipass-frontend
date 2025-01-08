@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_application_unipass/models/users.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart'; // Importar el servicio de registro
@@ -91,6 +92,24 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
           String tipoUser = result['user']['TipoUser'];
           String userId = result['user']['Matricula'];
           String newUserId = userId.replaceFirst('MTR', '');
+          try {
+            final String userId = result['user']['Matricula'];
+            final String? currentToken =
+                await _authService.searchTokenFCM(userId);
+            final String? newToken =
+                await FirebaseMessaging.instance.getToken();
+
+            print('Current Token: $currentToken');
+            print('New Token: $newToken');
+
+            if (newToken != null &&
+                (currentToken == null || currentToken != newToken)) {
+              await _authService.updateTokenFCM(userId, newToken);
+            }
+          } catch (e) {
+            print('Error handling Firebase token: $e');
+            // Considera cómo manejar este error, quizás mostrando un mensaje al usuario.
+          }
 
           // Guardar idDormitorio en SharedPreferences
           if (tipoUser == 'DEPARTAMENTO' || tipoUser == 'PRECEPTOR') {
