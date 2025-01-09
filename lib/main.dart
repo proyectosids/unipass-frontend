@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_application_unipass/api/firebase_api.dart';
 import 'package:flutter_application_unipass/screen/checkspoint/form_create_user.dart';
 import 'package:flutter_application_unipass/screen/preceptor/delegate_user.dart';
+import 'package:flutter_application_unipass/services/local_notification.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 void main() async {
@@ -10,6 +11,7 @@ void main() async {
   bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await LocalNotification.requestPermissionLocalNotifications();
   await FirebaseApi().initNotifications();
   runApp(MyApp(isFirstTime: isFirstTime));
 }

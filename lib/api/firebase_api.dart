@@ -1,21 +1,57 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-
-Future<void> handlerBackgroundMessage(RemoteMessage message) async {
-  print('Title: ${message.notification?.title}');
-  print('Body: ${message.notification?.body}');
-  print('Payload: ${message.data}');
-}
+import 'package:flutter_application_unipass/services/local_notification.dart';
 
 class FirebaseApi {
-  final FirebaseMessaging _firebasemessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  FirebaseApi() {
+    initNotifications();
+  }
 
   Future<void> initNotifications() async {
-    // Solicitar permisos de notificación
-    await _firebasemessaging.requestPermission();
-    final fCMToken = await _firebasemessaging.getToken();
-    print('Token: $fCMToken');
+    await _firebaseMessaging.requestPermission();
 
-    // Gestiona los mensajes en segundo plano
-    FirebaseMessaging.onBackgroundMessage(handlerBackgroundMessage);
+    final fCMToken = await _firebaseMessaging.getToken();
+    print('FCM Token: $fCMToken');
+
+    // Configura el manejo de mensajes en segundo plano
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // Configura el manejo de mensajes cuando la app está en primer plano
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _handleMessage(message);
+    });
+
+    // Configura el manejo de mensajes cuando la app se inicia desde una notificación cerrada
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null) {
+        _handleMessage(message);
+      }
+    });
+
+    // Configura el manejo de mensajes cuando la app se abre desde una notificación en segundo plano
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _handleMessage(message);
+    });
+  }
+
+  static Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    print("Handling a background message: ${message.messageId}");
+    // Aquí puedes agregar más lógica según los datos recibidos
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    // Este método centraliza el manejo de notificaciones
+    if (message.notification != null) {
+      LocalNotification.showLocalNotification(
+        id: 0,
+        title: message.notification!.title ?? 'No title',
+        body: message.notification!.body ?? 'No body',
+        data: message.data.toString(),
+      );
+    }
   }
 }
