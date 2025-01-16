@@ -14,15 +14,12 @@ class FirebaseApi {
     final fCMToken = await _firebaseMessaging.getToken();
     print('FCM Token: $fCMToken');
 
-    // Configura el manejo de mensajes en segundo plano
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Configura el manejo de mensajes cuando la app está en primer plano
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _handleMessage(message);
     });
 
-    // Configura el manejo de mensajes cuando la app se inicia desde una notificación cerrada
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) {
@@ -31,7 +28,6 @@ class FirebaseApi {
       }
     });
 
-    // Configura el manejo de mensajes cuando la app se abre desde una notificación en segundo plano
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _handleMessage(message);
     });
@@ -40,18 +36,26 @@ class FirebaseApi {
   static Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     print("Handling a background message: ${message.messageId}");
-    // Aquí puedes agregar más lógica según los datos recibidos
   }
 
   void _handleMessage(RemoteMessage message) {
-    // Este método centraliza el manejo de notificaciones
-    if (message.notification != null) {
-      LocalNotification.showLocalNotification(
-        id: 0,
-        title: message.notification!.title ?? 'No title',
-        body: message.notification!.body ?? 'No body',
-        data: message.data.toString(),
-      );
-    }
+    int notificationId =
+        DateTime.now().millisecondsSinceEpoch.remainder(100000);
+
+    // Llama a showLocalNotification para cada mensaje individual
+    LocalNotification.showLocalNotification(
+      id: notificationId,
+      title: message.notification?.title ?? 'No title',
+      body: message.notification?.body ?? 'No body',
+      data: message.data.toString(),
+      groupKey: 'com.tuapp.group_key',
+    );
+
+    // Llama a showGroupSummaryNotification para mantener el resumen del grupo actualizado
+    LocalNotification.showGroupSummaryNotification(
+      groupKey: 'com.tuapp.group_key',
+      title: "Notificaciones Agrupadas",
+      body: "Tienes nuevas notificaciones agrupadas.",
+    );
   }
 }

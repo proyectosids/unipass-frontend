@@ -4,22 +4,16 @@ class LocalNotification {
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  static Future<void> requestPermissionLocalNotifications() async {
-    // Este método es específicamente para iOS, para Android no es necesario.
-  }
-
   static Future<void> initializeLocalNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('launcher_icon');
+    final AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('ic_launcher_foreground');
 
-    const InitializationSettings initializationSettings =
+    final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
     );
 
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-    );
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   static Future<void> showLocalNotification({
@@ -27,17 +21,24 @@ class LocalNotification {
     String? title,
     String? body,
     String? data,
+    required String groupKey,
+    bool isGroupSummary = false,
   }) async {
-    const AndroidNotificationDetails androidDetails =
+    final String groupChannelId = 'group_channel_id';
+    final String groupChannelName = 'Group Channel';
+
+    final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-      'channelId',
-      'channelName',
+      groupChannelId,
+      groupChannelName,
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
+      groupKey: groupKey,
+      setAsGroupSummary: isGroupSummary,
     );
 
-    const NotificationDetails notificationDetails = NotificationDetails(
+    final NotificationDetails notificationDetails = NotificationDetails(
       android: androidDetails,
     );
 
@@ -46,6 +47,22 @@ class LocalNotification {
       title,
       body,
       notificationDetails,
+      payload: data,
+    );
+  }
+
+  static Future<void> showGroupSummaryNotification({
+    required String groupKey,
+    String? title,
+    String? body,
+    int id = 9999, // ID estático para el resumen del grupo
+  }) async {
+    showLocalNotification(
+      id: id,
+      title: title,
+      body: body,
+      groupKey: groupKey,
+      isGroupSummary: true,
     );
   }
 }

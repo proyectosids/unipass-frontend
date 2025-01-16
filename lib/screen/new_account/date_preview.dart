@@ -352,21 +352,23 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                             //    ? user.correoInstitucional
                             //    : user.emailInstitucional);
 
-                            if (userData.type == 'EMPLEADO') {
-                              final registerService = RegisterService();
-                              bool? validojefe =
-                                  await registerService.getValidarJefe(userData
-                                      .employees![0].matricula
-                                      .toString());
-                              if (validojefe != true) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'El usuario no es un jefe de departamento')),
-                                );
-                                return;
-                              }
-                            }
+                            //Analizar el flujo del negocio que cualquier empleado pueda ingresar para poder delegar
+                            // la autoridad de jefe cuando esta indispuesto o fuera de sus capacidades
+                            //if (userData.type == 'EMPLEADO') {
+                            //  final registerService = RegisterService();
+                            //  bool? validojefe =
+                            //      await registerService.getValidarJefe(userData
+                            //          .employees![0].matricula
+                            //          .toString());
+                            //  if (validojefe != true) {
+                            //    ScaffoldMessenger.of(context).showSnackBar(
+                            //      const SnackBar(
+                            //          content: Text(
+                            //              'El usuario no es un jefe de departamento')),
+                            //    );
+                            //    return;
+                            //  }
+                            //}
                             if (userData.type == 'ALUMNO') {
                               if (!isAlumno ||
                                   userData.students![0].residencia !=

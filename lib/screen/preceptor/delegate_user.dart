@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_unipass/config/config_url.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
+import 'package:flutter_application_unipass/services/notification_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
 import 'package:http/http.dart' as http;
@@ -23,49 +24,43 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
   final AuthServices _authServices = AuthServices();
   bool _isLoading = false;
   dynamic _personaInfo;
-  dynamic _matriculaInfo;
+  List<dynamic> _matriculaInfo = [];
 
-  Future<void> _eliminarAsignacion() async {
-    if (_matriculaInfo == null) return;
+  Future<void> _eliminarAsignacion(String matricula) async {
+    if (matricula.isEmpty) return;
 
-    final url =
-        Uri.parse('$baseUrl/terminarCargo/${_matriculaInfo['Matricula']}');
+    final url = Uri.parse('$baseUrl/terminarCargo/$matricula');
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+    );
 
-    try {
-      final response = await http.put(
-        url,
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        setState(() {
-          _matriculaInfo = null; // Limpiar información de la persona asignada
-          _personaInfo = null; // Limpiar resultados de búsqueda
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Asignación eliminada exitosamente")),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Error al eliminar la asignación")),
-        );
-      }
-    } catch (e) {
+    if (response.statusCode == 200) {
+      setState(() {
+        _matriculaInfo
+            .removeWhere((persona) => persona['Matricula'] == matricula);
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error al eliminar la asignación: $e")),
+        const SnackBar(content: Text("Asignación eliminada exitosamente")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error al eliminar la asignación")),
       );
     }
   }
 
   Future<void> _buscarPersona() async {
-    if (_matriculaInfo != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text(
-                "Ya hay una persona asignada. Elimina primero la asignación para buscar otra.")),
-      );
-      return;
-    }
+    //Comentado para permitir buscar mas usuarios
+
+    //if (_matriculaInfo != null) {
+    //  ScaffoldMessenger.of(context).showSnackBar(
+    //    const SnackBar(
+    //        content: Text(
+    //            "Ya hay una persona asignada. Elimina primero la asignación para buscar otra.")),
+    //  );
+    //  return;
+    //}
 
     final nombre = _nombreController.text;
     if (nombre.isEmpty) {
@@ -91,25 +86,91 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
     }
   }
 
-  Future<void> _toggleActivo(bool isActive, int idCargo) async {
-    final url = Uri.parse('$baseUrl/activarCargo/$idCargo');
+  Future<bool> _deactivateAll() async {
+    var errors = false;
+    for (var persona in _matriculaInfo) {
+      if (persona['Activo'] == 1) {
+        // Verifica si la persona está activa
+        final url = Uri.parse('$baseUrl/activarCargo/${persona['IdCargo']}');
+        final response = await http.put(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({'Activo': 0}),
+        );
+        if (response.statusCode != 200) {
+          errors = true;
+        } else {
+          setState(() {
+            persona['Activo'] = 0;
+          });
+        }
+      }
+    }
+    return errors;
+  }
 
-    // Traduce el booleano a número (1 o 0)
-    final int activoValue = isActive ? 1 : 0;
+  Future<void> _toggleActivo(bool isActive, String matricula) async {
+    var index = _matriculaInfo
+        .indexWhere((element) => element['Matricula'] == matricula);
+    if (index == -1) return; // Si no encuentra la matrícula, termina la función
 
+    // Desactiva o activa todos primero y luego actualiza el seleccionado
+    if (isActive) {
+      bool errors =
+          await _deactivateAll(); // Desactiva a todos antes de activar a la nueva persona
+      if (errors) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error al desactivar otros delegados")),
+        );
+        return;
+      }
+    }
+
+    // Actualiza el estado activo de la persona seleccionada
+    final url =
+        Uri.parse('$baseUrl/activarCargo/${_matriculaInfo[index]['IdCargo']}');
     final response = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'Activo': activoValue}), // Envía solo el número
+      body: json.encode({'Activo': isActive ? 1 : 0}),
     );
 
     if (response.statusCode == 200) {
       setState(() {
-        _matriculaInfo['Activo'] =
-            activoValue; // Actualiza el estado localmente
+        _matriculaInfo[index]['Activo'] = isActive ? 1 : 0;
       });
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? nombre = prefs.getString('nombre');
+      String? apellido = prefs.getString('apellidos');
+      String? departamento = prefs.getString('nombreDepartamento');
+      String? token = '${_matriculaInfo[index]['TokenCFM']}';
+
+      // Mensajes de notificación
+      final String titleActivo = "Has sido delegado como Jefe de Departamento.";
+      final String bodyActivo =
+          "$nombre $apellido te ha asignado temporalmente como encargo de $departamento para desempeñar ciertas funciones.";
+      final String titleInactivo =
+          "Has sido relevado como Jefe de Departamento.";
+      final String bodyInactivo =
+          "$nombre $apellido ha finalizado tu asignación temporal como encargado de $departamento.";
+
+      // Envía notificación de activación o desactivación
+      if (token != null) {
+        await NotificationService().sendNotificationToServer(
+            token,
+            isActive ? titleActivo : titleInactivo,
+            isActive ? bodyActivo : bodyInactivo);
+        print("Notificación enviada.");
+      } else {
+        print("No se encontró token FCM.");
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Estado actualizado exitosamente")),
+        SnackBar(
+            content: Text(isActive
+                ? "Persona activada exitosamente"
+                : "Persona desactivada exitosamente")),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -186,7 +247,7 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
     String? matricula = prefs.getString('matricula');
     try {
       setState(() => _isLoading = true);
-      final matriculaInfo = await _authServices.UserInfoDelegado(matricula!);
+      var matriculaInfo = await _authServices.userInfoDelegado(matricula!);
       setState(() {
         _matriculaInfo = matriculaInfo;
       });
@@ -295,8 +356,8 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
                   ),
                   SizedBox(height: responsive.hp(1)),
 
-                  // Mostrar mensaje si no hay persona asignada
-                  if (_matriculaInfo == null)
+// Comprobación y muestra de la lista de personas asignadas
+                  if (_matriculaInfo.isEmpty)
                     Text(
                       "No hay personas asignadas",
                       style: TextStyle(
@@ -305,30 +366,38 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
                       ),
                     )
                   else
-                    Card(
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      child: ListTile(
-                        title: Text(
-                            "${_matriculaInfo['Nombre']} ${_matriculaInfo['Apellidos']}"),
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("${_matriculaInfo['TipoUser']}"),
-                            Text("${_matriculaInfo['Celular']}"),
-                          ],
-                        ),
-                        trailing: Switch(
-                          value: _matriculaInfo['Activo'] == 1,
-                          onChanged: (bool newValue) async {
-                            await _toggleActivo(
-                                newValue, _matriculaInfo['IdCargo']);
-                          },
-                        ),
-                        onLongPress: () async {
-                          await _eliminarAsignacion();
-                          setState(() {}); // Refrescar pantalla
-                        },
-                      ),
+                    ListView.builder(
+                      shrinkWrap:
+                          true, // Importante para no expandir indefinidamente dentro de una columna
+                      physics:
+                          NeverScrollableScrollPhysics(), // Deshabilita el scrolling propio del ListView
+                      itemCount: _matriculaInfo.length,
+                      itemBuilder: (context, index) {
+                        var persona = _matriculaInfo[index];
+                        return Card(
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          child: ListTile(
+                            title: Text(
+                                "${persona['Nombre']} ${persona['Apellidos']}"),
+                            subtitle: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("${persona['TipoUser']}"),
+                                Text("${persona['Celular']}"),
+                              ],
+                            ),
+                            trailing: Switch(
+                              value: persona['Activo'] == 1,
+                              onChanged: (bool newValue) {
+                                _toggleActivo(newValue, persona['Matricula']);
+                              },
+                            ),
+                            onLongPress: () {
+                              _eliminarAsignacion(persona['Matricula']);
+                            },
+                          ),
+                        );
+                      },
                     ),
 
                   SizedBox(

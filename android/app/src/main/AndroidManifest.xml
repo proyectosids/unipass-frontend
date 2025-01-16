@@ -25,7 +25,7 @@
         android:usesCleartextTraffic="true"
         android:label="UNIPASS"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/ic_launcher_foreground">
         
         <activity
             android:name=".MainActivity"

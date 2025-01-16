@@ -30,7 +30,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   String _selectedReason = 'Otros';
   String _selectedType = '';
   final PermissionService _permissionService =
-      PermissionService(RegisterService(), AuthorizeService());
+      PermissionService(RegisterService(), AuthorizeService(), AuthServices());
   final AuthServices _authService = AuthServices();
   final Map<String, int> typeMap = {
     'Pueblo': 1,

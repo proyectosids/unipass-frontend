@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_unipass/models/permission.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
@@ -22,7 +23,8 @@ class _PermissionAuthorizationEmployeeState
   List<Permission> _permissions = [];
   List<Permission> _filteredPermissions = []; // Lista filtrada
   final PermissionService _permissionService =
-      PermissionService(RegisterService(), AuthorizeService());
+      PermissionService(RegisterService(), AuthorizeService(), AuthServices());
+  final AuthServices _authService = AuthServices();
 
   @override
   void initState() {
@@ -40,10 +42,36 @@ class _PermissionAuthorizationEmployeeState
       return;
     }
 
-    try {
-      List<Permission> permissions =
-          await _permissionService.getPermissionForAutorizacion(matricula);
+    // Sección para buscar la matricula si alguien me asignó
+    Map<String, dynamic>? userInfoExt =
+        await _authService.UserInfoExt(matricula);
 
+    String? cargoEmp;
+    int? activo;
+    if (userInfoExt != null) {
+      cargoEmp = userInfoExt['MatriculaEncargado'];
+      activo = userInfoExt['Activo']; // Obtener el valor de 'Activo'
+    } else {
+      print('User info not found');
+      cargoEmp = '0'; // Valor predeterminado si no hay información
+      activo = 0; // Valor predeterminado para 'Activo'
+    }
+
+    try {
+      // Obtener permisos de la matrícula principal
+      List<Permission> permissionsPrece =
+          await _permissionService.getPermissionForAutorizacionPrece(matricula);
+
+      List<Permission> permissionsAsig = [];
+
+      // Verificar si cargoEmp es válido y si 'Activo' es igual a 1
+      if (cargoEmp != null && cargoEmp != '0' && activo == 1) {
+        permissionsAsig = await _permissionService
+            .getPermissionForAutorizacionPrece(cargoEmp);
+      }
+
+      // Combinar las listas
+      List<Permission> permissions = permissionsPrece + permissionsAsig;
       permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
 
       setState(() {
@@ -247,6 +275,7 @@ class _PermissionAuthorizationEmployeeState
             'ApellidosTutor': permission.apellidotutor,
             'ContactoTutor': permission.moviltutor,
             'IdSalida': permission.idsalida,
+            'Matricula': permission.matricula,
           },
         );
 

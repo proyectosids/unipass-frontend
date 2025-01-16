@@ -4,6 +4,7 @@ import 'package:flutter_application_unipass/services/checks_service.dart';
 import 'package:flutter_application_unipass/services/document_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -88,7 +89,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                   'apellidos': check['Apellidos'],
                   'matricula': check['Matricula'],
                   'tipoSalida': check['Descripcion'],
-                  'Estatus': check['Estatus'],
+                  'datetime': check['FechaSalida'],
                   'profilePic': check['profilePic'],
                 })
             .toList();
@@ -101,7 +102,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                   'apellidos': check['Apellidos'],
                   'matricula': check['Matricula'],
                   'tipoSalida': check['Descripcion'],
-                  'Estatus': check['Estatus'],
+                  'datetime': check['FechaRegreso'],
                   'profilePic': check['profilePic'],
                 })
             .toList();
@@ -123,10 +124,11 @@ class _HomeDepartamentState extends State<HomeDepartament> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true,
         title: isUserDataLoading
             ? const CircularProgressIndicator()
             : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     'Bienvenido ${nombre ?? 'Estudiante'}',
@@ -244,9 +246,11 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                                             'Matrícula: ${check['matricula']}'),
                                         Text(
                                             'Tipo de salida: ${check['tipoSalida']}'),
-                                        Text(check['Estatus'] == "Confirmada"
-                                            ? 'Estatus: Confirmada'
-                                            : 'Estatus: No Confirmada'),
+                                        //Text(check['Estatus'] == "Confirmada"
+                                        //    ? 'Estatus: Confirmada'
+                                        //    : 'Estatus: No Confirmada'),
+                                        Text(
+                                            'Fecha: ${DateFormat('dd/MM/yyyy h:mm:ss a').format(DateTime.parse(check['datetime']))}'),
                                       ],
                                     ),
                                     value: check['Estatus'] == "Confirmada",
@@ -287,7 +291,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _fetchChecks,
-        child: const Icon(Icons.refresh),
+        child: const Icon(Icons.refresh, color: Colors.white),
         backgroundColor: Colors.deepPurple,
       ),
     );

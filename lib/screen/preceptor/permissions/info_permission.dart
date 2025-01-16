@@ -1,5 +1,8 @@
+import 'package:flutter_application_unipass/models/authorization.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/services/checks_service.dart';
+import 'package:flutter_application_unipass/services/notification_service.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/point_check_service.dart';
 import 'package:flutter_application_unipass/services/register_service.dart';
@@ -24,10 +27,12 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   String? statusPermiso;
   final AuthorizeService _authorizeService = AuthorizeService();
   final PermissionService _permissionService =
-      PermissionService(RegisterService(), AuthorizeService());
+      PermissionService(RegisterService(), AuthorizeService(), AuthServices());
   final PointCheckService _pointCheckService = PointCheckService();
   final ChecksService _checksService = ChecksService();
+  final AuthServices _authServices = AuthServices();
   String selectedValue = 'Foto no identificable';
+  Future<List<Authorization>>? _futureAuthorizations;
 
   @override
   void didChangeDependencies() {
@@ -70,6 +75,22 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     }
   }
 
+  Future<List<int>> findEmployeesByDepartments(Set<int> departmentNos) async {
+    // Obtener la lista de autorizaciones de manera asíncrona
+    List<Authorization>? authorizations = await AuthorizeService()
+        .fetchAuthorizations(exitDetails['IdPermission']);
+
+    // Filtrar y encontrar las autorizaciones donde el NoDepto esté en los valores dados
+    List<int> employeeIds = [];
+    for (var auth in authorizations) {
+      if (departmentNos.contains(auth.noDepto)) {
+        employeeIds.add(auth.idEmpleado);
+      }
+    }
+
+    return employeeIds;
+  }
+
   Future<void> _asignarAutorizacion(String autorizo, String motivo) async {
     try {
       final idPermiso = exitDetails['IdPermission'] as int;
@@ -77,11 +98,70 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? matricula = prefs.getString('matricula');
       String? tipoUser = prefs.getString('tipoUser');
+      String? nombre = prefs.getString('nombre');
+      String? apellido = prefs.getString('apellidos');
+      DateTime fechsalida = DateTime.parse(exitDetails['FechaSalida']);
+      String formatoFecha = DateFormat('dd/MM/yyyy').format(fechsalida);
 
       await _authorizeService.valorarAuthorize(idPermiso, matricula!, autorizo);
+///////////////////////////////
+      if (autorizo == "Aprobada" && tipoUser == "EMPLEADO" ||
+          autorizo == "Aprobada" && tipoUser == "VIGILANCIA") {
+        //_futureAuthorizations =
+        //  AuthorizeService().fetchAuthorizations(exitDetails['IdPermission']);
+
+        Set<int> departmentsToCheck = {317, 318, 315, 316};
+        List<int> employeeIds =
+            await findEmployeesByDepartments(departmentsToCheck);
+        if (employeeIds.isNotEmpty) {
+          int firstEmployeeId =
+              employeeIds.first; // Obtiene el primer IdEmpleado de la lista
+          String? token = await _authServices.searchTokenFCM(firstEmployeeId
+              .toString()); // Asumiendo que la función acepta un String
+          String? notificationToken = token; // Obtén el token de alguna manera
+
+          String title = "Solicitud de salida al Pueblo";
+          String body =
+              "${exitDetails['NombreAlumno']} ${exitDetails['ApellidosAlumno']} ha solicitado una salida para $formatoFecha";
+          if (token != null) {
+            // Llamada al servicio de notificaciones
+            await NotificationService()
+                .sendNotificationToServer(notificationToken!, title, body);
+            print("Notificación enviada.");
+            notificationToken =
+                await _authServices.searchTokenFCM(exitDetails['Matricula']);
+            title = "Aprobacion de solicitud de jefe de departamento";
+            body =
+                "Salida ${exitDetails['TipoSalida']} aprobada por $nombre $apellido, pendiente la aprobación de tu preceptor(a)";
+            await NotificationService()
+                .sendNotificationToServer(notificationToken!, title, body);
+          } else {
+            print("No se encontró token FCM.");
+          }
+        } else {
+          print(
+              "No se encontraron empleados para los departamentos especificados.");
+        }
+      }
 
       if (autorizo == 'Rechazada') {
         await _terminarPermiso(autorizo, motivo);
+        String? token =
+            await _authServices.searchTokenFCM(exitDetails['Matricula']);
+        // Supongamos que decides enviar la notificación aquí
+        final String? notificationToken =
+            token; // Obtén el token de alguna manera
+        final String title = _getTitleForIdSalida(idSalida, autorizo);
+        final String body =
+            "$nombre $apellido ha rechazado su salida por el motivo: $motivo.";
+        if (token != null) {
+          // Llamada al servicio de notificaciones
+          await NotificationService()
+              .sendNotificationToServer(notificationToken!, title, body);
+          print("Notificación enviada.");
+        } else {
+          print("No se encontró token FCM.");
+        }
       }
 
       if (autorizo == 'Aprobada' && tipoUser == 'PRECEPTOR') {
@@ -104,6 +184,24 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
         }
 
         await _terminarPermiso(autorizo, motivo);
+        DateTime fechsalida = DateTime.parse(exitDetails['FechaSalida']);
+        String formatoFecha = DateFormat('dd/MM/yyyy').format(fechsalida);
+        String? token =
+            await _authServices.searchTokenFCM(exitDetails['Matricula']);
+        // Supongamos que decides enviar la notificación aquí
+        final String? notificationToken =
+            token; // Obtén el token de alguna manera
+        final String title = _getTitleForIdSalida(idSalida, autorizo);
+        final String body =
+            "$nombre $apellido ha aprobado tu salida con fecha $formatoFecha.";
+        if (token != null) {
+          // Llamada al servicio de notificaciones
+          await NotificationService()
+              .sendNotificationToServer(notificationToken!, title, body);
+          print("Notificación enviada.");
+        } else {
+          print("No se encontró token FCM.");
+        }
       }
 
       // Manejando la navegación según el tipo de usuario
@@ -452,5 +550,18 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
         ),
       ],
     );
+  }
+}
+
+String _getTitleForIdSalida(int idSalida, String valoracion) {
+  switch (idSalida) {
+    case 1:
+      return "Solicitud de Salida al Pueblo $valoracion";
+    case 2:
+      return "Solicitud de Salida Especial $valoracion";
+    case 3:
+      return "Solicitud de Salida a Casa $valoracion";
+    default:
+      return "Solicitud de Salida $valoracion";
   }
 }

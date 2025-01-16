@@ -47,14 +47,15 @@ class AuthServices {
     }
   }
 
-  Future<Map<String, dynamic>?> UserInfoDelegado(String userId) async {
+  Future<List<Map<String, dynamic>>> userInfoDelegado(String userId) async {
     final response = await http.get(Uri.parse('$baseUrl/InfoDelegado/$userId'));
 
     if (response.statusCode == 200) {
       if (response.body == 'null') {
-        return null;
+        return [];
       }
-      return json.decode(response.body);
+      List<dynamic> data = json.decode(response.body);
+      return data.cast<Map<String, dynamic>>();
     } else {
       throw Exception('Failed to load user info');
     }

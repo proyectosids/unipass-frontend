@@ -23,7 +23,7 @@ class _HistoryPermissionAuthorizationState
   List<Permission> _permissions = [];
   List<Permission> _filteredPermissions = []; // Lista filtrada
   final PermissionService _permissionService =
-      PermissionService(RegisterService(), AuthorizeService());
+      PermissionService(RegisterService(), AuthorizeService(), AuthServices());
   final AuthServices _authService = AuthServices();
 
   @override
@@ -277,6 +277,7 @@ class _HistoryPermissionAuthorizationState
             'ApellidosTutor': permission.apellidotutor,
             'ContactoTutor': permission.moviltutor,
             'IdSalida': permission.idsalida,
+            'Matricula': permission.matricula,
           },
         );
 
