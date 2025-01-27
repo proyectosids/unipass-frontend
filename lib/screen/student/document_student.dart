@@ -1,4 +1,5 @@
 import 'package:flutter_application_unipass/config/config_url.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/document_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
@@ -31,6 +32,8 @@ class _DocumentStudentState extends State<DocumentStudent> {
   };
 
   final DocumentService _documentService = DocumentService();
+  final AuthServices _authServices = AuthServices();
+  bool allDocumentsComplete = false;
 
   @override
   void initState() {
@@ -62,8 +65,29 @@ class _DocumentStudentState extends State<DocumentStudent> {
           }
         }
       });
+      await updateDocumentStatusOnServer();
     } catch (e) {
       print('Error loading documents: $e');
+    }
+  }
+
+  // Método para actualizar el estado del documento en el servidor
+  Future<void> updateDocumentStatusOnServer() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? matricula = prefs.getString('matricula');
+    int? userId = await AuthUtils.getUserId();
+    if (userId == null) {
+      print('User ID is null');
+      return;
+    }
+
+    try {
+      bool allDocumentsComplete = _isAllDocumentsComplete();
+      int statusDoc =
+          allDocumentsComplete ? 1 : 0; // 1 si todos completos, 0 si no
+      await _authServices.updateDocumentStatus(matricula!, statusDoc);
+    } catch (e) {
+      print('Error updating document status: $e');
     }
   }
 
@@ -97,6 +121,9 @@ class _DocumentStudentState extends State<DocumentStudent> {
   }
 
   Future<void> _deleteDocument(String documentName) async {
+    bool confirmDelete = await _showDeleteConfirmationDialog();
+    if (!confirmDelete) return; // Si el usuario no confirma, no hacer nada.
+
     if (documents[documentName] == false) {
       print('No se puede eliminar un documento que no está adjunto.');
       return;
@@ -113,19 +140,52 @@ class _DocumentStudentState extends State<DocumentStudent> {
       if (documentId != null) {
         await _documentService.deleteDocument(userId, documentId);
 
+        // Actualizar el estado de los documentos inmediatamente
+        setState(() {
+          documents[documentName] = false;
+          documentFiles[documentName] = null;
+          documentIds[documentName] = null;
+        });
+
+        // Limpiar preferencias y actualizar estado en el servidor
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('${documentName}_isUploaded', false);
         await prefs.remove('${documentName}_fileName');
 
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (BuildContext context) => const DocumentStudent(),
-          ),
-        );
+        await updateDocumentStatusOnServer(); // Actualiza el estado de los documentos en el servidor
       }
     } catch (e) {
       print('Error deleting document: $e');
     }
+  }
+
+  Future<bool> _showDeleteConfirmationDialog() async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Confirmar eliminación'),
+          content: const Text(
+              '¿Estás seguro de que quieres eliminar este documento?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(dialogContext)
+                    .pop(false); // No proceder con la eliminación
+              },
+            ),
+            TextButton(
+              child: const Text('Eliminar'),
+              onPressed: () {
+                Navigator.of(dialogContext)
+                    .pop(true); // Proceder con la eliminación
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _launchURL(String url) async {
@@ -168,7 +228,8 @@ class _DocumentStudentState extends State<DocumentStudent> {
             color: Color.fromRGBO(250, 198, 0, 1),
           ),
           onPressed: () {
-            Navigator.pop(context, _isAllDocumentsComplete());
+            Navigator.pop(context,
+                true); // Devuelve true si los documentos fueron actualizados
           },
         ),
       ),
@@ -234,9 +295,12 @@ class _DocumentStudentState extends State<DocumentStudent> {
                   String key = documents.keys.elementAt(index);
                   bool value = documents[key]!;
                   String? fileName = documentFiles[key];
+                  int? docId = documentIds[
+                      key]; // Asumiendo que es un identificador único
 
                   return Dismissible(
-                    key: Key(key),
+                    key: Key(docId
+                        .toString()), // Usa el ID del documento como clave única
                     direction: value
                         ? DismissDirection.endToStart
                         : DismissDirection.none,
@@ -247,7 +311,20 @@ class _DocumentStudentState extends State<DocumentStudent> {
                       child: const Icon(Icons.delete, color: Colors.white),
                     ),
                     onDismissed: (direction) async {
+                      bool confirmDelete =
+                          await _showDeleteConfirmationDialog();
+                      if (!confirmDelete) {
+                        setState(
+                            () {}); // Restablece el estado si la eliminación no se confirma
+                        return;
+                      }
+
                       await _deleteDocument(key);
+                      //setState(() {
+                      //  documents.remove(key);
+                      //  documentFiles.remove(key);
+                      //  documentIds.remove(key);
+                      //});
                     },
                     child: Card(
                       child: ListTile(
@@ -276,7 +353,8 @@ class _DocumentStudentState extends State<DocumentStudent> {
                               },
                             );
 
-                            if (result != null) {
+                            // Aquí manejas el resultado para ver si necesitas recargar los estados de los documentos
+                            if (result == true) {
                               setState(() {
                                 _loadDocumentStates();
                               });

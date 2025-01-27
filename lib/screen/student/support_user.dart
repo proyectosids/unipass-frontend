@@ -1,5 +1,8 @@
 import 'package:flutter_application_unipass/utils/imports.dart';
 
+final Uri _url = Uri.parse(
+    'https://mountain-chauffeur-3c4.notion.site/MANUAL-DE-USUARIO-DE-UNIPASS-18134478d25e8054ac3ad2cd85403f54');
+
 class SupportUserScreen extends StatefulWidget {
   static const routeName = '/supportUser';
   const SupportUserScreen({super.key});
@@ -132,9 +135,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                     SizedBox(height: responsive.hp(4)),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Lógica para descargar manual
-                        },
+                        onPressed: _launchUrl,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromRGBO(250, 198, 0, 1),
                           padding: EdgeInsets.symmetric(
@@ -147,7 +148,7 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
                           ),
                         ),
                         child: Text(
-                          'Descargar Manual',
+                          'Manual de usuario',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: responsive.dp(2),
@@ -164,5 +165,11 @@ class _SupportUserScreenState extends State<SupportUserScreen> {
         ),
       ),
     );
+  }
+}
+
+Future<void> _launchUrl() async {
+  if (!await launchUrl(_url)) {
+    throw Exception('Could not launch $_url');
   }
 }

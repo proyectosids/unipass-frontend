@@ -1,3 +1,4 @@
+import 'package:flutter_application_unipass/services/register_service.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
@@ -11,11 +12,35 @@ class MenuEmployeeScreen extends StatefulWidget {
 
 class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
   String? typeUser;
+  bool hasJefe = false;
+  final RegisterService _registerService = RegisterService();
 
   @override
   void initState() {
     super.initState();
-    _getTypeUser();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _getTypeUser();
+    await _checkIfHasJefe();
+  }
+
+  Future<void> _getTypeUser() async {
+    String? user = await AuthUtils.getTipoUser();
+    setState(() {
+      typeUser = user;
+    });
+  }
+
+  Future<void> _checkIfHasJefe() async {
+    // Obtener datos del usuario que realiza la acción
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? idEmpleado = prefs.getString('matricula');
+    bool? result = await _registerService.getValidarJefe(idEmpleado ?? '');
+    setState(() {
+      hasJefe = result ?? false;
+    });
   }
 
   @override
@@ -61,6 +86,17 @@ class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
                   if (typeUser == 'VIGILANCIA')
                     _buildMenuItem(context, 'Checks', 'assets/image/checks.svg',
                         '/NewProfileChecks', Colors.white),
+
+                  if (hasJefe ||
+                      typeUser ==
+                          'VIGILANCIA') // Condición para mostrar el ítem "Delegar"
+                    _buildMenuItem(
+                      context,
+                      'Delegar',
+                      'assets/image/HelpApp.svg',
+                      '/delegatePosition',
+                      Colors.white,
+                    ),
                 ],
               ),
             ),
@@ -101,13 +137,5 @@ class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _getTypeUser() async {
-    String? user = await AuthUtils.getTipoUser();
-
-    setState(() {
-      typeUser = user;
-    });
   }
 }

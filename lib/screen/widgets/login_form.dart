@@ -93,7 +93,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
           String userId = result['user']['Matricula'];
           String newUserId = userId.replaceFirst('MTR', '');
           try {
-            final String userId = result['user']['Matricula'];
+            //final String userId = result['user']['Matricula'];
             final String? currentToken =
                 await _authService.searchTokenFCM(userId);
             final String? newToken =

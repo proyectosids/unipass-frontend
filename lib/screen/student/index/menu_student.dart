@@ -23,26 +23,22 @@ class _MenuScreenState extends State<MenuScreen> {
   void initState() {
     super.initState();
     _checkDocumentCompletion();
-    _fetchUserInfo();
   }
 
-  Future<void> _fetchUserInfo() async {
+  Future<bool> _fetchDocumentos() async {
     int? userId = await AuthUtils.getUserId();
     if (userId == null) {
       print('User ID not found');
-      return;
+      return false;
     }
 
     Map<String, dynamic>? userInfo = await _authService.getUserInfo(userId);
     if (userInfo == null) {
       print('User info not found');
-      return;
+      return false;
     }
-    if (userInfo['IdCargoDelegado'] != null) {
-      setState(() {
-        hasIdCargoDelegado = true;
-      });
-    }
+
+    return userInfo['Documentacion'] == 1;
   }
 
   Future<void> _checkDocumentCompletion() async {
@@ -63,44 +59,6 @@ class _MenuScreenState extends State<MenuScreen> {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(3);
 
-    List<Widget> menuItems = [
-      _buildMenuItem(
-        context,
-        'Salidas',
-        'assets/image/salidas.svg',
-        '/ExitStudent',
-        Colors.white,
-        isComplete,
-      ),
-      _buildMenuItem(
-        context,
-        'Ayuda',
-        'assets/image/HelpApp.svg',
-        '/helpUser',
-        Colors.white,
-        true,
-      ),
-      _buildMenuItem(
-        context,
-        'Documentos',
-        'assets/image/documents.svg',
-        '/documentStudent',
-        Colors.white,
-        true,
-      ),
-    ];
-
-    if (hasIdCargoDelegado) {
-      menuItems.add(_buildMenuItem(
-        context,
-        'Autorizar',
-        'assets/image/checks.svg',
-        '/AuthorizationPreceptor',
-        Colors.white,
-        true,
-      ));
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -113,27 +71,59 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, '/notificationsStudent');
-            },
-          ),
-        ],
       ),
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.all(padding),
-        child: Column(
-          children: [
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                children: menuItems,
-              ),
-            ),
-          ],
+        child: FutureBuilder<bool>(
+          future: _fetchDocumentos(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Error loading data'));
+            } else {
+              hasIdCargoDelegado = snapshot.data ?? false;
+
+              List<Widget> menuItems = [
+                _buildMenuItem(
+                  context,
+                  'Salidas',
+                  'assets/image/salidas.svg',
+                  '/ExitStudent',
+                  Colors.white,
+                  hasIdCargoDelegado,
+                ),
+                _buildMenuItem(
+                  context,
+                  'Ayuda',
+                  'assets/image/HelpApp.svg',
+                  '/helpUser',
+                  Colors.white,
+                  true,
+                ),
+                _buildMenuItem(
+                  context,
+                  'Documentos',
+                  'assets/image/documents.svg',
+                  '/documentStudent',
+                  Colors.white,
+                  true,
+                ),
+              ];
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      children: menuItems,
+                    ),
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ),
     );
@@ -144,13 +134,13 @@ class _MenuScreenState extends State<MenuScreen> {
     final Responsive responsive = Responsive.of(context);
     return GestureDetector(
       onTap: () async {
-        if (routeName == DocumentStudent.routeName) {
+        if (isEnabled) {
           final result = await Navigator.pushNamed(context, routeName);
           if (result != null && result == true) {
-            _checkDocumentCompletion();
+            setState(() {
+              _checkDocumentCompletion(); // Revisar el estado de los documentos
+            });
           }
-        } else if (isEnabled) {
-          Navigator.pushNamed(context, routeName);
         }
       },
       child: Card(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "401541086731",
+    "project_id": "unipass-ulv",
+    "storage_bucket": "unipass-ulv.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401541086731:android:4b279f857db5f6d356910e",
+        "android_client_info": {
+          "package_name": "com.irvingdesarrolla.UNIPASS"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDU4f8FAphPFMMiqmmr07ZELX3CrlGNIfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

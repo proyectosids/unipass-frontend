@@ -86,27 +86,26 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
     }
   }
 
-  Future<bool> _deactivateAll() async {
-    var errors = false;
+  Future<List<Map<String, dynamic>>> _deactivateAll() async {
+    List<Map<String, dynamic>> deactivatedUsers = [];
     for (var persona in _matriculaInfo) {
       if (persona['Activo'] == 1) {
-        // Verifica si la persona está activa
         final url = Uri.parse('$baseUrl/activarCargo/${persona['IdCargo']}');
         final response = await http.put(
           url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode({'Activo': 0}),
         );
-        if (response.statusCode != 200) {
-          errors = true;
-        } else {
+        if (response.statusCode == 200) {
           setState(() {
             persona['Activo'] = 0;
           });
+          deactivatedUsers
+              .add(persona); // Añade la persona desactivada a la lista
         }
       }
     }
-    return errors;
+    return deactivatedUsers;
   }
 
   Future<void> _toggleActivo(bool isActive, String matricula) async {
@@ -114,19 +113,25 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
         .indexWhere((element) => element['Matricula'] == matricula);
     if (index == -1) return; // Si no encuentra la matrícula, termina la función
 
-    // Desactiva o activa todos primero y luego actualiza el seleccionado
-    if (isActive) {
-      bool errors =
-          await _deactivateAll(); // Desactiva a todos antes de activar a la nueva persona
-      if (errors) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Error al desactivar otros delegados")),
-        );
-        return;
+    // Obtener datos del usuario que realiza la acción
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? nombre = prefs.getString('nombre');
+    String? apellido = prefs.getString('apellidos');
+    String? departamento = prefs.getString('nombreDepartamento');
+
+    List<Map<String, dynamic>> deactivatedUsers = await _deactivateAll();
+    // Notificar a todos los delegados desactivados
+    for (var user in deactivatedUsers) {
+      String? token = user['TokenCFM'];
+      if (token != null && token.isNotEmpty) {
+        await NotificationService().sendNotificationToServer(
+            token,
+            "Has sido relevado como Jefe de Departamento",
+            "$nombre $apellido ha finalizado tu asignación temporal como encargado de $departamento.");
       }
     }
 
-    // Actualiza el estado activo de la persona seleccionada
+    // Activar o desactivar el delegado seleccionado
     final url =
         Uri.parse('$baseUrl/activarCargo/${_matriculaInfo[index]['IdCargo']}');
     final response = await http.put(
@@ -140,42 +145,24 @@ class _DelegatePositionScreenState extends State<DelegatePositionScreen> {
         _matriculaInfo[index]['Activo'] = isActive ? 1 : 0;
       });
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? nombre = prefs.getString('nombre');
-      String? apellido = prefs.getString('apellidos');
-      String? departamento = prefs.getString('nombreDepartamento');
-      String? token = '${_matriculaInfo[index]['TokenCFM']}';
-
-      // Mensajes de notificación
-      final String titleActivo = "Has sido delegado como Jefe de Departamento.";
-      final String bodyActivo =
-          "$nombre $apellido te ha asignado temporalmente como encargo de $departamento para desempeñar ciertas funciones.";
-      final String titleInactivo =
-          "Has sido relevado como Jefe de Departamento.";
-      final String bodyInactivo =
-          "$nombre $apellido ha finalizado tu asignación temporal como encargado de $departamento.";
-
-      // Envía notificación de activación o desactivación
-      if (token != null) {
-        await NotificationService().sendNotificationToServer(
-            token,
-            isActive ? titleActivo : titleInactivo,
-            isActive ? bodyActivo : bodyInactivo);
-        print("Notificación enviada.");
-      } else {
-        print("No se encontró token FCM.");
+      // Notificar al delegado activado, si corresponde
+      if (isActive) {
+        String? token = _matriculaInfo[index]['TokenCFM'];
+        if (token != null && token.isNotEmpty) {
+          await NotificationService().sendNotificationToServer(
+              token,
+              "Has sido delegado como Jefe de Departamento",
+              "$nombre $apellido te ha asignado temporalmente como encargo de $departamento para desempeñar ciertas funciones.");
+        }
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(isActive
-                ? "Persona activada exitosamente"
-                : "Persona desactivada exitosamente")),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(isActive
+              ? "Persona activada exitosamente"
+              : "Persona desactivada exitosamente")));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Error al actualizar el estado")),
-      );
+          const SnackBar(content: Text("Error al actualizar el estado")));
     }
   }
 

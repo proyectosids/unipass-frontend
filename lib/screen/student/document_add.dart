@@ -97,11 +97,8 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
         await _documentService.uploadDocument(file!, idDocumento, id);
         await _saveDocumentState(widget.documentName, isFileAttached, fileName);
 
-        Navigator.of(context).pop({
-          'isUploaded': isFileAttached,
-          'fileName': fileName,
-          'IdDocumento': idDocumento,
-        });
+        // Devuelve true al hacer pop para indicar que se guardaron cambios
+        Navigator.of(context).pop(true);
       } catch (e) {
         print('Error uploading file: $e');
       }

@@ -348,9 +348,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                       child: ElevatedButton(
                         onPressed: () async {
                           try {
-                            //await _otpServices.launchOTP(isAlumno
-                            //    ? user.correoInstitucional
-                            //    : user.emailInstitucional);
+                            await _otpServices.launchOTP(isAlumno
+                                ? user.correoInstitucional
+                                : user.emailInstitucional);
 
                             //Analizar el flujo del negocio que cualquier empleado pueda ingresar para poder delegar
                             // la autoridad de jefe cuando esta indispuesto o fuera de sus capacidades

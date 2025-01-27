@@ -153,4 +153,30 @@ class AuthServices {
       throw Exception('Exception when fetching token FCM: $e');
     }
   }
+
+  Future<void> updateDocumentStatus(String matricula, int statusDoc) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/Documentacion/$matricula'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(<String, int>{
+          'StatusDoc': statusDoc,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Dato Actualizado');
+      } else if (response.statusCode == 404) {
+        print('Dato no encontrado');
+        throw Exception('Dato no encontrado');
+      } else {
+        throw Exception('Error al actualizar documento');
+      }
+    } catch (e) {
+      print('Error al actualizar documento: $e');
+      throw Exception('Error al comunicarse con el servidor: $e');
+    }
+  }
 }
