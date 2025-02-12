@@ -222,32 +222,66 @@ class _ExitDetailScreenState extends State<ExitDetailScreen> {
     );
   }
 
-  Widget _buildProgressBar(Responsive responsive, bool isFinalized) {
-    return Row(
-      children: [
-        _buildStepCircle(responsive, '1', isActive: true),
-        _buildStepLine(isActive: true),
-        _buildStepCircle(responsive, '2', isActive: isFinalized),
-        _buildStepLine(isActive: isFinalized),
-        _buildStepCircle(responsive, '3', isActive: isFinalized),
-        _buildStepLine(isActive: isFinalized),
-        _buildStepCircle(responsive, '4', isActive: isFinalized),
-      ],
-    );
-  }
+  //Widget _buildProgressBar(Responsive responsive, bool isFinalized) {
+  //  return Row(
+  //    children: [
+  //      _buildStepCircle(responsive, '1', isActive: true),
+  //      _buildStepLine(isActive: true),
+  //      _buildStepCircle(responsive, '2', isActive: isFinalized),
+  //      _buildStepLine(isActive: isFinalized),
+  //      _buildStepCircle(responsive, '3', isActive: isFinalized),
+  //      _buildStepLine(isActive: isFinalized),
+  //      _buildStepCircle(responsive, '4', isActive: isFinalized),
+  //    ],
+  //  );
+  //}
 
   Widget _buildDynamicProgressBar(
       List<Authorization> authorizations, Responsive responsive) {
+    // Obtiene los detalles de salida desde los argumentos de la ruta con un casting adecuado
+    final Map<String, dynamic> exitDetails =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    // Lee el tipo de salida desde los detalles de la ruta
+    final String tipoSalida = exitDetails['TipoSalida'];
+
+    // Determina cuántos pasos mostrar basado en el tipo de salida
+    int numSteps = tipoSalida == 'PUEBLO'
+        ? 2
+        : authorizations.length; // Asume 2 pasos para 'PUEBLO'
+
     List<Widget> widgets = [];
-    for (int i = 0; i < authorizations.length; i++) {
-      bool isActive = authorizations[i].statusAuthorize == 'Aprobado';
+    for (int i = 0; i < numSteps; i++) {
+      Color color;
+      switch (authorizations[i].statusAuthorize) {
+        case 'Aprobada':
+          color = Colors.green;
+          break;
+        case 'Rechazada':
+          color = Colors.red;
+          break;
+        default:
+          color = Colors.orange; // Considerando como pendiente
+      }
+
       // Agrega el círculo para cada paso
-      widgets.add(
-          _buildStepCircle(responsive, (i + 1).toString(), isActive: isActive));
+      widgets
+          .add(_buildStepCircle(responsive, (i + 1).toString(), color: color));
+
       // Agrega la línea entre los círculos, excepto después del último
-      if (i < authorizations.length - 1) {
-        widgets.add(_buildStepLine(
-            isActive: authorizations[i + 1].statusAuthorize == 'Aprobado'));
+      if (i < numSteps - 1) {
+        Color nextColor;
+        switch (authorizations[i + 1].statusAuthorize) {
+          case 'Aprobada':
+            nextColor = Colors.green;
+            break;
+          case 'Rechazada':
+            nextColor = Colors.red;
+            break;
+          default:
+            nextColor = Colors.orange;
+        }
+        widgets.add(_buildStepLine(color: nextColor));
       }
     }
     return Row(
@@ -257,11 +291,10 @@ class _ExitDetailScreenState extends State<ExitDetailScreen> {
   }
 
   Widget _buildStepCircle(Responsive responsive, String step,
-      {required bool isActive}) {
+      {required Color color}) {
     return CircleAvatar(
       radius: responsive.wp(4),
-      backgroundColor:
-          isActive ? const Color.fromRGBO(182, 217, 59, 1) : Colors.grey,
+      backgroundColor: color,
       child: Text(
         step,
         style: const TextStyle(
@@ -272,11 +305,11 @@ class _ExitDetailScreenState extends State<ExitDetailScreen> {
     );
   }
 
-  Widget _buildStepLine({required bool isActive}) {
+  Widget _buildStepLine({required Color color}) {
     return Expanded(
       child: Container(
         height: 2,
-        color: isActive ? const Color.fromRGBO(182, 217, 59, 1) : Colors.grey,
+        color: color,
       ),
     );
   }

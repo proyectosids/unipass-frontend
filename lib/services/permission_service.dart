@@ -140,7 +140,7 @@ class PermissionService {
             int.tryParse(coordinador!['empMatricula'].toString()) ?? 0,
             int.tryParse(coordinador['IdDepartamento'].toString()) ?? 0,
             idPermission,
-            'Aprobado');
+            'Aprobada');
         Map<String, dynamic>? userInfo =
             await _authServices.getUserInfo(userId);
         print(userInfo);

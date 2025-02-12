@@ -44,6 +44,8 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     nombreCompletoTutor =
         '${exitDetails['NombreTutor'] ?? ''} ${exitDetails['ApellidosTutor'] ?? ''}';
     isFinalized = exitDetails['StatusPermission'] == 'Finalizado';
+    _futureAuthorizations =
+        AuthorizeService().fetchAuthorizations(exitDetails['IdPermission']);
     _loadAuthorize();
   }
 

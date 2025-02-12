@@ -94,17 +94,16 @@ class _DocumentStudentState extends State<DocumentStudent> {
   String _getDocumentNameById(int id) {
     switch (id) {
       case 1:
-        return 'Reglamento ULV';
-      case 2:
-      case 3:
-      case 4:
-      case 5:
         return 'Reglamento dormitorio';
-      case 6:
-        return 'Acuerdo de consentimiento';
-      case 7:
+      case 2:
+        return 'Reglamento dormitorio';
+      case 3:
+        return 'Reglamento dormitorio';
+      case 4:
+        return 'Reglamento dormitorio';
+      case 5:
         return 'Convenio de salidas';
-      case 9:
+      case 7:
         return 'INE del Tutor';
       default:
         return 'Documento desconocido';

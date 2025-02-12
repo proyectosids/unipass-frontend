@@ -33,7 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadProfileImage() async {
-    int? idDocumento = 8;
+    int? idDocumento = 6;
     int? id = await AuthUtils.getUserId();
     if (id == null) {
       print('User ID not found');

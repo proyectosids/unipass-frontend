@@ -235,24 +235,20 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
 
 int determineIdDocumento(
     String documentName, String nivelAcademico, String genero) {
-  if (documentName == 'Reglamento ULV') {
-    return 1;
-  } else if (documentName == 'Reglamento dormitorio') {
+  if (documentName == 'Reglamento dormitorio') {
     if (nivelAcademico == 'Bachiller' && genero == 'M') {
-      return 3;
-    } else if (nivelAcademico == 'UNIVERSITARIO' && genero == 'M') {
       return 2;
+    } else if (nivelAcademico == 'UNIVERSITARIO' && genero == 'M') {
+      return 1;
     } else if (nivelAcademico == 'UNIVERSITARIO' && genero == 'F') {
-      return 4;
+      return 3;
     } else if (nivelAcademico == 'Bachiller' && genero == 'F') {
-      return 5;
+      return 4;
     }
-  } else if (documentName == 'Acuerdo de consentimiento') {
-    return 6;
   } else if (documentName == 'Convenio de salidas') {
-    return 7;
+    return 5;
   } else if (documentName == 'INE del Tutor') {
-    return 9;
+    return 7;
   }
   throw Exception('No matching idDocumento found');
 }

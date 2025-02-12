@@ -59,8 +59,8 @@ class _PermissionAuthorizationEmployeeState
 
     try {
       // Obtener permisos de la matrícula principal
-      List<Permission> permissionsPrece =
-          await _permissionService.getPermissionForAutorizacionPrece(matricula);
+      List<Permission> permissionsEmple =
+          await _permissionService.getPermissionForAutorizacion(matricula);
 
       List<Permission> permissionsAsig = [];
 
@@ -71,7 +71,7 @@ class _PermissionAuthorizationEmployeeState
       }
 
       // Combinar las listas
-      List<Permission> permissions = permissionsPrece + permissionsAsig;
+      List<Permission> permissions = permissionsEmple + permissionsAsig;
       permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
 
       setState(() {

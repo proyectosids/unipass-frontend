@@ -179,10 +179,10 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
         } else if (tipoUsuario == 'EMPLEADO' ||
             //tipoUsuario == 'PRECEPTOR' ||
             tipoUsuario == 'VIGILANCIA') {
-          dormitorio = 0;
+          dormitorio = 5;
         }
 
-        dormitorio ??= 0;
+        dormitorio ??= 5;
 
         setState(() {
           // Aquí puedes actualizar el estado si necesitas usar el valor de dormitorio.
