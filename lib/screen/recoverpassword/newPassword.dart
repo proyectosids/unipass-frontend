@@ -102,8 +102,11 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
           await _otpServices.resetPassword(email, otpCode, newPassword);
 
       if (isValid == false) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Mínimo 8 caracteres')),
+        );
         // Si la verificación del OTP es incorrecta, regresar a la pantalla anterior con Navigator.pop()
-        Navigator.pop(context); // Realiza un pop al stack de navegación
+        //Navigator.pop(context); // Realiza un pop al stack de navegación
         return; // Detener la ejecución si el OTP es inválido
       }
 

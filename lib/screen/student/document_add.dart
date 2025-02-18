@@ -198,6 +198,18 @@ class _DocumentAddStudentState extends State<DocumentAddStudent> {
                 ),
               ),
             ),
+            SizedBox(height: responsive.hp(1.5)),
+            Center(
+              child: Text(
+                "--Los archivos no deben pesar más de 1 MB--",
+                style: TextStyle(
+                  fontSize: responsive.dp(1.8),
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
             const Spacer(),
             SizedBox(height: responsive.hp(2)),
             Center(

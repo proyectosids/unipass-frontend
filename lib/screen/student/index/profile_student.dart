@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     int? idDocumento =
-        8; // Asegúrate de que este ID es correcto para tu caso de uso
+        6; // Asegúrate de que este ID es correcto para tu caso de uso
     int? id = await AuthUtils.getUserId();
 
     if (id == null) {

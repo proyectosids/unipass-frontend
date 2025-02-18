@@ -278,6 +278,7 @@ class _HistoryPermissionAuthorizationState
             'ContactoTutor': permission.moviltutor,
             'IdSalida': permission.idsalida,
             'Matricula': permission.matricula,
+            'IdLogin': permission.idlogin,
           },
         );
 

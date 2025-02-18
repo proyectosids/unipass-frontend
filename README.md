@@ -14,3 +14,23 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+Para el nombre de la aplicación:
+```
+flutter pub run change_app_package_name: main com.irvingdesarrolla.UNIPASS
+```
+
+Para el icono de la aplicacion:
+```
+flutter pub run flutter_launcher_icons
+```
+
+Para cambiar el splash creen:
+```
+flutter pub run flutter_native_splash:create
+```
+
+Android ABB
+```
+flutter build appbundle
+```

@@ -200,7 +200,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
             child: Column(
               children: [
                 TextFieldWidget(
-                  label: 'Matrícula o correo',
+                  label: 'Matrícula',
                   onChanged: (text) {
                     _usernameOrEmail =
                         text; // Guardar el valor de la matrícula o correo

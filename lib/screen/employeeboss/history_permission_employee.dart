@@ -276,6 +276,7 @@ class _PermissionAuthorizationEmployeeState
             'ContactoTutor': permission.moviltutor,
             'IdSalida': permission.idsalida,
             'Matricula': permission.matricula,
+            'IdLogin': permission.idlogin,
           },
         );
 

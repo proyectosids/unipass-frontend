@@ -1,7 +1,9 @@
+import 'package:flutter_application_unipass/config/config_url.dart';
 import 'package:flutter_application_unipass/models/authorization.dart';
 import 'package:flutter_application_unipass/services/auth_service.dart';
 import 'package:flutter_application_unipass/services/authorize_service.dart';
 import 'package:flutter_application_unipass/services/checks_service.dart';
+import 'package:flutter_application_unipass/services/document_service.dart';
 import 'package:flutter_application_unipass/services/notification_service.dart';
 import 'package:flutter_application_unipass/services/permission_service.dart';
 import 'package:flutter_application_unipass/services/point_check_service.dart';
@@ -33,6 +35,9 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   final AuthServices _authServices = AuthServices();
   String selectedValue = 'Foto no identificable';
   Future<List<Authorization>>? _futureAuthorizations;
+  String? fullImageUrl;
+  Future<String?>? _futureImageUrl;
+  final DocumentService _documentService = DocumentService();
 
   @override
   void didChangeDependencies() {
@@ -46,6 +51,10 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
     isFinalized = exitDetails['StatusPermission'] == 'Finalizado';
     _futureAuthorizations =
         AuthorizeService().fetchAuthorizations(exitDetails['IdPermission']);
+    _futureImageUrl = _documentService
+        .getProfile(exitDetails['IdLogin'], 8)
+        .then((relativeImageUrl) =>
+            relativeImageUrl != null ? '$baseUrl$relativeImageUrl' : null);
     _loadAuthorize();
   }
 
@@ -273,6 +282,29 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: FutureBuilder<String?>(
+                  future: _futureImageUrl,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError || snapshot.data == null) {
+                      return const CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.grey,
+                        child:
+                            Icon(Icons.person, size: 100, color: Colors.white),
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(snapshot.data!),
+                      );
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
               _buildDetailItem('Alumno', nombreCompleto),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -299,6 +331,22 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
               _buildDetailItem('Trabajo', exitDetails['Trabajo'] ?? ''),
               _buildDetailItem('Nombre del tutor', nombreCompletoTutor),
               _buildContactSection(exitDetails['ContactoTutor'] ?? 'N/A'),
+              FutureBuilder<List<Authorization>>(
+                future: _futureAuthorizations,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    return _buildDynamicProgressBar(
+                        snapshot.data!, Responsive.of(context));
+                  } else {
+                    return const Center(child: Text('No data available'));
+                  }
+                },
+              ),
+
               SizedBox(height: responsive.hp(1.4)),
               if (statusPermiso == 'Pendiente')
                 Center(
@@ -551,6 +599,77 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildDynamicProgressBar(
+      List<Authorization> authorizations, Responsive responsive) {
+    final Map<String, dynamic> exitDetails =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    final String tipoSalida = exitDetails['TipoSalida'];
+    int numSteps = tipoSalida == 'PUEBLO' ? 2 : authorizations.length;
+
+    List<Widget> widgets = [];
+    for (int i = 0; i < numSteps; i++) {
+      Color color;
+      switch (authorizations[i].statusAuthorize) {
+        case 'Aprobada':
+          color = Colors.green;
+          break;
+        case 'Rechazada':
+          color = Colors.red;
+          break;
+        default:
+          color = Colors.orange;
+      }
+
+      widgets
+          .add(_buildStepCircle(responsive, (i + 1).toString(), color: color));
+
+      if (i < numSteps - 1) {
+        Color nextColor;
+        switch (authorizations[i + 1].statusAuthorize) {
+          case 'Aprobada':
+            nextColor = Colors.green;
+            break;
+          case 'Rechazada':
+            nextColor = Colors.red;
+            break;
+          default:
+            nextColor = Colors.orange;
+        }
+        widgets.add(_buildStepLine(color: nextColor));
+      }
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: widgets,
+    );
+  }
+
+  Widget _buildStepCircle(Responsive responsive, String step,
+      {required Color color}) {
+    return CircleAvatar(
+      radius: responsive.wp(4),
+      backgroundColor: color,
+      child: Text(
+        step,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStepLine({required Color color}) {
+    return Expanded(
+      child: Container(
+        height: 2,
+        color: color,
+      ),
     );
   }
 }

@@ -120,8 +120,8 @@ class _DocumentStudentState extends State<DocumentStudent> {
   }
 
   Future<void> _deleteDocument(String documentName) async {
-    bool confirmDelete = await _showDeleteConfirmationDialog();
-    if (!confirmDelete) return; // Si el usuario no confirma, no hacer nada.
+    //bool confirmDelete = await _showDeleteConfirmationDialog();
+    //if (!confirmDelete) return; // Si el usuario no confirma, no hacer nada.
 
     if (documents[documentName] == false) {
       print('No se puede eliminar un documento que no está adjunto.');

@@ -84,7 +84,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: responsive.hp(3)),
+                    SizedBox(height: responsive.hp(12)),
                     Text(
                       'Revisión 2023 - 5 de mayo de 2023.',
                       style: TextStyle(
@@ -124,7 +124,7 @@ class _PrivacyUserScreenState extends State<PrivacyUserScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: responsive.hp(6)),
                   ],
                 ),
               ),
