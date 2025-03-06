@@ -56,7 +56,7 @@ class Preview2 extends StatelessWidget {
                     ),
                     SizedBox(height: responsive.wp(1.5)),
                     Text(
-                      'Mediante una herramienta que la gran mayoría tenemos que es un dispositivo móvil o la web',
+                      'Mediante una herramienta que la gran mayoría tenemos que es un dispositivo móvil.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Roboto',

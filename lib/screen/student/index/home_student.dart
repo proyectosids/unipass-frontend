@@ -50,14 +50,6 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
               ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, '/notificationsStudent');
-            },
-          ),
-        ],
       ),
       backgroundColor: Colors.white,
       body: Padding(

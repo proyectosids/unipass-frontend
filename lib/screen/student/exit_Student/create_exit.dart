@@ -101,14 +101,26 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
   }
 
   Future<void> _createExit(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Evita que se cierre al tocar fuera
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(), // Muestra la animación de carga
+        );
+      },
+    );
+
     int? userId = await AuthUtils.getUserId();
     if (userId == null) {
+      Navigator.pop(context); // Cerrar el diálogo si hay error
       print('User ID not found');
       return;
     }
 
     Map<String, dynamic>? userInfo = await _authService.getUserInfo(userId);
     if (userInfo == null) {
+      Navigator.pop(context);
       print('User info not found');
       return;
     }
@@ -116,11 +128,11 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
     String userSex = userInfo['Sexo'] ?? '';
     if (_selectedType == 'Pueblo' &&
         !_isValidDayForSex(userSex, _selectedStartDate)) {
+      Navigator.pop(context);
       _showInvalidDayAlert(context, userSex);
       return;
     }
 
-    // Registrar la fecha y hora seleccionada del dispositivo
     final DateTime fechaSalida =
         _combineDateAndTime(_selectedStartDate, _selectedStartTime);
     final DateTime fechaRegreso =
@@ -170,8 +182,10 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
         celular: userInfo['Celular'] as String? ?? '',
       );
 
-      Navigator.pop(context, newPermission);
+      Navigator.pop(context); // Cerrar el diálogo de carga
+      Navigator.pop(context, newPermission); // Enviar resultado a ExitStudent
     } catch (e) {
+      Navigator.pop(context); // Cerrar el diálogo en caso de error
       print('Failed to create exit: $e');
     }
   }
@@ -401,7 +415,7 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  // Convierte `TimeOfDay` a `DateTime` y luego formatea
+                  // Convierte TimeOfDay a DateTime y luego formatea
                   DateFormat('hh:mm a').format(
                     DateTime(date.year, date.month, date.day, time.hour,
                         time.minute),

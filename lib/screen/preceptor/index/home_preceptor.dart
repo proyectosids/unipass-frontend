@@ -62,14 +62,6 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
               ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, '/notificationsStudent');
-            },
-          ),
-        ],
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

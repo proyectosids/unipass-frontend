@@ -91,14 +91,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: const Text('Perfil'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, '/notificationsStudent');
-            },
-          ),
-        ],
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -141,21 +133,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Activar notificaciones',
-                      style: TextStyle(fontSize: 16)),
-                  Switch(
-                    value: _notificationsEnabled,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _notificationsEnabled = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
               const SizedBox(height: 16),
               GridView.count(
                 crossAxisCount: 2,
@@ -180,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   _buildProfileItem(
                     context,
-                    'Políticas de Privacidad',
+                    'Privacidad',
                     'assets/image/politicas.svg',
                     '/privacyUser',
                     Colors.white,

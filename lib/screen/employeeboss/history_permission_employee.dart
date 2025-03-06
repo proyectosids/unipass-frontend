@@ -22,6 +22,7 @@ class _PermissionAuthorizationEmployeeState
   DateTime _selectedDate = DateTime.now();
   List<Permission> _permissions = [];
   List<Permission> _filteredPermissions = []; // Lista filtrada
+  bool _isLoading = true;
   final PermissionService _permissionService =
       PermissionService(RegisterService(), AuthorizeService(), AuthServices());
   final AuthServices _authService = AuthServices();
@@ -34,53 +35,56 @@ class _PermissionAuthorizationEmployeeState
   }
 
   Future<void> _loadPermissions() async {
+    setState(() {
+      _isLoading = true; // Iniciar la carga
+    });
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? matricula = prefs.getString('matricula');
 
     if (matricula == null) {
       print('Matricula not found');
+      setState(() {
+        _isLoading = false; // Finalizar la carga en caso de error
+      });
       return;
     }
 
-    // Sección para buscar la matricula si alguien me asignó
     Map<String, dynamic>? userInfoExt =
         await _authService.UserInfoExt(matricula);
-
     String? cargoEmp;
     int? activo;
     if (userInfoExt != null) {
       cargoEmp = userInfoExt['MatriculaEncargado'];
-      activo = userInfoExt['Activo']; // Obtener el valor de 'Activo'
+      activo = userInfoExt['Activo'];
     } else {
-      print('User info not found');
-      cargoEmp = '0'; // Valor predeterminado si no hay información
-      activo = 0; // Valor predeterminado para 'Activo'
+      cargoEmp = '0';
+      activo = 0;
     }
 
     try {
-      // Obtener permisos de la matrícula principal
       List<Permission> permissionsEmple =
           await _permissionService.getPermissionForAutorizacion(matricula);
 
       List<Permission> permissionsAsig = [];
-
-      // Verificar si cargoEmp es válido y si 'Activo' es igual a 1
       if (cargoEmp != null && cargoEmp != '0' && activo == 1) {
         permissionsAsig = await _permissionService
             .getPermissionForAutorizacionPrece(cargoEmp);
       }
 
-      // Combinar las listas
       List<Permission> permissions = permissionsEmple + permissionsAsig;
       permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
 
       setState(() {
         _permissions = permissions;
-        _filterPermissionsByDate(
-            _selectedDate); // Filtrar inicialmente por la fecha actual
+        _filterPermissionsByDate(_selectedDate);
+        _isLoading = false; // Finalizar carga
       });
     } catch (e) {
       print('Failed to load permissions: $e');
+      setState(() {
+        _isLoading = false; // Finalizar carga en caso de error
+      });
     }
   }
 
@@ -119,25 +123,38 @@ class _PermissionAuthorizationEmployeeState
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDatePicker(),
-              const Text(
-                'Salidas',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDatePicker(),
+                  const Text(
+                    'Salidas',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: responsive.hp(1.5)),
+                  SizedBox(
+                    height: 400,
+                    child: _buildPermissionList(),
+                  ),
+                ],
               ),
-              SizedBox(height: responsive.hp(1.5)),
-              SizedBox(
-                height: 400, // Altura fija para la lista
-                child: _buildPermissionList(), // Lista de permisos
-              ),
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

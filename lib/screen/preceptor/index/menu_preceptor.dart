@@ -25,14 +25,6 @@ class _MenuPreceptorScreenState extends State<MenuPreceptorScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: const Text('Menu'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, '/notificationsStudent');
-            },
-          ),
-        ],
       ),
       backgroundColor: Colors.white,
       body: Padding(

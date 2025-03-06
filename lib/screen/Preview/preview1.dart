@@ -42,7 +42,7 @@ class Preview1 extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '¿Qué es eso?',
+                      '¿Qué es UNIPASS?',
                       style: TextStyle(
                         fontSize: responsive.dp(3),
                         fontWeight: FontWeight.bold,
@@ -52,7 +52,7 @@ class Preview1 extends StatelessWidget {
                     ),
                     SizedBox(height: responsive.hp(1)),
                     Text(
-                      'Es una aplicación destinada para las salidas de los estudiantes y personal de la Universidad Linda Vista',
+                      'Es una aplicación destinada para las salidas de los estudiantes y personal de la Universidad Linda Vista.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Roboto',

@@ -23,6 +23,7 @@ class InfoPermissionDetail extends StatefulWidget {
 class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   Map<String, dynamic> exitDetails = {};
   bool isFinalized = false;
+  bool isLoading = false;
   String nombreCompleto = '';
   String nombreCompletoTutor = '';
   String valorar = '';
@@ -103,6 +104,12 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
   }
 
   Future<void> _asignarAutorizacion(String autorizo, String motivo) async {
+    setState(() {
+      isLoading = true; // Activa la pantalla de carga
+    });
+
+    _showLoadingDialog(); // Muestra la pantalla de carga
+
     try {
       final idPermiso = exitDetails['IdPermission'] as int;
       final idSalida = exitDetails['IdSalida'] as int;
@@ -217,11 +224,18 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
 
       // Manejando la navegación según el tipo de usuario
       if (mounted) {
+        Navigator.of(context).pop();
         Navigator.pop(context, true);
       }
     } catch (e) {
       // ignore: avoid_print
       print('Failed to authorize permission: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false; // Desactiva la pantalla de carga
+        });
+      }
     }
   }
 
@@ -249,6 +263,32 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
       print(
           'No se puede abrir WhatsApp. Verifica si está instalado en el dispositivo.');
     }
+  }
+
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Evita que el usuario cierre el diálogo manualmente
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(height: 20),
+                Text("Procesando... Por favor, espere"),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -337,7 +377,9 @@ class _InfoPermissionDetailState extends State<InfoPermissionDetail> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return const Center(
+                        child:
+                            Text('No fue posible cargar las autorizaciones'));
                   } else if (snapshot.hasData) {
                     return _buildDynamicProgressBar(
                         snapshot.data!, Responsive.of(context));

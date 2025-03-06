@@ -22,6 +22,7 @@ class _HistoryPermissionAuthorizationState
   DateTime _selectedDate = DateTime.now();
   List<Permission> _permissions = [];
   List<Permission> _filteredPermissions = []; // Lista filtrada
+  bool _isLoading = true;
   final PermissionService _permissionService =
       PermissionService(RegisterService(), AuthorizeService(), AuthServices());
   final AuthServices _authService = AuthServices();
@@ -34,53 +35,56 @@ class _HistoryPermissionAuthorizationState
   }
 
   Future<void> _loadPermissions() async {
+    setState(() {
+      _isLoading = true; // Iniciar carga
+    });
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? matricula = prefs.getString('matricula');
 
     if (matricula == null) {
       print('Matricula not found');
+      setState(() {
+        _isLoading = false; // Finalizar carga en caso de error
+      });
       return;
     }
 
-    // Sección para buscar la matricula si alguien me asignó
     Map<String, dynamic>? userInfoExt =
         await _authService.UserInfoExt(matricula);
-
     String? cargoEmp;
     int? activo;
     if (userInfoExt != null) {
       cargoEmp = userInfoExt['MatriculaEncargado'];
-      activo = userInfoExt['Activo']; // Obtener el valor de 'Activo'
+      activo = userInfoExt['Activo'];
     } else {
-      print('User info not found');
-      cargoEmp = '0'; // Valor predeterminado si no hay información
-      activo = 0; // Valor predeterminado para 'Activo'
+      cargoEmp = '0';
+      activo = 0;
     }
 
     try {
-      // Obtener permisos de la matrícula principal
       List<Permission> permissionsPrece =
           await _permissionService.getPermissionForAutorizacionPrece(matricula);
-
       List<Permission> permissionsAsig = [];
 
-      // Verificar si cargoEmp es válido y si 'Activo' es igual a 1
       if (cargoEmp != null && cargoEmp != '0' && activo == 1) {
         permissionsAsig = await _permissionService
             .getPermissionForAutorizacionPrece(cargoEmp);
       }
 
-      // Combinar las listas
       List<Permission> permissions = permissionsPrece + permissionsAsig;
       permissions.sort((a, b) => b.fechasolicitud.compareTo(a.fechasolicitud));
 
       setState(() {
         _permissions = permissions;
-        _filterPermissionsByDate(
-            _selectedDate); // Filtrar inicialmente por la fecha actual
+        _filterPermissionsByDate(_selectedDate);
+        _isLoading = false; // Finalizar carga
       });
     } catch (e) {
       print('Falla al cargar permisos: $e');
+      setState(() {
+        _isLoading = false; // Finalizar carga en caso de error
+      });
     }
   }
 
@@ -119,27 +123,38 @@ class _HistoryPermissionAuthorizationState
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        // Aquí envolvemos el contenido con SingleChildScrollView
-        child: Padding(
-          padding: EdgeInsets.all(padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDatePicker(),
-              const Text(
-                'Salidas',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDatePicker(),
+                  const Text(
+                    'Salidas',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: responsive.hp(1.5)),
+                  SizedBox(
+                    height: responsive.hp(50),
+                    child: _buildPermissionList(),
+                  ),
+                ],
               ),
-              SizedBox(height: responsive.hp(1.5)),
-              // La lista aún necesita un Expanded para que funcione correctamente
-              SizedBox(
-                height: responsive.hp(50), // Limitar el tamaño máximo
-                child: _buildPermissionList(), // Usar la lista filtrada aquí
-              ),
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5), // Fondo semitransparente
+                child: const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

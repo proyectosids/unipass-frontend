@@ -55,19 +55,19 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
   void _submit() async {
     final isOk = _formKey.currentState?.validate() ?? false;
     if (isOk) {
-      // Mostrar el diálogo de carga
+      // Mostrar pantalla de carga
       showDialog(
         context: context,
-        barrierDismissible:
-            false, // Evitar que se cierre al tocar fuera del diálogo
+        barrierDismissible: false, // Evita que se cierre accidentalmente
         builder: (BuildContext context) {
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              child: const Column(
+          return WillPopScope(
+            onWillPop: () async =>
+                false, // Evita que el usuario presione "Atrás"
+            child: Dialog(
+              backgroundColor: Colors.transparent,
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: const [
                   CircularProgressIndicator(),
                   SizedBox(height: 16.0),
                   Text(
@@ -86,21 +86,21 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
             _usernameOrEmail, _usernameOrEmail, _password);
 
         // Cerrar el diálogo de carga
-        Navigator.pop(context);
+        if (mounted) {
+          Navigator.pop(context);
+        }
 
         if (result['success']) {
           String tipoUser = result['user']['TipoUser'];
           String userId = result['user']['Matricula'];
           String newUserId = userId.replaceFirst('MTR', '');
+
+          // Manejo de tokens FCM
           try {
-            //final String userId = result['user']['Matricula'];
             final String? currentToken =
                 await _authService.searchTokenFCM(userId);
             final String? newToken =
                 await FirebaseMessaging.instance.getToken();
-
-            print('Current Token: $currentToken');
-            print('New Token: $newToken');
 
             if (newToken != null &&
                 (currentToken == null || currentToken != newToken)) {
@@ -108,74 +108,59 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
             }
           } catch (e) {
             print('Error handling Firebase token: $e');
-            // Considera cómo manejar este error, quizás mostrando un mensaje al usuario.
           }
 
-          // Guardar idDormitorio en SharedPreferences
+          // Guardar información del usuario
           if (tipoUser == 'DEPARTAMENTO' || tipoUser == 'PRECEPTOR') {
             await AuthUtils.saveIdDormitorio(result['user']['Dormitorio']);
           }
-
-          // Guardar tipoUser en SharedPreferences
           await AuthUtils.saveTipoUser(tipoUser);
 
-          // Llamar al servicio con la matrícula del usuario
+          // Obtener datos del usuario y guardarlos
           final registerService = RegisterService();
           final userData = await registerService.getDatosUser(newUserId);
+          await saveUserInfo(userData);
 
           // Verificar si el usuario está activo
           if (result['user']['StatusActividad'] == 1) {
-            // Guardar la información del usuario en SharedPreferences
-            await saveUserInfo(userData);
-
             // Redirigir según el tipo de usuario
-            if (tipoUser == 'ALUMNO') {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/homeStudentMenu', // Ruta para alumnos
-                (route) => false,
-              );
-            } else if (tipoUser == 'PRECEPTOR') {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/homePreceptorMenu', // Ruta para preceptores
-                (route) => false,
-              );
-            } else if (tipoUser == 'DEPARTAMENTO') {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/homeDepartamentMenu', // Ruta para preceptores
-                (route) => false,
-              );
-            } else if (tipoUser == 'EMPLEADO' || tipoUser == 'VIGILANCIA') {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/homeEmployeeMenu', // Ruta para empleados o vigilancia
-                (route) => false,
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Tipo de usuario no reconocido')),
-              );
-            }
+            _navigateToUserHome(tipoUser);
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Usuario no activo')),
-            );
+            _showSnackbar('Usuario no activo');
           }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Credenciales inválidas')),
-          );
+          _showSnackbar('Credenciales inválidas');
         }
       } catch (error) {
-        // Cerrar el diálogo de carga en caso de error
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error de autenticación')),
-        );
+        if (mounted) {
+          Navigator.pop(context);
+        }
+        _showSnackbar('Error de autenticación');
       }
     }
+  }
+
+  void _navigateToUserHome(String tipoUser) {
+    final Map<String, String> routes = {
+      'ALUMNO': '/homeStudentMenu',
+      'PRECEPTOR': '/homePreceptorMenu',
+      'DEPARTAMENTO': '/homeDepartamentMenu',
+      'EMPLEADO': '/homeEmployeeMenu',
+      'VIGILANCIA': '/homeEmployeeMenu',
+    };
+
+    String? route = routes[tipoUser];
+
+    if (route != null) {
+      Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);
+    } else {
+      _showSnackbar('Tipo de usuario no reconocido');
+    }
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
