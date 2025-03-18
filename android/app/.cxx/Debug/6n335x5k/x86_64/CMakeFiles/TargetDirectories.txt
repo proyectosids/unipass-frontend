@@ -1,0 +1,2 @@
+/Users/irvingyaelpatriciogonzalez/UniPassULV-App/android/app/.cxx/Debug/6n335x5k/x86_64/CMakeFiles/rebuild_cache.dir
+/Users/irvingyaelpatriciogonzalez/UniPassULV-App/android/app/.cxx/Debug/6n335x5k/x86_64/CMakeFiles/edit_cache.dir

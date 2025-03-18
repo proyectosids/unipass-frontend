@@ -112,6 +112,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                               fontSize: responsive.dp(1.6),
                               fontWeight: FontWeight.bold,
                             ),
+                            overflow: TextOverflow
+                                .ellipsis, // Puntos suspensivos si excede
+                            maxLines: 1, // Limitar a 1 línea
                           ),
                         ),
                         ListTile(
@@ -128,6 +131,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                               fontSize: responsive.dp(1.6),
                               fontWeight: FontWeight.bold,
                             ),
+                            overflow: TextOverflow
+                                .ellipsis, // Puntos suspensivos si excede
+                            maxLines: 1, // Limitar a 1 línea
                           ),
                         ),
                         ListTile(
@@ -144,6 +150,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                               fontSize: responsive.dp(1.6),
                               fontWeight: FontWeight.bold,
                             ),
+                            overflow: TextOverflow
+                                .ellipsis, // Puntos suspensivos si excede
+                            maxLines: 1, // Limitar a 1 línea
                           ),
                         ),
                         ListTile(
@@ -162,6 +171,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                               fontSize: responsive.dp(1.6),
                               fontWeight: FontWeight.bold,
                             ),
+                            overflow: TextOverflow
+                                .ellipsis, // Puntos suspensivos si excede
+                            maxLines: 1, // Limitar a 1 línea
                           ),
                         ),
                         ListTile(
@@ -178,6 +190,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                               fontSize: responsive.dp(1.6),
                               fontWeight: FontWeight.bold,
                             ),
+                            overflow: TextOverflow
+                                .ellipsis, // Puntos suspensivos si excede
+                            maxLines: 1, // Limitar a 1 línea
                           ),
                         ),
                         if (isAlumno)
@@ -195,6 +210,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                                 fontSize: responsive.dp(1.6),
                                 fontWeight: FontWeight.bold,
                               ),
+                              overflow: TextOverflow
+                                  .ellipsis, // Puntos suspensivos si excede
+                              maxLines: 1, // Limitar a 1 línea
                             ),
                           ),
                         const Divider(),
@@ -225,6 +243,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                                 fontSize: responsive.dp(1.6),
                                 fontWeight: FontWeight.bold,
                               ),
+                              overflow: TextOverflow
+                                  .ellipsis, // Puntos suspensivos si excede
+                              maxLines: 1, // Limitar a 1 línea
                             ),
                           ),
                           ListTile(
@@ -241,6 +262,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                                 fontSize: responsive.dp(1.6),
                                 fontWeight: FontWeight.bold,
                               ),
+                              overflow: TextOverflow
+                                  .ellipsis, // Puntos suspensivos si excede
+                              maxLines: 1, // Limitar a 1 línea
                             ),
                           ),
                           const Divider(),
@@ -272,6 +296,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                                   fontSize: responsive.dp(1.6),
                                   fontWeight: FontWeight.bold,
                                 ),
+                                overflow: TextOverflow
+                                    .ellipsis, // Puntos suspensivos si excede
+                                maxLines: 1, // Limitar a 1 línea
                               ),
                             ),
                             ListTile(
@@ -288,6 +315,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                                   fontSize: responsive.dp(1.6),
                                   fontWeight: FontWeight.bold,
                                 ),
+                                overflow: TextOverflow
+                                    .ellipsis, // Corta con puntos suspensivos
+                                softWrap: false, // Evita saltos de línea
                               ),
                             ),
                           ],
@@ -319,6 +349,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                                 fontSize: responsive.dp(1.6),
                                 fontWeight: FontWeight.bold,
                               ),
+                              overflow: TextOverflow
+                                  .ellipsis, // Puntos suspensivos si excede
+                              maxLines: 1, // Limitar a 1 línea
                             ),
                           ),
                           ListTile(
@@ -335,6 +368,9 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                                 fontSize: responsive.dp(1.6),
                                 fontWeight: FontWeight.bold,
                               ),
+                              overflow: TextOverflow
+                                  .ellipsis, // Puntos suspensivos si excede
+                              maxLines: 1, // Limitar a 1 línea
                             ),
                           ),
                         ],
