@@ -926,10 +926,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: "21b704ce5fa560ea9f3b525b43601c678728ba46725bab9b01187b4831377ed3"
+      sha256: "47e208a6711459d813ba18af120d9663c20bdf6985d6ad39fe165d2538378d27"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.0"
+    version: "6.1.14"
   url_launcher_android:
     dependency: transitive
     description:
@@ -939,13 +939,13 @@ packages:
     source: hosted
     version: "6.3.3"
   url_launcher_ios:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: url_launcher_ios
-      sha256: "7068716403343f6ba4969b4173cbf3b84fc768042124bc2c011e5d782b24fe89"
+      sha256: "7c65021d5dee51813d652357bc65b8dd4a6177082a9966bc8ba6ee477baa795f"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.0"
+    version: "6.1.5"
   url_launcher_linux:
     dependency: transitive
     description:

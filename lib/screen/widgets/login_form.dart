@@ -63,11 +63,11 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
           return WillPopScope(
             onWillPop: () async =>
                 false, // Evita que el usuario presione "Atrás"
-            child: Dialog(
+            child: const Dialog(
               backgroundColor: Colors.transparent,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   CircularProgressIndicator(),
                   SizedBox(height: 16.0),
                   Text(

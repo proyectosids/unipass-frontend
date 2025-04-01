@@ -1,4 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/models/permission.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
+import 'package:flutter_application_unipass/services/authorize_service.dart';
+import 'package:flutter_application_unipass/services/permission_service.dart';
+import 'package:flutter_application_unipass/services/register_service.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeStudentScreen extends StatefulWidget {
   static const routeName = '/homeStudent';
@@ -6,36 +17,70 @@ class HomeStudentScreen extends StatefulWidget {
   const HomeStudentScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeStudentScreenState createState() => _HomeStudentScreenState();
+  State<HomeStudentScreen> createState() => _HomeStudentScreenState();
 }
 
 class _HomeStudentScreenState extends State<HomeStudentScreen> {
-  bool isAvisosSelected = true;
   String? nombre;
   String? apellidos;
+  int? userId;
+  bool isLoading = true;
+  List<Permission> permissions = [];
+
+  final permissionService = PermissionService(
+    RegisterService(),
+    AuthorizeService(),
+    AuthServices(),
+  );
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('es_MX', null);
-    _getNombreUser();
+    _loadUserAndPermissions();
+  }
+
+  Future<void> _loadUserAndPermissions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final nombreUsuario = prefs.getString('nombre');
+    final apellidosUsuario = prefs.getString('apellidos');
+    final idLogin = await AuthUtils.getUserId();
+
+    setState(() {
+      nombre = nombreUsuario;
+      apellidos = apellidosUsuario;
+      userId = idLogin;
+    });
+
+    if (idLogin != null) {
+      try {
+        final result = await permissionService.getTopPermissionsByUser(idLogin);
+        setState(() {
+          permissions = result;
+        });
+      } catch (e) {
+        print('Error al obtener permisos: $e');
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
-    final double padding = responsive.wp(3);
+    final responsive = Responsive.of(context);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        centerTitle: true, // Centra el título del AppBar
+        centerTitle: true,
         title: Column(
-          mainAxisSize: MainAxisSize
-              .min, // Esto asegura que la columna ocupe solo el espacio necesario
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Bienvenido, ${nombre ?? 'Empleado'}',
+              'Bienvenido, ${nombre ?? 'Alumno'}',
               style: TextStyle(
                 fontSize: responsive.dp(2.2),
                 fontFamily: 'Roboto',
@@ -52,176 +97,181 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.all(padding),
-        child: SingleChildScrollView(
-          // Envuelve el contenido en SingleChildScrollView
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('¿Qué haremos hoy?',
-                  style: TextStyle(fontSize: responsive.dp(2.4))),
-              SizedBox(height: responsive.hp(1.8)),
-              Row(
-                children: [
-                  _buildStatusButton('Avisos', isAvisosSelected),
-                  SizedBox(width: responsive.wp(3)),
-                  _buildStatusButton('En proceso', !isAvisosSelected),
-                ],
-              ),
-              SizedBox(height: responsive.hp(1.5)),
-              _buildCards(),
-              SizedBox(height: responsive.hp(1.5)),
-              Text('Actividad', style: TextStyle(fontSize: responsive.dp(2.2))),
-              _buildActivityList(), // Ya maneja un ListView para la actividad
-            ],
-          ),
-        ),
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : permissions.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Bienvenido a tu aplicación UNIPASS',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Esperamos que esta aplicación pueda ser de beneficio\nDisfrútala',
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 10),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Salidas recientes',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            //ElevatedButton(
+                            //  onPressed: () {
+                            //    Navigator.pushNamed(
+                            //        context, ExitStudent.routeName);
+                            //  },
+                            //  style: ElevatedButton.styleFrom(
+                            //    backgroundColor: Color.fromRGBO(6, 66, 106, 1),
+                            //    shape: RoundedRectangleBorder(
+                            //      borderRadius: BorderRadius.circular(8),
+                            //    ),
+                            //  ),
+                            //  child: const Text(
+                            //    'Ir a Salidas',
+                            //    style: TextStyle(
+                            //      color: Colors.white,
+                            //      fontWeight: FontWeight.bold,
+                            //    ),
+                            //  ),
+                            //),
+                          ]),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        itemCount: permissions.length,
+                        itemBuilder: (context, index) {
+                          final p = permissions[index];
+                          return _buildPermissionItem(
+                            context,
+                            p.motivo,
+                            p.fechasalida.toIso8601String(),
+                            p.fecharegreso.toIso8601String(),
+                            p.statusPermission,
+                            p,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
+}
 
-//Responsives pendientes hacia abajo
-  Widget _buildStatusButton(String title, bool isSelected) {
-    return Expanded(
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            isAvisosSelected = title == 'Avisos';
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected
-              ? Colors.purple
-              : const Color.fromARGB(255, 178, 178, 178),
-          disabledForegroundColor: Colors.white.withOpacity(0.38),
-          disabledBackgroundColor: Colors.white.withOpacity(0.12),
-        ),
-        child: Text(
-          title,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    );
+String formatDateTime12H(DateTime dateTime) {
+  final formatter = DateFormat('dd MMM yyyy, hh:mm a', 'es_MX');
+  return formatter.format(dateTime);
+}
+
+Widget _buildPermissionItem(BuildContext context, String title, String date,
+    String dateE, String status, Permission permission) {
+  final Responsive responsive = Responsive.of(context);
+  DateTime parsedDate;
+  DateTime parsedDateE;
+
+  try {
+    parsedDate = DateTime.parse(date);
+    parsedDateE = DateTime.parse(dateE);
+  } catch (e) {
+    return const Text('Fecha inválida');
   }
 
-  Widget _buildCards() {
-    if (isAvisosSelected) {
-      return SizedBox(
-        height: 200,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: [
-            _buildCard(
-              'Preceptor',
-              'Nueva regla de salidas a casa',
-              '25 Mayo, 2024',
-              Colors.purple,
-              Icons.announcement,
-            ),
-            _buildCard(
-              'Jefe de área',
-              'Alumnos pendientes de horas',
-              '22 Mayo, 2024',
-              Colors.blue,
-              Icons.announcement,
-            ),
-          ],
-        ),
-      );
-    } else {
-      return SizedBox(
-        height: 200,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: [
-            _buildCard(
-              'Preceptor',
-              'Solicitud a casa',
-              '30 Mayo, 2024',
-              Colors.purple,
-              Icons.announcement,
-            ),
-            _buildCard(
-              'Jefe de área',
-              'Solicitud al pueblo',
-              '23 Mayo, 2024',
-              Colors.blue,
-              Icons.announcement,
-            ),
-          ],
-        ),
-      );
-    }
-  }
+  String formattedDate =
+      DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
+  String formattedDateE =
+      DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDateE);
 
-  Widget _buildCard(
-      String title, String subtitle, String date, Color color, IconData icon) {
-    return Container(
-      width: 250,
-      margin: const EdgeInsets.only(right: 16.0),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: Icon(icon, color: Colors.white),
-            title: Text(
-              title,
-              style: const TextStyle(color: Colors.white),
-            ),
-            subtitle: Text(
-              subtitle,
-              style: const TextStyle(color: Colors.white70),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              date,
-              style: const TextStyle(color: Colors.white70),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActivityList() {
-    return ListView(
-      shrinkWrap: true, // Permite anidar dentro de un SingleChildScrollView
-      physics:
-          NeverScrollableScrollPhysics(), // Evita el desplazamiento interno
-      children: [
-        _buildActivityItem('Salida al pueblo', 'hace 12 horas'),
-        _buildActivityItem('Salida al pueblo', 'hace 5 días'),
-        _buildActivityItem('Salida especial', 'hace 15 días'),
-      ],
-    );
-  }
-
-  Widget _buildActivityItem(String title, String subtitle) {
-    return Card(
+  return GestureDetector(
+    child: Card(
+      color: Colors.white70,
+      shadowColor: Colors.black,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: ListTile(
-        leading: const Icon(Icons.event, color: Colors.purple),
-        title: Text(title),
-        subtitle: Text(subtitle),
+        leading: SizedBox(
+          width: responsive.wp(5),
+          height: responsive.hp(10),
+          child: const Icon(Icons.event),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: responsive.dp(1.5)),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              formattedDateE,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            SizedBox(height: responsive.hp(0.3)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    status,
+                    style: TextStyle(
+                      color: _getStatusColor(status),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                SizedBox(width: responsive.wp(0.5)),
+                Flexible(
+                  child: Text(
+                    formattedDate,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Future<void> _getNombreUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? nombreUsuario = prefs.getString('nombre');
-    String? apellidosUsuario = prefs.getString('apellidos');
-
-    setState(() {
-      nombre = nombreUsuario;
-      apellidos = apellidosUsuario;
-    });
+Color _getStatusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'aprobada':
+      return Colors.green;
+    case 'rechazada':
+      return Colors.red;
+    case 'pendiente':
+      return Colors.orange;
+    case 'cancelado':
+      return Colors.grey;
+    default:
+      return Colors.black;
   }
 }

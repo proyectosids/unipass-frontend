@@ -309,15 +309,21 @@ class _ConfirmDataUserState extends State<ConfirmDataUser> {
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),
-                              trailing: Text(
-                                checkEmpty(userData.works![0].jefeDepartamento),
-                                style: TextStyle(
-                                  fontSize: responsive.dp(1.6),
-                                  fontWeight: FontWeight.bold,
+                              trailing: Container(
+                                constraints: BoxConstraints(
+                                    maxWidth: responsive
+                                        .wp(50)), // 👈 límite de ancho
+                                child: Text(
+                                  checkEmpty(
+                                      userData.works![0].jefeDepartamento),
+                                  style: TextStyle(
+                                    fontSize: responsive.dp(1.6),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: false,
+                                  maxLines: 1,
                                 ),
-                                overflow: TextOverflow
-                                    .ellipsis, // Corta con puntos suspensivos
-                                softWrap: false, // Evita saltos de línea
                               ),
                             ),
                           ],

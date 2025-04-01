@@ -278,4 +278,37 @@ class PermissionService {
       throw Exception('Error valorar el permiso');
     }
   }
+
+  Future<List<Permission>> getTopPermissionsByUser(int userId) async {
+    final url = Uri.parse('$baseUrl/permissionTop/Student/$userId');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      if (response.body == "null" || response.body.isEmpty) {
+        return [];
+      }
+
+      final List<dynamic> data = json.decode(response.body);
+
+      // Obtener matrícula del usuario
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? matricula = prefs.getString('matricula');
+
+      if (matricula == null) {
+        throw Exception('No se encontró matrícula en SharedPreferences');
+      }
+
+      // Obtener los datos del usuario
+      final userResponse = await _registerService.getDatosUser(matricula);
+      final userData = userResponse.toJson();
+
+      List<Permission> permissions = data
+          .map<Permission>((json) => Permission.fromJson(json, userData))
+          .toList();
+
+      return permissions;
+    } else {
+      throw Exception('Fallo en la carga de permisos recientes');
+    }
+  }
 }

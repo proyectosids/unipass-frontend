@@ -336,7 +336,8 @@ class _CreateExitScreenState extends State<CreateExitScreen> {
                   'Trabajo',
                   'Salud',
                   'Trámites',
-                  'Asuntos Familiaress'
+                  'Asuntos Familiares',
+                  'Actividad de Iglesia'
                 ].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
