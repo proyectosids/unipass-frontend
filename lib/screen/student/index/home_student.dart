@@ -138,25 +138,25 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            //ElevatedButton(
-                            //  onPressed: () {
-                            //    Navigator.pushNamed(
-                            //        context, ExitStudent.routeName);
-                            //  },
-                            //  style: ElevatedButton.styleFrom(
-                            //    backgroundColor: Color.fromRGBO(6, 66, 106, 1),
-                            //    shape: RoundedRectangleBorder(
-                            //      borderRadius: BorderRadius.circular(8),
-                            //    ),
-                            //  ),
-                            //  child: const Text(
-                            //    'Ir a Salidas',
-                            //    style: TextStyle(
-                            //      color: Colors.white,
-                            //      fontWeight: FontWeight.bold,
-                            //    ),
-                            //  ),
-                            //),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, ExitStudent.routeName);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color.fromRGBO(6, 66, 106, 1),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                'Ir a Salidas',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ]),
                     ),
                     Expanded(

@@ -137,9 +137,8 @@ class _NewAccountAuthenticationState extends State<NewAccountAuthentication> {
                                       .loginOTP(); // Ahora el servicio está accesible aquí
 
                                   // Llamar a obtenerCorreo de forma asincrónica
-                                  cuentaEmail = 'irving.patricio@ulv.edu.mx';
-                                  //cuentaEmail = await obtenerCorreo(
-                                  //    _emailController.text);
+                                  cuentaEmail = await obtenerCorreo(
+                                      _emailController.text);
 
                                   await _otpServices.launchOTP(cuentaEmail);
                                   print("OTP enviado con éxito");
