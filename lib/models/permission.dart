@@ -58,7 +58,9 @@ class Permission {
   factory Permission.fromJson(
       Map<String, dynamic> json, Map<String, dynamic> userJson) {
     return Permission(
-      id: json['IdPermission'] ?? 0,
+      id: json['IdPermission'] is int
+          ? json['IdPermission']
+          : int.tryParse(json['IdPermission'].toString()) ?? 0,
       fechasolicitud:
           DateTime.tryParse(json['FechaSolicitada'] ?? '') ?? DateTime(1900),
       statusPermission: json['StatusPermission'] ?? '',
@@ -77,14 +79,18 @@ class Permission {
           ? (userJson['student'][0]['CELULAR'] ?? '')
           : '',
       idTrabajo: userJson['work'] != null && userJson['work'].isNotEmpty
-          ? (userJson['work'][0]['ID DEPTO'] ?? '')
-          : '',
+          ? (userJson['work'][0]['ID DEPTO'] is int
+              ? userJson['work'][0]['ID DEPTO']
+              : int.tryParse(userJson['work'][0]['ID DEPTO'].toString()) ?? 0)
+          : 0,
       trabajo: userJson['work'] != null && userJson['work'].isNotEmpty
           ? (userJson['work'][0]['DEPARTAMENTO'] ?? '')
           : '',
       idJefeTrabajo: userJson['work'] != null && userJson['work'].isNotEmpty
-          ? (userJson['work'][0]['ID JEFE'] ?? '')
-          : '',
+          ? (userJson['work'][0]['ID JEFE'] is int
+              ? userJson['work'][0]['ID JEFE']
+              : int.tryParse(userJson['work'][0]['ID JEFE'].toString()) ?? 0)
+          : 0,
       jefetrabajo: userJson['work'] != null && userJson['work'].isNotEmpty
           ? (userJson['work'][0]['JEFE DEPARTAMENTO'] ?? '')
           : '',

@@ -311,4 +311,33 @@ class PermissionService {
       throw Exception('Fallo en la carga de permisos recientes');
     }
   }
+
+  Future<List<Permission>> getTopPermissionsByPreceptor() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? matricula = prefs.getString('matricula');
+
+    if (matricula == null) {
+      throw Exception('No se encontró la matrícula en SharedPreferences');
+    }
+
+    final url = Uri.parse('$baseUrl/permissionTop/Preceptor/$matricula');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      if (response.body == "null" || response.body.isEmpty) {
+        return [];
+      }
+
+      final List<dynamic> data = json.decode(response.body);
+
+      // Puedes usar datos vacíos si no necesitas el perfil del alumno
+      List<Permission> permissions = data
+          .map<Permission>((json) => Permission.fromJson(json, {}))
+          .toList();
+
+      return permissions;
+    } else {
+      throw Exception('Fallo al cargar permisos recientes del preceptor');
+    }
+  }
 }
