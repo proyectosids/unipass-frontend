@@ -1,4 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_application_unipass/models/permission.dart';
+import 'package:flutter_application_unipass/services/auth_service.dart';
+import 'package:flutter_application_unipass/services/authorize_service.dart';
+import 'package:flutter_application_unipass/services/permission_service.dart';
+import 'package:flutter_application_unipass/services/register_service.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:flutter_application_unipass/utils/responsive.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePreceptorScreen extends StatefulWidget {
   static const routeName = '/homePreceptor';
@@ -6,37 +17,55 @@ class HomePreceptorScreen extends StatefulWidget {
   const HomePreceptorScreen({Key? key}) : super(key: key);
 
   @override
-  _HomePreceptorScreenState createState() => _HomePreceptorScreenState();
+  State<HomePreceptorScreen> createState() => _HomePreceptorScreenState();
 }
 
 class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
-  bool isAvisosSelected = true;
   String? nombre;
   String? apellidos;
-  final List<Map<String, String>> _notices = [
-    {
-      'directedTo': 'Departamento de trabajo',
-      'title': 'No deber horas para salir a prácticas',
-      'date': '25 Mayo, 2024',
-    },
-    {
-      'directedTo': 'Dormitorio',
-      'title': 'Subir sus documentos para salir',
-      'date': '22 Mayo, 2024',
-    },
-  ];
+  bool isLoading = true;
+  List<Permission> permissions = [];
+
+  final permissionService = PermissionService(
+    RegisterService(),
+    AuthorizeService(),
+    AuthServices(),
+  );
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('es_MX', null);
-    _getNombreUser();
+    _loadUserAndPermissions();
+  }
+
+  Future<void> _loadUserAndPermissions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final nombreUsuario = prefs.getString('nombre');
+    final apellidosUsuario = prefs.getString('apellidos');
+
+    setState(() {
+      nombre = nombreUsuario;
+      apellidos = apellidosUsuario;
+    });
+
+    try {
+      final result = await permissionService.getTopPermissionsByPreceptor();
+      setState(() {
+        permissions = result;
+      });
+    } catch (e) {
+      print('Error al obtener permisos del preceptor: $e');
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
-    final double padding = responsive.wp(3);
+    final responsive = Responsive.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +75,7 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Bienvenido ${nombre ?? 'Empleado'}',
+              'Bienvenido, ${nombre ?? 'Preceptor'}',
               style: TextStyle(
                 fontSize: responsive.dp(2.2),
                 fontFamily: 'Roboto',
@@ -57,224 +86,165 @@ class _HomePreceptorScreenState extends State<HomePreceptorScreen> {
                 apellidos!,
                 style: TextStyle(
                     fontSize: responsive.dp(1.4),
-                    fontFamily: 'Roboto',
                     color: const Color.fromARGB(255, 138, 138, 138)),
               ),
           ],
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('¿Qué haremos hoy?', style: TextStyle(fontSize: 24)),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  _buildStatusButton('Avisos', isAvisosSelected),
-                  const SizedBox(width: 8),
-                  _buildStatusButton('Solicitudes', !isAvisosSelected),
-                ],
-              ),
-              const SizedBox(height: 16),
-              _buildCards(),
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final result = await Navigator.pushNamed(
-                      context,
-                      '/noticePreceptor',
-                    );
-                    if (result != null && result is Map<String, String>) {
-                      setState(() {
-                        _notices.add(result);
-                      });
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : permissions.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Bienvenido a tu panel de Preceptor',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Aquí podrás monitorear las últimas salidas de tus estudiantes.',
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
                   ),
-                  child: const Text('Crear aviso',
-                      style: TextStyle(color: Colors.white)),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                      child: Text(
+                        'Solicitudes recientes',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh:
+                            _loadUserAndPermissions, // Recarga cuando se desliza hacia abajo
+                        child: ListView.builder(
+                          physics:
+                              const AlwaysScrollableScrollPhysics(), // Asegura que funcione el gesto
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          itemCount: permissions.length,
+                          itemBuilder: (context, index) {
+                            final p = permissions[index];
+                            return _buildPermissionItem(
+                              context,
+                              p.motivo,
+                              p.fechasolicitud.toIso8601String(),
+                              p.fechasalida.toIso8601String(),
+                              p.statusPermission,
+                              p,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Text('Recientes', style: TextStyle(fontSize: 24)),
-              _buildActivityList(), // Ajustado para que no use Expanded
-            ],
-          ),
-        ),
-      ),
     );
   }
+}
 
-  Widget _buildActivityList() {
-    return Column(
-      children: [
-        _buildActivityItem('Salida al pueblo alumno 11', 'hace 2 horas'),
-        _buildActivityItem('Salida al pueblo alumno 152', 'hace 3 horas'),
-        _buildActivityItem('Salida especial alumno 74', 'hace 5 horas'),
-      ],
-    );
+Widget _buildPermissionItem(BuildContext context, String title, String date,
+    String dateE, String status, Permission permission) {
+  final Responsive responsive = Responsive.of(context);
+  DateTime parsedDate;
+  DateTime parsedDateE;
+
+  try {
+    parsedDate = DateTime.parse(date);
+    parsedDateE = DateTime.parse(dateE);
+  } catch (e) {
+    return const Text('Fecha inválida');
   }
 
-  Widget _buildStatusButton(String title, bool isSelected) {
-    return Expanded(
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            isAvisosSelected = title == 'Avisos';
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected
-              ? Colors.purple
-              : const Color.fromARGB(255, 178, 178, 178),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        child: Text(
-          title,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    );
-  }
+  String formattedDate =
+      DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDate);
+  String formattedDateE =
+      DateFormat('dd MMMM yyyy, hh:mm a', 'es_MX').format(parsedDateE);
 
-  Widget _buildCards() {
-    if (isAvisosSelected) {
-      return SizedBox(
-        height: 200,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: _notices.map((notice) {
-            return _buildCard(
-              notice['directedTo']!,
-              notice['title']!,
-              notice['date']!,
-              Colors.purple,
-              Icons.school, // Puedes cambiar el icono si es necesario
-            );
-          }).toList(),
-        ),
-      );
-    } else {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildCircleCard('Pendientes', 7, Colors.red),
-          _buildCircleCard('Pueblo', 3, Colors.green),
-          _buildCircleCard('Especiales', 2, Colors.blue),
-          _buildCircleCard('A casa', 2, Colors.orange),
-        ],
-      );
-    }
-  }
-
-  Widget _buildCard(String directedTo, String title, String date, Color color,
-      IconData icon) {
-    return Container(
-      width: 250,
-      margin: const EdgeInsets.only(right: 16.0),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: Icon(icon, color: Colors.white),
-            title: Text(
-              directedTo,
-              style: const TextStyle(color: Colors.white),
-            ),
-            subtitle: Text(
-              title,
-              style: const TextStyle(color: Colors.white70),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              date,
-              style: const TextStyle(color: Colors.white70),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCircleCard(String title, int count, Color color) {
-    return Column(
-      children: [
-        Container(
-          width: 70,
-          height: 70,
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Text(
-              count.toString(),
-              style: TextStyle(
-                color: color,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          style: const TextStyle(color: Colors.black, fontSize: 14),
-        ),
-      ],
-    );
-  }
-
-  //Widget _buildActivityList() {
-  //  return Expanded(
-  //    child: ListView(
-  //      children: [
-  //        _buildActivityItem('Salida al pueblo alumno 11', 'hace 2 horas'),
-  //        _buildActivityItem('Salida al pueblo alumno 152', 'hace 3 horas'),
-  //        _buildActivityItem('Salida especial alumno 74', 'hace 5 horas'),
-  //      ],
-  //    ),
-  //  );
-  //}
-
-  Widget _buildActivityItem(String title, String subtitle) {
-    return Card(
+  return GestureDetector(
+    child: Card(
+      color: Colors.white70,
+      shadowColor: Colors.black,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: ListTile(
-        leading: const Icon(Icons.event, color: Colors.purple),
-        title: Text(title),
-        subtitle: Text(subtitle),
+        leading: SizedBox(
+          width: responsive.wp(5),
+          height: responsive.hp(10),
+          child: const Icon(Icons.event),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: responsive.dp(1.5)),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              formattedDateE,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            SizedBox(height: responsive.hp(0.3)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    status,
+                    style: TextStyle(
+                      color: _getStatusColor(status),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                SizedBox(width: responsive.wp(0.5)),
+                Flexible(
+                  child: Text(
+                    formattedDate,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Future<void> _getNombreUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? nombreUsuario = prefs.getString('nombre');
-    String? apellidosUsuario = prefs.getString('apellidos');
-
-    setState(() {
-      nombre = nombreUsuario;
-      apellidos = apellidosUsuario;
-    });
+Color _getStatusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'aprobada':
+      return Colors.green;
+    case 'rechazada':
+      return Colors.red;
+    case 'pendiente':
+      return Colors.orange;
+    case 'cancelado':
+      return Colors.grey;
+    default:
+      return Colors.black;
   }
 }

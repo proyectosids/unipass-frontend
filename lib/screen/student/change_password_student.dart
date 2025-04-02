@@ -153,7 +153,7 @@ class _ChangepasswordStudentState extends State<ChangepasswordStudent> {
                                       try {
                                         await _otpServices.loginOTP();
                                         await _otpServices.forgotOTP(email);
-                                        await Navigator.pushReplacementNamed(
+                                        await Navigator.pushNamed(
                                           context,
                                           '/verificationPassword',
                                           arguments: email,
