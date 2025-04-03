@@ -118,7 +118,11 @@ class _PermissionAuthorizationEmployeeState
           icon: const Icon(Icons.arrow_back,
               color: Color.fromRGBO(250, 198, 0, 1)),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(
+              context,
+              '/homeEmployeeMenu',
+              arguments: 1,
+            );
           },
         ),
       ),

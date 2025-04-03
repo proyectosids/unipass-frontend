@@ -27,10 +27,10 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
 
   final List<String> _genders = ['Hombre', 'Mujer'];
   final List<String> _dormitories = [
-    'H.V.N.M.',
-    'H.V.N.U.',
     'H.S.N.M.',
     'H.S.N.U.',
+    'H.V.N.M.',
+    'H.V.N.U.',
     'Vigilancia'
   ];
   final UserCheckersService _userCheckersService = UserCheckersService();
@@ -64,23 +64,23 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
       // Convertir el departamento seleccionado a su valor numérico
       int departmentValue;
       switch (department) {
-        case 'H.V.N.M.':
+        case 'H.S.N.M.':
           departmentValue = 1;
           break;
-        case 'H.V.N.U.':
+        case 'H.S.N.U.':
           departmentValue = 2;
           break;
-        case 'H.S.N.M.':
+        case 'H.V.N.M.':
           departmentValue = 3;
           break;
-        case 'H.S.N.U.':
+        case 'H.V.N.U.':
           departmentValue = 4;
           break;
         case 'Vigilancia':
-          departmentValue = 0;
+          departmentValue = 5;
           break;
         default:
-          departmentValue = 0;
+          departmentValue = 5;
       }
 
       // Asignar la fecha en la que se crea
