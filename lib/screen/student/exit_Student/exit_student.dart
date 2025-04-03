@@ -155,103 +155,118 @@ class _ExitStudentState extends State<ExitStudent> {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(3);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
-        centerTitle: true,
-        title: Text(
-          'Salidas',
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: responsive.dp(2.2),
-              fontWeight: FontWeight.w600),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(
+          context,
+          '/homeStudentMenu',
+          arguments: 1,
+        );
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(6, 66, 106, 1),
+          centerTitle: true,
+          title: Text(
+            'Salidas',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: responsive.dp(2.2),
+                fontWeight: FontWeight.w600),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back,
+                color: Color.fromRGBO(250, 198, 0, 1)),
+            onPressed: () {
+              Navigator.pushReplacementNamed(
+                context,
+                '/homeStudentMenu',
+                arguments: 1,
+              );
+            },
+          ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Color.fromRGBO(250, 198, 0, 1)),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      backgroundColor: Colors.white,
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              controller: _scrollController,
-              child: Padding(
-                padding: EdgeInsets.all(padding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
-                    const SizedBox(height: 16),
-                    _buildDatePicker(),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Salidas',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _permissions.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index < _permissions.length) {
-                          final permission = _permissions[index];
-                          return permission.statusPermission == 'Pendiente'
-                              ? Dismissible(
-                                  key: Key(permission.id.toString()),
-                                  direction: DismissDirection.endToStart,
-                                  confirmDismiss: (direction) async {
-                                    return await _showConfirmationDialog(
-                                        context);
-                                  },
-                                  onDismissed: (direction) {
-                                    _cancelPermission(permission.id);
-                                  },
-                                  background: Container(
-                                    color: Colors.red,
-                                    alignment: Alignment.centerRight,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    child: const Icon(Icons.delete,
-                                        color: Colors.white),
-                                  ),
-                                  child: _buildPermissionItem(
+        backgroundColor: Colors.white,
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: EdgeInsets.all(padding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildHeader(),
+                      const SizedBox(height: 16),
+                      _buildDatePicker(),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Salidas',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 16),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _permissions.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index < _permissions.length) {
+                            final permission = _permissions[index];
+                            return permission.statusPermission == 'Pendiente'
+                                ? Dismissible(
+                                    key: Key(permission.id.toString()),
+                                    direction: DismissDirection.endToStart,
+                                    confirmDismiss: (direction) async {
+                                      return await _showConfirmationDialog(
+                                          context);
+                                    },
+                                    onDismissed: (direction) {
+                                      _cancelPermission(permission.id);
+                                    },
+                                    background: Container(
+                                      color: Colors.red,
+                                      alignment: Alignment.centerRight,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: const Icon(Icons.delete,
+                                          color: Colors.white),
+                                    ),
+                                    child: _buildPermissionItem(
+                                      context,
+                                      'SALIDA ${permission.descripcion}',
+                                      permission.fechasolicitud
+                                          .toIso8601String(),
+                                      permission.fechasalida.toIso8601String(),
+                                      permission.statusPermission,
+                                      permission,
+                                    ),
+                                  )
+                                : _buildPermissionItem(
                                     context,
                                     'SALIDA ${permission.descripcion}',
                                     permission.fechasolicitud.toIso8601String(),
                                     permission.fechasalida.toIso8601String(),
                                     permission.statusPermission,
                                     permission,
-                                  ),
-                                )
-                              : _buildPermissionItem(
-                                  context,
-                                  'SALIDA ${permission.descripcion}',
-                                  permission.fechasolicitud.toIso8601String(),
-                                  permission.fechasalida.toIso8601String(),
-                                  permission.statusPermission,
-                                  permission,
-                                );
-                        } else {
-                          return _isLoadingMore
-                              ? const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                )
-                              : const SizedBox.shrink();
-                        }
-                      },
-                    ),
-                  ],
+                                  );
+                          } else {
+                            return _isLoadingMore
+                                ? const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  )
+                                : const SizedBox.shrink();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 

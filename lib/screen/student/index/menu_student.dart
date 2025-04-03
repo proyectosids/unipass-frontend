@@ -59,71 +59,75 @@ class _MenuScreenState extends State<MenuScreen> {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(3);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          'Menu',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: responsive.dp(2.2),
-            fontWeight: FontWeight.w600,
+    return WillPopScope(
+      onWillPop: () async => false, // ⛔ No permitir volver atrás
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false, // ⛔ Ocultar la flecha de regreso
+          backgroundColor: Colors.white,
+          title: Text(
+            'Menu',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: responsive.dp(2.2),
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.all(padding),
-        child: FutureBuilder<bool>(
-          future: _fetchDocumentos(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return const Center(child: Text('Error loading data'));
-            } else {
-              hasIdCargoDelegado = snapshot.data ?? false;
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: EdgeInsets.all(padding),
+          child: FutureBuilder<bool>(
+            future: _fetchDocumentos(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('Error loading data'));
+              } else {
+                hasIdCargoDelegado = snapshot.data ?? false;
 
-              List<Widget> menuItems = [
-                _buildMenuItem(
-                  context,
-                  'Salidas',
-                  'assets/image/salidas.svg',
-                  '/ExitStudent',
-                  Colors.white,
-                  hasIdCargoDelegado,
-                ),
-                _buildMenuItem(
-                  context,
-                  'Ayuda',
-                  'assets/image/HelpApp.svg',
-                  '/helpUser',
-                  Colors.white,
-                  true,
-                ),
-                _buildMenuItem(
-                  context,
-                  'Documentos',
-                  'assets/image/documents.svg',
-                  '/documentStudent',
-                  Colors.white,
-                  true,
-                ),
-              ];
-
-              return Column(
-                children: [
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 2,
-                      children: menuItems,
-                    ),
+                List<Widget> menuItems = [
+                  _buildMenuItem(
+                    context,
+                    'Salidas',
+                    'assets/image/salidas.svg',
+                    '/ExitStudent',
+                    Colors.white,
+                    hasIdCargoDelegado,
                   ),
-                ],
-              );
-            }
-          },
+                  _buildMenuItem(
+                    context,
+                    'Ayuda',
+                    'assets/image/HelpApp.svg',
+                    '/helpUser',
+                    Colors.white,
+                    true,
+                  ),
+                  _buildMenuItem(
+                    context,
+                    'Documentos',
+                    'assets/image/documents.svg',
+                    '/documentStudent',
+                    Colors.white,
+                    true,
+                  ),
+                ];
+
+                return Column(
+                  children: [
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        children: menuItems,
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
         ),
       ),
     );

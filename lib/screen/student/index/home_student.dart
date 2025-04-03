@@ -74,6 +74,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Column(

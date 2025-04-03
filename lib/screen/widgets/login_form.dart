@@ -152,7 +152,21 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
     String? route = routes[tipoUser];
 
     if (route != null) {
-      Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);
+      // Enviar índice 1 solo si es ALUMNO
+      if (tipoUser == 'ALUMNO') {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          route!,
+          (route) => false,
+          arguments: 0, // Índice deseado (Menu)
+        );
+      } else {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          route!,
+          (route) => false,
+        );
+      }
     } else {
       _showSnackbar('Tipo de usuario no reconocido');
     }
