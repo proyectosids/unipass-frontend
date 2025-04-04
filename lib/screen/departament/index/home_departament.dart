@@ -55,7 +55,7 @@ class _HomeDepartamentState extends State<HomeDepartament> {
     try {
       List<dynamic> checks = [];
 
-      if (idDormitorio != 0) {
+      if (idDormitorio != 5) {
         final checksSalida =
             await _checksService.obtenerChecksDormitorio(idDormitorio!);
         final checksFin =
@@ -143,14 +143,6 @@ class _HomeDepartamentState extends State<HomeDepartament> {
                     ),
                 ],
               ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.pushNamed(context, '/notificationsStudent');
-            },
-          ),
-        ],
       ),
       backgroundColor: Colors.white,
       body: isLoading

@@ -15,7 +15,7 @@ class _HomeScreenDepartamentState extends State<HomeScreenDepartament> {
   final List<Widget> screens = [
     const HomeDepartament(),
     const HelpFAQUser(),
-    const ProfileScreen(userType: 'departamento'), // Pasa el tipo de usuario
+    const ProfileScreen(userType: 'DEPARTAMENTO'), // Pasa el tipo de usuario
   ];
 
   @override

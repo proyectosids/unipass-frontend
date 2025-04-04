@@ -15,7 +15,7 @@ class _HomeScreenStudentState extends State<HomeScreenStudent> {
   final List<Widget> screens = [
     const HomeStudentScreen(),
     const MenuScreen(),
-    const ProfileScreen(userType: 'student'),
+    const ProfileScreen(userType: 'ALUMNO'),
   ];
 
   @override

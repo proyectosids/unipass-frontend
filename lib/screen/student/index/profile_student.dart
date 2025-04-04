@@ -82,9 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final double padding = responsive.wp(3);
-    String profileText = widget.userType == 'student'
-        ? 'Alumno'
-        : 'Empleado'; // Cambia según el tipo de usuario
+    String profileText = widget.userType; // Cambia según el tipo de usuario
 
     return Scaffold(
       appBar: AppBar(
@@ -142,13 +140,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 physics:
                     const NeverScrollableScrollPhysics(), // Desactiva el scroll interno
                 children: [
-                  _buildProfileItem(
-                    context,
-                    'Cambiar contraseña',
-                    'assets/image/cambiar_contra.svg',
-                    '/changeStudent',
-                    Colors.white,
-                  ),
+                  if (widget.userType != "DEPARTAMENTO")
+                    _buildProfileItem(
+                      context,
+                      'Cambiar contraseña',
+                      'assets/image/cambiar_contra.svg',
+                      '/changeStudent',
+                      Colors.white,
+                    ),
                   _buildProfileItem(
                     context,
                     'Soporte',

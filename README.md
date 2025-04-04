@@ -34,3 +34,7 @@ Android ABB
 ```
 flutter build appbundle
 ```
+Considerar que por cada Bundle que se genene vamos tenemos que cambiar la version del proyecto el los siguientes archivos:
+- android/app/build.gradle
+- android/local.propities
+- pubspec.yaml

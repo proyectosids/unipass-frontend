@@ -45,7 +45,7 @@ class _HomeEmployeeScreenState extends State<HomeEmployeeScreen> {
     });
 
     try {
-      final result = await permissionService.getTopPermissionsByPreceptor();
+      final result = await permissionService.getTopPermissionsByEmployee();
       setState(() {
         permissions = result;
       });

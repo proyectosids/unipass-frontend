@@ -15,8 +15,7 @@ class _HomeScreenEmployeeState extends State<HomeScreenEmployee> {
   final List<Widget> screens = [
     const HomeEmployeeScreen(),
     const MenuEmployeeScreen(),
-    const ProfileScreen(
-        userType: 'jefe de departamento'), // Pasa el tipo de usuario
+    const ProfileScreen(userType: 'JEFE DE AREA'), // Pasa el tipo de usuario
   ];
 
   @override
