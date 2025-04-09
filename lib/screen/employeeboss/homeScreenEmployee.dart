@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_application_unipass/config/config_url.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
 
 class HomeScreenEmployee extends StatefulWidget {
@@ -9,14 +14,53 @@ class HomeScreenEmployee extends StatefulWidget {
   _HomeScreenEmployeeState createState() => _HomeScreenEmployeeState();
 }
 
-class _HomeScreenEmployeeState extends State<HomeScreenEmployee> {
+class _HomeScreenEmployeeState extends State<HomeScreenEmployee>
+    with WidgetsBindingObserver {
   int selectedIndex = 0;
 
   final List<Widget> screens = [
     const HomeEmployeeScreen(),
     const MenuEmployeeScreen(),
-    const ProfileScreen(userType: 'JEFE DE AREA'), // Pasa el tipo de usuario
+    const ProfileScreen(userType: 'JEFE DE AREA'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      bool isValid = await _checkToken();
+      if (!isValid && mounted) {
+        await AuthUtils.clearSessionToken();
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+      }
+    }
+  }
+
+  Future<bool> _checkToken() async {
+    final token = await AuthUtils.getSessionToken();
+    if (token == null) return false;
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/verifyToken'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
 
   @override
   void didChangeDependencies() {

@@ -91,6 +91,9 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
         }
 
         if (result['success']) {
+          print(result['token']);
+          await AuthUtils.saveSessionToken(result['token']);
+
           String tipoUser = result['user']['TipoUser'];
           String userId = result['user']['Matricula'];
           String newUserId = userId.replaceFirst('MTR', '');

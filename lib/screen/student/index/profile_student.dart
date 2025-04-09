@@ -76,6 +76,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _clearUserPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await await AuthUtils.getUserId(); // Limpia todas las preferencias
+    await AuthUtils.clearSessionToken();
+    await AuthUtils.clearTipoUser();
+    await AuthUtils.clearUserId();
+    await AuthUtils.clearIdDormitorio();
+    await AuthUtils.clearUserInfo();
   }
 
   @override

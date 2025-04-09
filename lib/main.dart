@@ -1,28 +1,89 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_application_unipass/api/firebase_api.dart';
+import 'package:flutter_application_unipass/config/config_url.dart';
 import 'package:flutter_application_unipass/screen/checkspoint/form_create_user.dart';
 import 'package:flutter_application_unipass/screen/preceptor/delegate_user.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 //import 'package:flutter_application_unipass/services/local_notification.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
+import 'package:http/http.dart' as http;
+
+Future<bool> isSessionValid() async {
+  final token = await AuthUtils.getSessionToken();
+  if (token == null) return false;
+
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/verifyToken'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    return response.statusCode == 200;
+  } catch (_) {
+    return false;
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
-  WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
-  //await LocalNotification.requestPermissionLocalNotifications();
   await FirebaseApi().initNotifications();
-  runApp(MyApp(isFirstTime: isFirstTime));
+
+  bool isLoggedIn = await isSessionValid();
+  String? tipoUser = await AuthUtils.getTipoUser();
+
+  runApp(MyApp(
+    isFirstTime: isFirstTime,
+    isLoggedIn: isLoggedIn,
+    tipoUser: tipoUser,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final bool isFirstTime;
+  final bool isLoggedIn;
+  final String? tipoUser;
 
-  const MyApp({super.key, required this.isFirstTime});
+  const MyApp({
+    super.key,
+    required this.isFirstTime,
+    required this.isLoggedIn,
+    required this.tipoUser,
+  });
 
   @override
   Widget build(BuildContext context) {
+    String? routeInicial;
+
+    if (isFirstTime) {
+      routeInicial = Preview1.routeName;
+    } else if (isLoggedIn && tipoUser != null) {
+      // Elegir home según tipo de usuario
+      switch (tipoUser) {
+        case 'ALUMNO':
+          routeInicial = '/homeStudentMenu';
+          break;
+        case 'PRECEPTOR':
+          routeInicial = '/homePreceptorMenu';
+          break;
+        case 'DEPARTAMENTO':
+          routeInicial = '/homeDepartamentMenu';
+          break;
+        case 'EMPLEADO':
+        case 'VIGILANCIA':
+          routeInicial = '/homeEmployeeMenu';
+          break;
+        default:
+          routeInicial = LoginApp.routeName;
+      }
+    } else {
+      routeInicial = LoginApp.routeName;
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UniPass ULV',
@@ -33,7 +94,7 @@ class MyApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      initialRoute: isFirstTime ? Preview1.routeName : LoginApp.routeName,
+      initialRoute: routeInicial,
       routes: {
         Preview1.routeName: (context) => const Preview1(),
         Preview2.routeName: (context) => const Preview2(),

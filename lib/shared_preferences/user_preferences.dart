@@ -6,6 +6,24 @@ class AuthUtils {
   static const String _tipoUserKey = 'tipoUser';
   static const String _idDormitoriokey = 'idDormitorio';
   static const String _authTokenKey = 'auth_token'; // Nueva clave para el token
+  static const String _sessionTokenKey = 'session_token'; // Token JWT
+
+  // ==== JWT AUTH TOKEN ====
+
+  static Future<void> saveSessionToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_sessionTokenKey, token);
+  }
+
+  static Future<String?> getSessionToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_sessionTokenKey);
+  }
+
+  static Future<void> clearSessionToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_sessionTokenKey);
+  }
 
   // Función para guardar el token
   static Future<void> saveAuthToken(String token) async {
