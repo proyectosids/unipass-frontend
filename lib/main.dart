@@ -3,6 +3,7 @@ import 'package:flutter_application_unipass/api/firebase_api.dart';
 import 'package:flutter_application_unipass/config/config_url.dart';
 import 'package:flutter_application_unipass/screen/checkspoint/form_create_user.dart';
 import 'package:flutter_application_unipass/screen/preceptor/delegate_user.dart';
+import 'package:flutter_application_unipass/services/local_notification.dart';
 import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
 //import 'package:flutter_application_unipass/services/local_notification.dart';
 import 'package:flutter_application_unipass/utils/imports.dart';
@@ -31,6 +32,7 @@ void main() async {
   bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
 
   await Firebase.initializeApp();
+  await LocalNotification.initializeLocalNotifications();
   await FirebaseApi().initNotifications();
 
   bool isLoggedIn = await isSessionValid();

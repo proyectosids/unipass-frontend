@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyBTV-oaDNHn_SppOCpTqBNi8CuWsby_D4o</string>
+	<string>AIzaSyC6ybklqHOgERo4Tk-x8rYfXvY0wfgzun8</string>
 	<key>GCM_SENDER_ID</key>
-	<string>401541086731</string>
+	<string>765994156606</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.irvingdesarrolla.UNIPASS</string>
 	<key>PROJECT_ID</key>
-	<string>unipass-ulv</string>
+	<string>fir-app-12fbc</string>
 	<key>STORAGE_BUCKET</key>
-	<string>unipass-ulv.firebasestorage.app</string>
+	<string>fir-app-12fbc.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:401541086731:ios:aee2ff8a4b20f93b56910e</string>
+	<string>1:765994156606:ios:0022855a776af3c37dc76f</string>
 </dict>
 </plist>

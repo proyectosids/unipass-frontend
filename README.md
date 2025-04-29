@@ -17,7 +17,7 @@ samples, guidance on mobile development, and a full API reference.
 
 Para el nombre de la aplicación:
 ```
-flutter pub run change_app_package_name: main com.irvingdesarrolla.UNIPASS
+flutter pub run change_app_package_name:main com.irvingdesarrolla.UNIPASS
 ```
 
 Para el icono de la aplicacion:
