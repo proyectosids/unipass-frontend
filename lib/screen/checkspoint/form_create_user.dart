@@ -77,10 +77,10 @@ class _CreateUserChecksState extends State<CreateUserChecks> {
           departmentValue = 4;
           break;
         case 'Vigilancia':
-          departmentValue = 5;
+          departmentValue = 6;
           break;
         default:
-          departmentValue = 5;
+          departmentValue = 6;
       }
 
       // Asignar la fecha en la que se crea
