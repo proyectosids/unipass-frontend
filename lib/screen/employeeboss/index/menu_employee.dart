@@ -1,0 +1,134 @@
+import 'package:flutter_application_unipass/services/register_service.dart';
+import 'package:flutter_application_unipass/shared_preferences/user_preferences.dart';
+import 'package:flutter_application_unipass/utils/imports.dart';
+
+class MenuEmployeeScreen extends StatefulWidget {
+  static const routeName = '/menuEmployee';
+  const MenuEmployeeScreen({super.key});
+
+  @override
+  State<MenuEmployeeScreen> createState() => _MenuEmployeeScreenState();
+}
+
+class _MenuEmployeeScreenState extends State<MenuEmployeeScreen> {
+  String? typeUser;
+  bool hasJefe = false;
+  final RegisterService _registerService = RegisterService();
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _getTypeUser();
+    await _checkIfHasJefe();
+  }
+
+  Future<void> _getTypeUser() async {
+    String? user = await AuthUtils.getTipoUser();
+    setState(() {
+      typeUser = user;
+    });
+  }
+
+  Future<void> _checkIfHasJefe() async {
+    // Obtener datos del usuario que realiza la acción
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? idEmpleado = prefs.getString('matricula');
+    bool? result = await _registerService.getValidarJefe(idEmpleado ?? '');
+    setState(() {
+      hasJefe = result ?? false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: const Text('Menu'),
+      ),
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                children: [
+                  _buildMenuItem(
+                    context,
+                    'Salidas',
+                    'assets/image/salidas.svg',
+                    '/AuthorizationEmployee',
+                    Colors.white,
+                  ),
+                  _buildMenuItem(
+                    context,
+                    'Ayuda',
+                    'assets/image/HelpApp.svg',
+                    '/helpUser',
+                    Colors.white,
+                  ),
+                  //Condiconar si el usuario es vigilancia para crear usuario de checks
+                  if (typeUser == 'VIGILANCIA')
+                    _buildMenuItem(context, 'Checks', 'assets/image/checks.svg',
+                        '/NewProfileChecks', Colors.white),
+
+                  if (hasJefe ||
+                      typeUser ==
+                          'VIGILANCIA') // Condición para mostrar el ítem "Delegar"
+                    _buildMenuItem(
+                      context,
+                      'Delegar',
+                      'assets/image/HelpApp.svg',
+                      '/delegatePosition',
+                      Colors.white,
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(BuildContext context, String title, String assetPath,
+      String routeName, Color color) {
+    final Responsive responsive = Responsive.of(context);
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, routeName);
+      },
+      child: Card(
+        color: color,
+        elevation: 20, // Aquí añades la elevación
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(assetPath,
+                width: responsive.wp(12), height: responsive.hp(12)),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: responsive.dp(1.6),
+                fontWeight: FontWeight.bold,
+                color: const Color.fromRGBO(6, 66, 106, 1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
