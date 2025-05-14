@@ -8,9 +8,13 @@ class LocalNotification {
     final AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('ic_launcher_foreground');
 
+    final DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
+
     final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
     );
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);

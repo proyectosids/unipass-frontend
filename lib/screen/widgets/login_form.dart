@@ -150,6 +150,7 @@ class _LoginTextFieldsState extends State<LoginTextFields> {
       'DEPARTAMENTO': '/homeDepartamentMenu',
       'EMPLEADO': '/homeEmployeeMenu',
       'VIGILANCIA': '/homeEmployeeMenu',
+      'ADMINISTRATIVO': '/homeEmployeeMenu',
     };
 
     String? route = routes[tipoUser];

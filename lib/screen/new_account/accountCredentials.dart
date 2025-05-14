@@ -148,7 +148,7 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
 
       try {
         final registerService = RegisterService();
-        List<int> dormitorios = [315, 316, 317, 318];
+        List<int> dormitorios = [315, 316, 317, 318, 351];
         String? tipoUsuario;
         int? dormitorio;
 
@@ -156,10 +156,15 @@ class _NewAccountCredentialsState extends State<NewAccountCredentials> {
           int? preceMatricula =
               await registerService.getPreceptor(dormitorios[i]);
           if (preceMatricula == widget.userData['matricula']) {
-            tipoUsuario = 'PRECEPTOR';
+            if (i != 4) {
+              tipoUsuario = 'PRECEPTOR';
+            } else {
+              tipoUsuario = 'ADMINISTRATIVO';
+            }
             dormitorio = i + 1;
             break;
           }
+          if (preceMatricula == widget.userData['matricula']) {}
         }
 
         bool? isjefeVigilancia = await registerService
